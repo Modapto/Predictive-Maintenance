@@ -40,6 +40,8 @@ ID_activity = df2['ID activity']
 ID_component = df2['ID component']
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
+t_begin = df2['Begin'][0]
+t_end = df2['End'][0]
 
 GENOME_LENGTH = 17                                                      # number of possible group
 POPULATION_SIZE = 100
@@ -47,10 +49,10 @@ MUTATION_RATE = 0.01
 CROSSOVER_RATE = 0.7
 GENERATIONS = 1500
 
-C_s = 5000
-C_d = 50
+C_s = 50
+C_d = 10
 
-m = 2                                                                   # Number of repairmen
+m = 1                                                                   # Number of repairmen
 w_max = 7                                                               # Maximum number of iterations for binary search
 
 # initialize genome
@@ -164,6 +166,17 @@ def mapping_IDcomponent_to_beta(G_component):
         group_to_beta.append((group, beta))
     return group_to_beta
 
+# # mapping group of component to group of alpha using output from mapping_activity_to_componentID()
+# def mapping_IDcomponent_to_name(G_component):
+#     group_to_name = []
+#     for group, id_component in G_component:
+#         name = []
+#         for d in id_component:
+#             value = df1.loc[df1['ID'] == d, 'Component'].iloc[0]
+#             name.append(value)
+#         group_to_name.append((group, name))
+#     return group_to_name
+
 
 # First Fit Decreasing (FFD) method
 def first_fit_decreasing(durations, m, D):
@@ -199,6 +212,7 @@ def calculate_d_Gk(G_duration, m, w_max):
     d_Gk = []
     for _, durations in G_duration:
         optimal_duration = multifit(durations, m, w_max)
+        optimal_duration = round(optimal_duration, 3)
         d_Gk.append(optimal_duration)
     return d_Gk
 
@@ -265,6 +279,7 @@ def penalty_cost(G_activity):
         # print("---------------------------------------------------")
         P.append(np.round(result.fun, decimals=3))
         t_group.append(np.round(result.x, decimals=3))
+    t_group = [float(arr[0]) for arr in t_group]
     return P, t_group
 
 # cost benefit EB = B_S + B_U - P
@@ -275,7 +290,7 @@ def cost_benefit(B_S, B_U, P):
 # # Test main
 # genome = random_genome(GENOME_LENGTH)
 # genome = [13, 15, 17, 9, 8, 13, 15, 14, 12, 2, 6, 4, 5, 3, 14, 5, 12]    #1496.6997279200023
-genome = [8, 16, 1, 7, 6, 8, 16, 1, 14, 6, 8, 4, 9, 3, 1, 9, 14]
+genome = [15, 13, 10, 1, 17, 12, 10, 11, 3, 8, 14, 7, 3, 9, 5, 6, 11]
 N, G_activity = decode(genome)
 print(f"Genome: {genome}")
 print(f"Activities in each group: {G_activity}")
@@ -287,6 +302,9 @@ print(f"Unavailability cost saving in each group: {B_U}")
 G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
 print(f"Components in each group: {G_component}")
 
+G_duration, _ = mapping_IDcomponent_to_duration(G_component)
+print(f"Durations in group: {G_duration}")
+
 G_alpha = mapping_IDcomponent_to_alpha(G_component)
 print(f"Alpha in each group: {G_alpha}")
 
@@ -296,7 +314,7 @@ print(f"Beta in each group: {G_beta}")
 replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
 print(f"Replacement time in each group: {replacement_time}")
 
-P, _ = penalty_cost(G_activity)
+P, t_group = penalty_cost(G_activity)
 print(f"Penalty cost: {P}")
 
 EB = cost_benefit(B_S, B_U, P)
@@ -309,7 +327,7 @@ a = fitness(EB)
 print(a)
 
 
-
+"""
 
 # Create a DataFrame based on the provided data
 data2 = {
@@ -332,7 +350,7 @@ plt.show()
 import pandas as pd
 import matplotlib.pyplot as plt
 
-"""
+
 # Create a DataFrame based on the provided data
 data2 = {
     "Number of repairmen": [1, 2, 3, 4, 5, 6, 7],
@@ -351,3 +369,185 @@ plt.xticks(df2["Number of repairmen"])
 
 plt.show()
 """
+
+
+
+
+
+from collections import defaultdict
+
+def build_component_dict(durations_in_group, components_in_each_group, replacement_time_in_group):
+    """
+    Build a dictionary keyed by component, where each component's value is a dict
+    with two lists: 'duration' and 'replacement_time'.
+    """
+    
+    # Convert the "durations in group" and "replacement time in group" tuples
+    # into dictionaries keyed by group for easy lookup
+    durations_dict = dict(durations_in_group)
+    replacements_dict = dict(replacement_time_in_group)
+    
+    # Create a dictionary keyed by component
+    # Each component will have a list of durations and replacement times
+    component_dict = defaultdict(lambda: {"duration": [], "replacement_time": []})
+    
+    # Populate component_dict
+    for group, comp_list in components_in_each_group:
+        group_durations = durations_dict[group]
+        group_replacements = replacements_dict[group]
+        
+        for i, comp in enumerate(comp_list):
+            component_dict[comp]["duration"].append(group_durations[i])
+            component_dict[comp]["replacement_time"].append(group_replacements[i])
+    
+    return dict(component_dict)
+
+
+
+import matplotlib.pyplot as plt
+
+def plot_replacement_times(component_dict):
+    """
+    Create a scatter plot where each component is on the y-axis and
+    its replacement times are plotted along the x-axis.
+    
+    component_dict: dict with structure:
+        {
+          component_id: {
+            'duration': [...],
+            'replacement_time': [...]
+          },
+          ...
+        }
+    """
+    # Create the figure and axis
+    fig, ax = plt.subplots()
+
+    # For each component, plot its replacement times on the x-axis
+    # and the component ID (or name) on the y-axis.
+    for comp_id, data in component_dict.items():
+        replacements = data["replacement_time"]
+        
+        # We'll have one or more x-values (the replacements) and a matching list of y-values (comp_id repeated)
+        y_values = [comp_id] * len(replacements)
+        
+        # Scatter plot for this component
+        ax.scatter(replacements, y_values)
+    
+    # Label axes
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Component")
+
+    # Optional: adjust the y-ticks to show each component distinctly (especially if comp_id are integers)
+    # If you prefer integer ticks only:
+    plt.yticks(sorted(component_dict.keys()))
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.title("Component Replacement Times")
+    plt.show()
+
+def rename_dict_keys_with_excel(component_dict, excel_file_path):
+    """
+    Read an Excel file with columns 'ID' and 'Component'
+    and convert the integer keys of component_dict to
+    the corresponding component names. The rest of the
+    structure remains unchanged.
+    """
+    # 1. Read the Excel file
+    df = pd.read_excel(excel_file_path)  # Make sure 'ID' and 'Component' columns exist
+
+    # 2. Build a lookup dict: {ID_value: Component_name}
+    id_to_name = dict(zip(df['ID'], df['Component']))
+
+    # 3. Create a new dictionary with keys = component names
+    component_dict_renamed = {}
+    for comp_id, comp_data in component_dict.items():
+        # Look up the name of the component in the id_to_name dictionary
+        comp_name = id_to_name.get(comp_id, f"Unknown_{comp_id}")
+        component_dict_renamed[comp_name] = comp_data
+
+    return component_dict_renamed
+
+def mapping_to_UI(genome):
+    N, G_activity = decode(genome)
+    G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
+    G_duration, _ = mapping_IDcomponent_to_duration(G_component)
+    replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
+    return G_duration, G_component, replacement_time
+
+
+def calculate_info(genome):
+    G_duration, G_component, replacement_time = mapping_to_UI(genome)
+    print("G_duration: ", G_duration)
+    print("G_component: ", G_component)
+    print("replacement_time: ", replacement_time)
+
+    component_dict = build_component_dict(
+        G_duration, G_component, replacement_time
+    )
+
+    renamed_dict = rename_dict_keys_with_excel(component_dict, file_path_1)
+
+    d_Gk = calculate_d_Gk(G_duration, m, w_max)
+    print("d_Gk: ", d_Gk)
+    _ , t_group = penalty_cost(G_activity)
+    print("t_group: ", t_group)
+    estimate_duration = convert_right_form(G_component, d_Gk)
+    print("estimate_duration: ", estimate_duration)
+    estimate_replacement_time = convert_right_form(G_component, t_group)
+    print("estimate_replacement_time: ", estimate_replacement_time)
+
+    estimate_component_dict = build_component_dict(
+        estimate_duration, G_component, estimate_replacement_time
+    )
+    estimate_renamed_dict = rename_dict_keys_with_excel(estimate_component_dict, file_path_1)
+    print(renamed_dict)
+    print(estimate_renamed_dict)
+
+    return renamed_dict, estimate_renamed_dict
+
+
+def convert_right_form(components, durations):
+    """
+    Replaces the index list in each tuple in `components` with a list of the corresponding
+    duration repeated as many times as there were indices.
+    
+    Parameters:
+    - components (list[tuple[int, list[int]]]): 
+        Each element is a tuple of the form (component_id, list_of_indices).
+    - durations (list[float]): 
+        Durations for each component, where durations[component_id - 1] is the duration.
+        
+    Returns:
+    - list[tuple[int, list[float]]]: A new list of tuples with the second element replaced by 
+      a list of repeated durations.
+    """
+    return [
+        (comp_id, [durations[comp_id - 1]] * len(indices))
+        for comp_id, indices in components
+    ]
+
+# # Example: print the data for component 0
+# # print("Component 0:", component_dict[1])
+# print(component_dict)
+
+# renamed_dict = rename_dict_keys_with_excel(component_dict, file_path_1)
+
+# # Now the dictionary keys match the "Component" names from the spreadsheet
+# print(renamed_dict)
+
+# plot_replacement_times(renamed_dict)
+
+renamed_dict, estimate_renamed_dict = calculate_info(genome)
+
+# component_dict = build_component_dict(
+#         G_duration, G_component, replacement_time
+#     )
+# print(component_dict)
+
+# print(f"Optimal replacement time for each group: {t_group}")
+# print("t_group:", t_group)
+# print(np.shape(t_group))
+
+# d_Gk = calculate_d_Gk(G_duration, m, w_max)
+# print(d_Gk)
+
