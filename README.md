@@ -1,14 +1,15 @@
-# Predictive-Maintenance
+# Predictive Maintenance Service
 
 ## Overview
 
-This subcomponent, part of the Predictive Maintenancce component, focuses on the Analysis of SEW data (CORIM file-Machine failure history, in which info related to MTBF, duration maintenance interventions, type of maintenance activity, downtime, etc.)
+This subcomponent, part of the Predictive Maintenance component, focuses on the Analysis of SEW data (CORIM file-Machine failure history, in which info related to MTBF, duration maintenance interventions, type of maintenance activity, downtime, etc.)
  
  ## Table of Contents
- 1. [Input] (#input)
- 2. [Installation](#installation)
- 3. [Usage](#usage)
- 4. [Contributor](#contributor)
+ 1. [Dataset](#dataset)
+ 2. [File Description](#file-description)
+ 3. [Installation](#installation)
+ 4. [Usage](#usage)
+ 5. [Contributor](#contributor)
 
  ## Input description
 The input of genetic algorithm includes 2 files: data.xlsx and activity.xlsx
