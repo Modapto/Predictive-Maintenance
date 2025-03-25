@@ -6,7 +6,7 @@ This subcomponent, part of the Predictive Maintenance component, focuses on the 
  
  ## Table of Contents
  1. [Dataset](#dataset)
- 2. [Files Description](#files-description)
+ 2. [Project Structure](#project-structure)
  3. [Installation](#installation)
  4. [Usage](#usage)
  5. [Contributor](#contributor)
@@ -16,9 +16,14 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 1. data.xlsx: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
 2. activity.xlsx: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
 
- ## Files Description
-
-
+ ## Project Structure
+ ```
+ Predictive-Maintenance/
+ ├── dataset/                  # Dataset storage
+ ├── GUI.py                    # Main application
+ ├── main.py                   # Genetic algorithm imlementation
+ ├── check_fitness.py          # Debugging file
+ ```
 
  ## Installation
 
