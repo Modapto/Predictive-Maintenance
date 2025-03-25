@@ -12,21 +12,12 @@ This subcomponent, part of the Predictive Maintenance component, focuses on the 
  5. [Contributor](#contributor)
 
  ## Dataset
-
-
+The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files: 
+1. data.xlsx: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
+2. activity.xlsx: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
 
  ## Files Description
 
-The input of genetic algorithm includes 2 files: data.xlsx and activity.xlsx
-
-1. data.xlsx: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
-
-2. activity.xlsx: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
-
-3. Defined constants in main.py and check_fitness.py
-    - C_s: setup cost
-    - C_d: downtime cost rate
-    - m: number of repairmen
 
 
  ## Installation
