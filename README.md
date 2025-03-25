@@ -2,7 +2,7 @@
 
 ## Overview
 
-This subcomponent, part of the Predictive Maintenance component, focuses on the Analysis of SEW data (CORIM file-Machine failure history, in which info related to MTBF, duration maintenance interventions, type of maintenance activity, downtime, etc.)
+This is a desktop application that ipmlements Predictive Maintenance Service. The purpose of the service is to provide an optimal scheduling of the maintenance action to be performed on a line or system. The output of the service will be for a list of maintenance actions and time to be performed for each component/group of components.
  
  ## Table of Contents
  1. [Dataset](#dataset)
