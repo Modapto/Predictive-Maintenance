@@ -50,13 +50,13 @@ pip install -r requirements.txt
 python GUI.py
 ```
 2. Enter input values:
-- C_s: is the setup cost which is the same for all components which can be shared if several components are maintained together.
-- C_d: is a positive constant representing downtime cost rate related to production loss.
-- m: is the number of repairmen available in the production line.
+    - C_s: is the setup cost which is the same for all components which can be shared if several components are maintained together.
+    - C_d: is a positive constant representing downtime cost rate related to production loss.
+    - m: is the number of repairmen available in the production line.
 3. User interface displays:
-- Cost saving when doing group maintenance for components in production line.
-- Time and duration to do maintenance in each component.
-- Visual graph on time domain.
+    - Cost saving when doing group maintenance for components in production line.
+    - Time and duration to do maintenance in each component.
+    - Visual graph on time domain.
 
 ## Contributor
 
