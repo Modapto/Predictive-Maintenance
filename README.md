@@ -45,8 +45,8 @@ python GUI.py
     - C_d: is a positive constant representing downtime cost rate related to production loss.
     - m: is the number of repairmen available in the production line.
 3. User interface displays:
-    - Cost saving when doing group maintenance for components in production line.
-    - Time and duration to do maintenance in each component.
+    - Cost saving and maintenance time window when doing group maintenance for components in production line.
+    - Time and duration to do maintenance for each component.
     - Visual graph on time domain.
 
 ## Contributor
