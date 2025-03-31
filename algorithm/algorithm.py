@@ -25,8 +25,8 @@ from collections import defaultdict
 """
 
 # Load the Excel file
-file_path_1 = "dataset/data.xlsx"
-file_path_2 = "dataset/activity.xlsx"
+file_path_1 = "../dataset/data.xlsx"
+file_path_2 = "../dataset/activity.xlsx"
 df1 = pd.read_excel(file_path_1)
 df2 = pd.read_excel(file_path_2)
 # Load input

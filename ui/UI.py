@@ -1,12 +1,14 @@
 import sys
 import json
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QTextEdit, QHBoxLayout, QScrollArea
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QPalette, QColor
-from main import genetic_algorithm, GENOME_LENGTH, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max
-from main import calculate_info, t_begin, t_end
-from main import plot_replacement_times  # Import the function to display the graph
-from main import plot_replacement_times_both_plans
+from algorithm.algorithm import genetic_algorithm, GENOME_LENGTH, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max
+from algorithm.algorithm import calculate_info, t_begin, t_end
+from algorithm.algorithm import plot_replacement_times  # Import the function to display the graph
+from algorithm.algorithm import plot_replacement_times_both_plans
 
 class GeneticAlgorithmWorker(QThread):
     result_signal = pyqtSignal(object, float, dict, dict)
