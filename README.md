@@ -19,10 +19,13 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
  ## Project Structure
  ```
  Predictive-Maintenance/
- ├── dataset/                  # Dataset storage
- ├── GUI.py                    # Main application
- ├── main.py                   # Genetic algorithm imlementation
- ├── check_fitness.py          # Debugging file
+ ├── dataset/                   # Dataset storage
+ ├── ui/                       
+ │   ├── UI.py                  # Main application
+ ├── algorithm/                 
+ │   ├── algorithm.py           # Genetic algorithm imlementation
+ ├── debug/                     
+ │   ├── check_fitness.py       # Debugging file
  ```
 
  ## Installation
@@ -43,7 +46,8 @@ pip install -r requirements.txt
 
 1. Start the application:
 ```bash
-python GUI.py
+cd ui
+python UI.py
 ```
 2. Enter input values:
     - C_s: is the setup cost which is the same for all components which can be shared if several components are maintained together.
