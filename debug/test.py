@@ -593,4 +593,3 @@ plt.show()
 
 # # d_Gk = calculate_d_Gk(G_duration, m, w_max)
 # # print(d_Gk)
-
