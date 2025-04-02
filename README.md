@@ -24,6 +24,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
  │   ├── component.json             # Including data related to specification of the components in the production line
  ├── algorithm/                 
  │   ├── algorithm.py           # Genetic algorithm imlementation
+ ├── output/                    
+ │   ├── result.json            # Output of predictive maintenance service within the defined time window
  ├── debug/                     
  │   ├── check_fitness.py       # Debugging file
  ```
