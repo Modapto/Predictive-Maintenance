@@ -20,8 +20,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
  ```
  Predictive-Maintenance/
  ├── dataset/                   # Dataset storage
- ├── ui/                       
- │   ├── UI.py                  # Main application
+ │   ├── activity.json              # Including data related to the failures of the components in the time window
+ │   ├── component.json             # Including data related to specification of the components in the production line
  ├── algorithm/                 
  │   ├── algorithm.py           # Genetic algorithm imlementation
  ├── debug/                     
