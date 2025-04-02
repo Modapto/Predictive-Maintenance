@@ -1,4 +1,5 @@
 import random
+import os
 import json
 import pandas as pd
 import numpy as np
@@ -23,6 +24,10 @@ from scipy.optimize import minimize
     P -- penalty cost
     EB -- cost benefit = B_S + B_U + P
 """
+# User input
+C_s = 500                           # Setup cost
+C_d = 100                           # Downtime cost rate
+m = 1                               # Number of repairmen
 
 # Path to the JSON files
 file_path_json_1 = '../dataset/component.json'
@@ -49,19 +54,16 @@ map_activity_to_replacement_time = list(zip(ID_activity, t))            # list o
 t_begin = data2['window']['Begin']
 t_end = data2['window']['End']
 
+# Algorithm parameter
 GENOME_LENGTH = 17                                                      # number of possible group
 POPULATION_SIZE = 60
-GENERATIONS = 5
+GENERATIONS = 1000
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
 p_m_max = 0.1
-
-C_s = 500
-C_d = 100
-
-m = 1                                                                   # Number of repairmen
 w_max = 7                                                               # Maximum number of iterations for binary search
+
 
 # initialize genome
 def random_genome(length):
@@ -287,10 +289,6 @@ def fitness_function(genome, C_s, C_d):
     return fitness_value
 
 
-# ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## 
-# # # ## ## ## ## ## ## ## ## ## ## ## # Test main # ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## 
-
-
 def linear_ranking_selection(population, fitness_values, num_groups=5):
     population_size = len(population)
     # Sort the population based on fitness
@@ -379,12 +377,24 @@ def genetic_algorithm(genome_length, m, population_size, generations, p_c_min, p
 
     return best_solution, best_fitness_value
 
+def convert_right_form(components, durations):
+    return [
+        (comp_id, [durations[comp_id - 1]] * len(indices))
+        for comp_id, indices in components
+    ]
+
+
 def mapping_to_UI(genome):
     N, G_activity = decode(genome)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
     G_duration, _ = mapping_IDcomponent_to_duration(G_component)
     replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
-    return G_duration, G_component, replacement_time
+    
+    d_Gk = calculate_d_Gk(G_duration, m, w_max)
+    _ , t_group = penalty_cost(G_activity)
+    estimate_duration = convert_right_form(G_component, d_Gk)
+    estimate_replacement_time = convert_right_form(G_component, t_group)
+    return G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time
 
 def convert_component_ids_to_names(G_component, json_path):
     # Load the JSON file with component info
@@ -420,11 +430,38 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
     return combined_data
 
+def output_json_file(best_individual, best_fitness, t_begin, t_end):
+    G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
+
+    G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
+    group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+    final_output = {
+                        "Cost savings": best_fitness,
+                        "Grouping maintenance": group_maintenance,
+                        "Time window": {
+                            "Begin": t_begin,
+                            "End": t_end
+                        }
+                   }
+
+    # Define your folder and filename
+    output_folder = "../output"
+    output_filename = "result.json"
+
+    # Create the folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Create the full path
+    output_path = os.path.join(output_folder, output_filename)
+
+    # Write the JSON file with correct formatting
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(final_output, f, indent=4, ensure_ascii=False)
+
+    print(f"File saved to: {output_path}")
+
 best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
 print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-G_duration, G_component, replacement_time = mapping_to_UI(best_individual)
-G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
-result = combine_group_data(G_duration, G_component, replacement_time, G_component_named)
-print(json.dumps(result, indent=4, ensure_ascii=False))
+output_json_file(best_individual, best_fitness, t_begin, t_end)
 
