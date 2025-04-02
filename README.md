@@ -13,21 +13,21 @@ This is a desktop application that ipmlements Predictive Maintenance Service. Th
 
  ## Dataset
 The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files: 
-1. data.xlsx: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
-2. activity.xlsx: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
+1. component.json: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
+2. activity.json: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
 
  ## Project Structure
  ```
  Predictive-Maintenance/
- ├── dataset/                   # Dataset storage
+ ├── dataset/                       
  │   ├── activity.json              # Including data related to the failures of the components in the time window
  │   ├── component.json             # Including data related to specification of the components in the production line
  ├── algorithm/                 
- │   ├── algorithm.py           # Genetic algorithm imlementation
+ │   ├── algorithm.py               # Genetic algorithm imlementation
  ├── output/                    
- │   ├── result.json            # Output of predictive maintenance service within the defined time window
+ │   ├── result.json                # Output of predictive maintenance service within the defined time window
  ├── debug/                     
- │   ├── check_fitness.py       # Debugging file
+ │   ├── check_fitness.py           # Debugging file
  ```
 
  ## Installation
@@ -45,12 +45,6 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-
-1. Start the application:
-```bash
-cd ui
-python UI.py
-```
 2. Enter input values:
     - C_s: is the setup cost which is the same for all components which can be shared if several components are maintained together.
     - C_d: is a positive constant representing downtime cost rate related to production loss.
