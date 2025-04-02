@@ -484,6 +484,7 @@ def calculate_info(genome):
     component_dict = build_component_dict(
         G_duration, G_component, replacement_time
     )
+    print("component_dict", component_dict)
 
     renamed_dict = rename_dict_keys_with_excel(component_dict, file_path_1)
 
