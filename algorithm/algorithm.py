@@ -1,9 +1,9 @@
 import random
+import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
-from collections import defaultdict
 
 """
     Nc -- number of component
@@ -24,29 +24,34 @@ from collections import defaultdict
     EB -- cost benefit = B_S + B_U + P
 """
 
-# Load the Excel file
-file_path_1 = "../dataset/data.xlsx"
-file_path_2 = "../dataset/activity.xlsx"
-df1 = pd.read_excel(file_path_1)
-df2 = pd.read_excel(file_path_2)
-# Load input
-component = df1['Component']
-alpha = df1['Alpha']
-d = df1['Average maintenance duration']
-# cost = df1['Replacement cost']
-beta = df1['Beta']
+# Path to the JSON files
+file_path_json_1 = '../dataset/component.json'
+file_path_json_2 = '../dataset/activity.json'
 
-t = df2['Replacement time']
-ID_activity = df2['ID activity']
-ID_component = df2['ID component']
+# Open and load the files
+with open(file_path_json_1, 'r', encoding='utf-8') as file:
+    data1 = json.load(file)
+with open(file_path_json_2, 'r', encoding='utf-8') as file:
+    data2 = json.load(file)
+
+# Load input
+component = [entry["Component"] for entry in data1]
+alpha = [entry["Alpha"] for entry in data1]
+beta = [entry["Beta"] for entry in data1]
+
+t = [entry["Replacement time"] for entry in data2["failure"]]
+ID_activity = [entry["ID activity"] for entry in data2["failure"]]
+ID_component = [entry["ID component"] for entry in data2["failure"]]
+
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
-t_begin = df2['Begin'][0]
-t_end = df2['End'][0]
+
+t_begin = data2['window']['Begin']
+t_end = data2['window']['End']
 
 GENOME_LENGTH = 17                                                      # number of possible group
 POPULATION_SIZE = 60
-GENERATIONS = 500
+GENERATIONS = 5
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
@@ -141,7 +146,7 @@ def mapping_IDcomponent_to_duration(G_component):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = df1.loc[df1['ID'] == d, 'Average maintenance duration'].iloc[0]
+            value = next(item["Average maintenance duration"] for item in data1 if item["ID"] == d)
             duration.append(value)
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
@@ -154,7 +159,7 @@ def mapping_IDcomponent_to_alpha(G_component):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = df1.loc[df1['ID'] == d, 'Alpha'].iloc[0]
+            value = next(item["Alpha"] for item in data1 if item["ID"] == d)
             alpha.append(value)
         group_to_alpha.append((group, alpha))
     return group_to_alpha
@@ -166,7 +171,7 @@ def mapping_IDcomponent_to_beta(G_component):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = df1.loc[df1['ID'] == d, 'Beta'].iloc[0]
+            value = next(item["Beta"] for item in data1 if item["ID"] == d)
             beta.append(value)
         group_to_beta.append((group, beta))
     return group_to_beta
@@ -281,30 +286,9 @@ def fitness_function(genome, C_s, C_d):
     fitness_value = np.sum(EB)
     return fitness_value
 
-def mapping_to_UI(genome):
-    N, G_activity = decode(genome)
-    G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
-    G_duration, _ = mapping_IDcomponent_to_duration(G_component)
-    replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
-    return G_duration, G_component, replacement_time
-
 
 # ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## 
 # # # ## ## ## ## ## ## ## ## ## ## ## # Test main # ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## 
-
-# genome = random_genome(GENOME_LENGTH)
-# print(genome)
-# fitness_value = fitness_function(genome, C_s, C_d)
-# print("Fitness value = ", fitness_value)
-
-
-# def linear_ranking_selection(population, fitness_values):
-#     sorted_population = [x for _, x in sorted(zip(fitness_values, population))]
-#     probabilities = [(2*(i+1))/(POPULATION_SIZE*(POPULATION_SIZE+1)) for i in range(POPULATION_SIZE)]
-#     print("prob",probabilities)
-#     print(len(probabilities))
-#     selected = random.choices(sorted_population, weights=probabilities, k=len(population))
-#     return selected
 
 
 def linear_ranking_selection(population, fitness_values, num_groups=5):
@@ -395,167 +379,52 @@ def genetic_algorithm(genome_length, m, population_size, generations, p_c_min, p
 
     return best_solution, best_fitness_value
 
-# best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
-# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
-
-# G_duration, G_component, replacement_time = mapping_to_UI(best_individual)
-# print(G_duration)
-
-def build_component_dict(durations_in_group, components_in_each_group, replacement_time_in_group):
-    """
-    Build a dictionary keyed by component, where each component's value is a dict
-    with two lists: 'duration' and 'replacement_time'.
-    """
-    
-    # Convert the "durations in group" and "replacement time in group" tuples
-    # into dictionaries keyed by group for easy lookup
-    durations_dict = dict(durations_in_group)
-    replacements_dict = dict(replacement_time_in_group)
-    
-    # Create a dictionary keyed by component
-    # Each component will have a list of durations and replacement times
-    component_dict = defaultdict(lambda: {"duration": [], "replacement_time": []})
-    
-    # Populate component_dict
-    for group, comp_list in components_in_each_group:
-        group_durations = durations_dict[group]
-        group_replacements = replacements_dict[group]
-        
-        for i, comp in enumerate(comp_list):
-            component_dict[comp]["duration"].append(group_durations[i])
-            component_dict[comp]["replacement_time"].append(group_replacements[i])
-    
-    return dict(component_dict)
-
-def plot_replacement_times(component_dict):
-    
-    # Create the figure and axis
-    fig, ax = plt.subplots()
-
-    # For each component, plot its replacement times on the x-axis
-    # and the component ID (or name) on the y-axis.
-    for comp_id, data in component_dict.items():
-        replacements = data["replacement_time"]
-        
-        # We'll have one or more x-values (the replacements) and a matching list of y-values (comp_id repeated)
-        y_values = [comp_id] * len(replacements)
-        
-        # Scatter plot for this component
-        ax.scatter(replacements, y_values, color='blue', label = 'Estimated preventive maintenance')
-    
-    # Label axes
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Component")
-
-    # Optional: adjust the y-ticks to show each component distinctly (especially if comp_id are integers)
-    # If you prefer integer ticks only:
-    plt.yticks(sorted(component_dict.keys()))
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.title("Component Replacement Times")
-    # plt.legend(loc='upper right')
-    plt.show()
-
-def plot_replacement_times_both_plans(individual_plan, estimate_plan):
-    """Plot replacement times from both plans on a single horizontal scatter plot,
-    using 'o' markers for the Individual Plan and 'x' markers for the Estimate Plan."""
-    
-    # We'll assume both plans have the same set of component names
-    components = list(individual_plan.keys())
-    
-    plt.figure()
-    
-    for i, comp in enumerate(components):
-        # Extract replacement times for both plans
-        times_indiv = individual_plan[comp]['replacement_time']
-        times_est = estimate_plan[comp]['replacement_time']
-        
-        # For the legend, we only set the label on the first component’s plots
-        if i == 0:
-            plt.scatter(times_indiv, [i]*len(times_indiv),
-                        marker='o', label='Individual Plan')
-            plt.scatter(times_est, [i]*len(times_est),
-                        marker='x', label='Estimate Plan')
-        else:
-            plt.scatter(times_indiv, [i]*len(times_indiv), marker='o')
-            plt.scatter(times_est, [i]*len(times_est), marker='x')
-    
-    # Label axes
-    plt.xlabel('Replacement Time')
-    plt.ylabel('Component')
-    
-    # Replace numeric y-ticks with component labels
-    plt.yticks(range(len(components)), components)
-    
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    # Add a legend so we can distinguish the two plans
-    plt.legend()
-    
-    # Add a title (optional)
-    plt.title('Replacement Times: Individual vs. Estimate Plans')
-    
-    # Show the figure
-    plt.show()
-
-
-def rename_dict_keys_with_excel(component_dict, excel_file_path):
-    """
-    Read an Excel file with columns 'ID' and 'Component'
-    and convert the integer keys of component_dict to
-    the corresponding component names. The rest of the
-    structure remains unchanged.
-    """
-    # 1. Read the Excel file
-    df = pd.read_excel(excel_file_path)  # Make sure 'ID' and 'Component' columns exist
-
-    # 2. Build a lookup dict: {ID_value: Component_name}
-    id_to_name = dict(zip(df['ID'], df['Component']))
-
-    # 3. Create a new dictionary with keys = component names
-    component_dict_renamed = {}
-    for comp_id, comp_data in component_dict.items():
-        # Look up the name of the component in the id_to_name dictionary
-        comp_name = id_to_name.get(comp_id, f"Unknown_{comp_id}")
-        component_dict_renamed[comp_name] = comp_data
-
-    return component_dict_renamed
-
-def calculate_info(genome):
+def mapping_to_UI(genome):
     N, G_activity = decode(genome)
-    G_duration, G_component, replacement_time = mapping_to_UI(genome)
-    # print("G_duration: ", G_duration)
-    # print("G_component: ", G_component)
-    # print("replacement_time: ", replacement_time)
-    component_dict = build_component_dict(
-        G_duration, G_component, replacement_time
-    )
-    renamed_dict = rename_dict_keys_with_excel(component_dict, file_path_1)
+    G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
+    G_duration, _ = mapping_IDcomponent_to_duration(G_component)
+    replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
+    return G_duration, G_component, replacement_time
 
-    d_Gk = calculate_d_Gk(G_duration, m, w_max)
-    _ , t_group = penalty_cost(G_activity)
-    estimate_duration = convert_right_form(G_component, d_Gk)
-    estimate_replacement_time = convert_right_form(G_component, t_group)
-    estimate_component_dict = build_component_dict(
-        estimate_duration, G_component, estimate_replacement_time
-    )
-    estimate_renamed_dict = rename_dict_keys_with_excel(estimate_component_dict, file_path_1)
-    return renamed_dict, estimate_renamed_dict
+def convert_component_ids_to_names(G_component, json_path):
+    # Load the JSON file with component info
+    with open(json_path, 'r', encoding='utf-8') as f:
+        component_data = json.load(f)
 
-def convert_right_form(components, durations):
-    """
-    Replaces the index list in each tuple in `components` with a list of the corresponding
-    duration repeated as many times as there were indices.
-    
-    Parameters:
-    - components (list[tuple[int, list[int]]]): 
-        Each element is a tuple of the form (component_id, list_of_indices).
-    - durations (list[float]): 
-        Durations for each component, where durations[component_id - 1] is the duration.
-        
-    Returns:
-    - list[tuple[int, list[float]]]: A new list of tuples with the second element replaced by 
-      a list of repeated durations.
-    """
-    return [
-        (comp_id, [durations[comp_id - 1]] * len(indices))
-        for comp_id, indices in components
-    ]
+    # Create a mapping from ID to Component name
+    id_to_name = {entry["ID"]: entry["Component"] for entry in component_data}
+
+    # Replace component IDs with names
+    G_component_named = []
+    for group_id, component_ids in G_component:
+        names = [id_to_name[comp_id] for comp_id in component_ids]
+        G_component_named.append((group_id, names))
+
+    return G_component_named
+
+def combine_group_data(G_duration, G_component, replacement_time, G_component_named):
+    combined_data = {}
+
+    for (g_id, durations), (_, components), (_, replacements), (_, names) in zip(G_duration, G_component, replacement_time, G_component_named):
+        group_key = f"Group {g_id}"
+        combined_data[group_key] = []
+
+        for comp_id, rep_time, duration, comp_names in zip(components, replacements, durations, names):
+            entry = {
+                "Component ID": comp_id,
+                "Component name": comp_names,
+                "Replacement time": rep_time,
+                "Duration": duration
+            }
+            combined_data[group_key].append(entry)
+
+    return combined_data
+
+best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
+print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+
+G_duration, G_component, replacement_time = mapping_to_UI(best_individual)
+G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
+result = combine_group_data(G_duration, G_component, replacement_time, G_component_named)
+print(json.dumps(result, indent=4, ensure_ascii=False))
+
