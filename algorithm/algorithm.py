@@ -6,8 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
-sys.path.append('../user_input')
+import parameters
+
+shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
+sys.path.append(shared_path)
+
 import input
+
 
 # User input
 C_s = input.setup_cost                          # Setup cost
@@ -15,14 +20,14 @@ C_d = input.downtime_cost_rate                  # Downtime cost rate
 m = input.no_repairmen                          # Number of repairmen
 
 # Algorithm parameter
-GENOME_LENGTH = 17                                                      # number of possible group
-POPULATION_SIZE = 60
-GENERATIONS = 50
-p_c_min = 0.6
-p_c_max = 0.9
-p_m_min = 0.01
-p_m_max = 0.1
-w_max = 7                                                               # Maximum number of iterations for binary search
+GENOME_LENGTH = parameters.GENOME_LENGTH                                                     
+POPULATION_SIZE = parameters.POPULATION_SIZE
+GENERATIONS = parameters.GENERATIONS
+p_c_min = parameters.p_c_min
+p_c_max = parameters.p_c_max
+p_m_min = parameters.p_m_min
+p_m_max = parameters.p_m_max
+w_max = parameters.w_max                                                               
 
 """
     Nc -- number of component
@@ -468,6 +473,8 @@ def output_json_file(best_individual, best_fitness, t_begin, t_end):
         json.dump(final_output, f, indent=4, ensure_ascii=False)
 
     print(f"File saved to: {output_path}")
+
+####### Execution ########
 
 best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
 print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
