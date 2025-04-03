@@ -9,7 +9,7 @@ This is a desktop application that ipmlements Predictive Maintenance Service. Th
 2. [Project Structure](#project-structure)
 3. [Installation](#installation)
 4. [Usage](#usage)
-5. [Input/Output description](#inout-description)
+5. [Input/Output description](#inputoutput-description)
 6. [Function description](#function-description)
 7. [Contributor](#contributor)
 
@@ -110,7 +110,7 @@ python algorithm.py
 1. To initiate the algorithmic process, call the genetic_algorithm() method:
     - Input:
         - genome_length, population_size, generations, p_c_min, p_c_max, p_m_min, p_m_max: parameters of genetic algorithm (see parameters.py).
-        - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inout-description)).
+        - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inputoutput-description)).
 
     - Output: 
         - best_individual: (list) contain the optimal encoding of the maintenance plan
