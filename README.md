@@ -9,8 +9,8 @@ This is a desktop application that ipmlements Predictive Maintenance Service. Th
 2. [Project Structure](#project-structure)
 3. [Installation](#installation)
 4. [Usage](#usage)
-5. [Input/Output description](#inout_description)
-6. [Service description](#service_description)
+5. [Input/Output description](#inout-description)
+6. [Function description](#function-description)
 7. [Contributor](#contributor)
 
 ## Dataset
@@ -26,6 +26,7 @@ Predictive-Maintenance/
 │   ├── component.json             # Including data related to specification of the components in the production line
 ├── algorithm/                 
 │   ├── algorithm.py               # Genetic algorithm imlementation
+│   ├── parameters.py               # Parameters of genetic algorithm
 ├── input/ 
 │   ├── input.py                   # User input from keyboard
 ├── output/                    
@@ -102,8 +103,9 @@ python algorithm.py
     }
 }
 ```
-## Service description
-1. sffsfsf
+## Function description
+1. To initiate the algorithmic process, call the genetic_algorithm() method
+    def genetic_algorithm(**genome_length:** list, **m:** integer, **population_size:** integer, **generations:** integer, **p_c_min:** float, **p_c_max:** float, **p_m_min:** float, **p_m_max:** float, **C_s:** float, **C_d:** float):
 
 ## Contributor
 

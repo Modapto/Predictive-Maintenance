@@ -1,5 +1,5 @@
 {
-    "Cost savings": 101.42000000000007,
+    "Cost savings": 639.1370000000001,
     "Grouping maintenance": {
         "Group 1": [
             {
@@ -73,14 +73,8 @@
             {
                 "Component ID": 1,
                 "Component name": "CONNECTEURS",
-                "Replacement time": 724.611,
-                "Duration": 4.739
-            },
-            {
-                "Component ID": 5,
-                "Component name": "LIGNE DE MONTAGE MOTG02",
-                "Replacement time": 724.611,
-                "Duration": 4.739
+                "Replacement time": 718.179,
+                "Duration": 3.849
             }
         ],
         "Group 9": [
@@ -111,8 +105,14 @@
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 626.487,
-                "Duration": 0.726
+                "Replacement time": 626.777,
+                "Duration": 1.218
+            },
+            {
+                "Component ID": 4,
+                "Component name": "CONVOYEURS",
+                "Replacement time": 626.777,
+                "Duration": 1.218
             }
         ],
         "Group 13": [
@@ -125,10 +125,10 @@
         ],
         "Group 14": [
             {
-                "Component ID": 4,
-                "Component name": "CONVOYEURS",
-                "Replacement time": 627.938,
-                "Duration": 0.492
+                "Component ID": 5,
+                "Component name": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 732.33,
+                "Duration": 0.89
             }
         ]
     },
