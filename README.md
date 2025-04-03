@@ -55,6 +55,7 @@ Run the program
 cd algorithm
 python algorithm.py
 ```
+
 ## Input/Output description
 1. input.py
     - setup_cost: is the setup cost which is the same for all components which can be shared if several components are maintained together. (datatype: float)
@@ -103,6 +104,7 @@ python algorithm.py
     }
 }
 ```
+
 ## Function description
 1. To initiate the algorithmic process, call the genetic_algorithm() method:
     Input:
