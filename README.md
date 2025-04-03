@@ -104,9 +104,21 @@ python algorithm.py
 }
 ```
 ## Function description
-1. To initiate the algorithmic process, call the genetic_algorithm() method
+1. To initiate the algorithmic process, call the genetic_algorithm() method:
 ```
-    def genetic_algorithm(genome_length: list, m: integer, population_size: integer, generations: integer, p_c_min: float, p_c_max: float, p_m_min: float, p_m_max: float, C_s: float, C_d: float):
+    def genetic_algorithm(genome_length: integer, m: integer, population_size: integer, generations: integer, p_c_min: float, p_c_max: float, p_m_min: float, p_m_max: float, C_s: float, C_d: float):
+        ...
+        return best_individual, best_fitness
+```
+    - Input:
+        - genome_length: the number of maintenance activity 
+        - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inout-description))
+        - population_size,
+
+2. To export the result of maintenance plan, call the output_json_file() method:
+```
+    def output_json_file(best_individual: list, best_fitness: float, t_begin: float, t_end: float):
+        ...
 ```
 ## Contributor
 
