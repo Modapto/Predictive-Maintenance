@@ -105,8 +105,9 @@ python algorithm.py
 ```
 ## Function description
 1. To initiate the algorithmic process, call the genetic_algorithm() method
+```
     def genetic_algorithm(***genome_length: list, m: integer, population_size: integer, generations: integer, p_c_min: float, p_c_max: float, p_m_min: float, p_m_max: float, C_s: float, C_d: float***):
-
+```
 ## Contributor
 
 Huu-Truong Le, Université de Lorraine
