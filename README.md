@@ -9,7 +9,9 @@ This is a desktop application that ipmlements Predictive Maintenance Service. Th
  2. [Project Structure](#project-structure)
  3. [Installation](#installation)
  4. [Usage](#usage)
- 5. [Contributor](#contributor)
+ 5. [Input/Output description](#inout_description)
+ 6. [Service description](#service_description)
+ 7. [Contributor](#contributor)
 
  ## Dataset
 The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files: 
@@ -24,6 +26,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
  │   ├── component.json             # Including data related to specification of the components in the production line
  ├── algorithm/                 
  │   ├── algorithm.py               # Genetic algorithm imlementation
+ ├── input/ 
+ │   ├── input.py                   # User input from keyboard
  ├── output/                    
  │   ├── result.json                # Output of predictive maintenance service within the defined time window
  ├── debug/                     
@@ -45,14 +49,63 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-2. Enter input values:
-    - C_s: is the setup cost which is the same for all components which can be shared if several components are maintained together.
-    - C_d: is a positive constant representing downtime cost rate related to production loss.
-    - m: is the number of repairmen available in the production line.
-3. User interface displays:
-    - Cost saving and maintenance time window when doing group maintenance for components in production line.
-    - Time and duration to do maintenance for each component.
-    - Visual graph on time domain.
+
+Run the program
+```bash
+cd algorithm
+python algorithm.py
+```
+## Input/Output description
+
+1. input.py
+    - setup_cost: is the setup cost which is the same for all components which can be shared if several components are maintained together. (datatype: float)
+    - downtime_cost_rate: is a positive constant representing downtime cost rate related to production loss. (datatype: float)
+    - no_repairmen: is the number of repairmen available in the production line. (datatype: interger)
+
+2. output.json: is a json file containing
+    - "Cost savings": cost saving for grouping maintenance plan.
+    - "Grouping maintenance": grouping maintenance plan.
+    - "Individual plan": individual maintenance plan.
+    - "Time window": maintenance time window.
+```
+    {
+        "Cost savings": 101.42000000000007,                                 # float
+        "Grouping maintenance": {
+            "Group 2": [
+                {
+                    "Component ID": 0,                                      # integer
+                    "Component name": "POSTE DE CONTRÔLE",                  # string
+                    "Replacement time": 349.571,                            # float
+                    "Duration": 4.957                                       # float
+                },
+                {
+                    "Component ID": 1,                                      # integer       
+                    "Component name": "CONNECTEURS",                        # string
+                    "Replacement time": 349.571,                            # float
+                    "Duration": 4.957                                       # float
+                }
+            ],
+            ...
+        },
+        "Individual maintenance": {
+            "Group 1": [
+                {  
+                "Component ID": 0,                                          # integer        
+                    "Component name": "POSTE DE CONTRÔLE",                  # string
+                    "Replacement time": 173.298,                            # float
+                    "Duration": 1.108                                       # float
+                }
+            ],
+            ...
+        },
+        "Time window": {
+            "Begin": 0.0,                                                   # float
+            "End": 1000.0                                                   # float
+        }
+    }
+```
+## Service description
+1. Clone the repository: 
 
 ## Contributor
 
