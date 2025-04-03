@@ -57,6 +57,7 @@ python algorithm.py
 ```
 
 ## Input/Output description
+
 1. input.py
     - setup_cost: is the setup cost which is the same for all components which can be shared if several components are maintained together. (datatype: float)
     - downtime_cost_rate: is a positive constant representing downtime cost rate related to production loss. (datatype: float)
@@ -109,7 +110,7 @@ python algorithm.py
 1. To initiate the algorithmic process, call the genetic_algorithm() method:
     Input:
         - genome_length: the number of maintenance activity 
-        - m, C_s, C_d: user input from keyboard
+        - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inout-description))
         - population_size,
 ```
     def genetic_algorithm(genome_length: integer, m: integer, population_size: integer, generations: integer, p_c_min: float, p_c_max: float, p_m_min: float, p_m_max: float, C_s: float, C_d: float):
