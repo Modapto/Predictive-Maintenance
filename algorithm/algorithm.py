@@ -10,7 +10,6 @@ import parameters
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 sys.path.append(shared_path)
-
 import input
 
 
