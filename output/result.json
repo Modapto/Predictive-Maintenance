@@ -1,18 +1,144 @@
 {
-    "Cost savings": 1085.1370000000002,
+    "Cost savings": 101.42000000000007,
     "Grouping maintenance": {
         "Group 1": [
             {
                 "Component ID": 0,
                 "Component name": "POSTE DE CONTRÔLE",
-                "Replacement time": 181.758,
-                "Duration": 1.834
+                "Replacement time": 173.298,
+                "Duration": 1.108
+            }
+        ],
+        "Group 2": [
+            {
+                "Component ID": 0,
+                "Component name": "POSTE DE CONTRÔLE",
+                "Replacement time": 349.571,
+                "Duration": 4.957
             },
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 349.571,
+                "Duration": 4.957
+            }
+        ],
+        "Group 3": [
+            {
+                "Component ID": 0,
+                "Component name": "POSTE DE CONTRÔLE",
+                "Replacement time": 519.895,
+                "Duration": 1.108
+            }
+        ],
+        "Group 4": [
+            {
+                "Component ID": 0,
+                "Component name": "POSTE DE CONTRÔLE",
+                "Replacement time": 693.193,
+                "Duration": 1.108
+            }
+        ],
+        "Group 5": [
+            {
+                "Component ID": 0,
+                "Component name": "POSTE DE CONTRÔLE",
+                "Replacement time": 866.491,
+                "Duration": 1.108
+            }
+        ],
+        "Group 6": [
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 179.545,
+                "Duration": 3.849
+            }
+        ],
+        "Group 7": [
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 543.054,
+                "Duration": 5.774
+            },
+            {
+                "Component ID": 3,
+                "Component name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+                "Replacement time": 543.054,
+                "Duration": 5.774
+            }
+        ],
+        "Group 8": [
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 724.611,
+                "Duration": 4.739
+            },
+            {
+                "Component ID": 5,
+                "Component name": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 724.611,
+                "Duration": 4.739
+            }
+        ],
+        "Group 9": [
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 897.724,
+                "Duration": 3.849
+            }
+        ],
+        "Group 10": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 181.758,
-                "Duration": 1.834
+                "Replacement time": 208.829,
+                "Duration": 0.726
+            }
+        ],
+        "Group 11": [
+            {
+                "Component ID": 2,
+                "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 417.658,
+                "Duration": 0.726
+            }
+        ],
+        "Group 12": [
+            {
+                "Component ID": 2,
+                "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 626.487,
+                "Duration": 0.726
+            }
+        ],
+        "Group 13": [
+            {
+                "Component ID": 2,
+                "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 835.316,
+                "Duration": 0.726
+            }
+        ],
+        "Group 14": [
+            {
+                "Component ID": 4,
+                "Component name": "CONVOYEURS",
+                "Replacement time": 627.938,
+                "Duration": 0.492
+            }
+        ]
+    },
+    "Individual maintenance": {
+        "Group 1": [
+            {
+                "Component ID": 0,
+                "Component name": "POSTE DE CONTRÔLE",
+                "Replacement time": 173.298,
+                "Duration": 1.108
             }
         ],
         "Group 2": [
@@ -67,14 +193,8 @@
             {
                 "Component ID": 1,
                 "Component name": "CONNECTEURS",
-                "Replacement time": 543.054,
-                "Duration": 5.774
-            },
-            {
-                "Component ID": 3,
-                "Component name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
-                "Replacement time": 543.054,
-                "Duration": 5.774
+                "Replacement time": 538.635,
+                "Duration": 3.849
             }
         ],
         "Group 9": [
@@ -97,7 +217,7 @@
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 417.658,
+                "Replacement time": 208.829,
                 "Duration": 0.726
             }
         ],
@@ -105,17 +225,19 @@
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 626.777,
-                "Duration": 1.218
-            },
-            {
-                "Component ID": 4,
-                "Component name": "CONVOYEURS",
-                "Replacement time": 626.777,
-                "Duration": 1.218
+                "Replacement time": 417.658,
+                "Duration": 0.726
             }
         ],
         "Group 13": [
+            {
+                "Component ID": 2,
+                "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 626.487,
+                "Duration": 0.726
+            }
+        ],
+        "Group 14": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -123,7 +245,23 @@
                 "Duration": 0.726
             }
         ],
-        "Group 14": [
+        "Group 15": [
+            {
+                "Component ID": 3,
+                "Component name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+                "Replacement time": 548.357,
+                "Duration": 1.925
+            }
+        ],
+        "Group 16": [
+            {
+                "Component ID": 4,
+                "Component name": "CONVOYEURS",
+                "Replacement time": 627.938,
+                "Duration": 0.492
+            }
+        ],
+        "Group 17": [
             {
                 "Component ID": 5,
                 "Component name": "LIGNE DE MONTAGE MOTG02",

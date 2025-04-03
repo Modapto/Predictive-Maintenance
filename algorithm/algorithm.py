@@ -17,7 +17,7 @@ m = input.no_repairmen                          # Number of repairmen
 # Algorithm parameter
 GENOME_LENGTH = 17                                                      # number of possible group
 POPULATION_SIZE = 60
-GENERATIONS = 1000
+GENERATIONS = 50
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
@@ -61,7 +61,7 @@ beta = [entry["Beta"] for entry in data1]
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
 ID_component = [entry["ID component"] for entry in data2["failure"]]
-
+# print(ID_activity)
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
 
@@ -435,13 +435,18 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
     return combined_data
 
 def output_json_file(best_individual, best_fitness, t_begin, t_end):
-    G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity) 
 
     G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+
+    G_component_named_individual = convert_component_ids_to_names(G_component_individual, file_path_json_1)
+    individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     final_output = {
                         "Cost savings": best_fitness,
                         "Grouping maintenance": group_maintenance,
+                        "Individual maintenance": individual_maintenance,
                         "Time window": {
                             "Begin": t_begin,
                             "End": t_end
