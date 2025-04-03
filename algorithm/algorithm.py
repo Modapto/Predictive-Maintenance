@@ -5,6 +5,24 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
+import sys
+sys.path.append('../user_input')
+import input
+
+# User input
+C_s = input.setup_cost                          # Setup cost
+C_d = input.downtime_cost_rate                  # Downtime cost rate
+m = input.no_repairmen                          # Number of repairmen
+
+# Algorithm parameter
+GENOME_LENGTH = 17                                                      # number of possible group
+POPULATION_SIZE = 60
+GENERATIONS = 1000
+p_c_min = 0.6
+p_c_max = 0.9
+p_m_min = 0.01
+p_m_max = 0.1
+w_max = 7                                                               # Maximum number of iterations for binary search
 
 """
     Nc -- number of component
@@ -24,10 +42,6 @@ from scipy.optimize import minimize
     P -- penalty cost
     EB -- cost benefit = B_S + B_U + P
 """
-# User input
-C_s = 500                           # Setup cost
-C_d = 100                           # Downtime cost rate
-m = 1                               # Number of repairmen
 
 # Path to the JSON files
 file_path_json_1 = '../dataset/component.json'
@@ -53,16 +67,6 @@ map_activity_to_replacement_time = list(zip(ID_activity, t))            # list o
 
 t_begin = data2['window']['Begin']
 t_end = data2['window']['End']
-
-# Algorithm parameter
-GENOME_LENGTH = 17                                                      # number of possible group
-POPULATION_SIZE = 60
-GENERATIONS = 1000
-p_c_min = 0.6
-p_c_max = 0.9
-p_m_min = 0.01
-p_m_max = 0.1
-w_max = 7                                                               # Maximum number of iterations for binary search
 
 
 # initialize genome
