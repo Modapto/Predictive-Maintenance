@@ -108,10 +108,9 @@ python algorithm.py
 
 ## Function description
 1. To initiate the algorithmic process, call the genetic_algorithm() method:
-    Input:
-        - genome_length: the number of maintenance activity 
+    - Input:
+        - genome_length, population_size, generations, p_c_min, p_c_max, p_m_min, p_m_max: parameters of genetic algorithm (see parameters.py)
         - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inout-description))
-        - population_size,
 ```
     def genetic_algorithm(genome_length: integer, m: integer, population_size: integer, generations: integer, p_c_min: float, p_c_max: float, p_m_min: float, p_m_max: float, C_s: float, C_d: float):
         ...
