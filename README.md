@@ -110,7 +110,7 @@ python algorithm.py
         ...
         return best_individual, best_fitness
 ```
-    - Input:
+    Input:
         - genome_length: the number of maintenance activity 
         - m, C_s, C_d: user input from keyboard (see [Input/Output description](#inout-description))
         - population_size,
