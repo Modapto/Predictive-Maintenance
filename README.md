@@ -59,9 +59,9 @@ python algorithm.py
 ## Input/Output description
 
 1. input.py
-    - setup_cost: is the setup cost which is the same for all components which can be shared if several components are maintained together. (datatype: float)
-    - downtime_cost_rate: is a positive constant representing downtime cost rate related to production loss. (datatype: float)
-    - no_repairmen: is the number of repairmen available in the production line. (datatype: interger)
+    - setup_cost: (float) is the setup cost which is the same for all components which can be shared if several components are maintained together. 
+    - downtime_cost_rate: (float) is a positive constant representing downtime cost rate related to production loss. 
+    - no_repairmen: (interger) is the number of repairmen available in the production line. 
 
 2. output.json: is a json file containing
     - "Cost savings": cost saving for grouping maintenance plan.
