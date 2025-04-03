@@ -124,6 +124,8 @@ python algorithm.py
 
 
 2. To export the result of maintenance plan, call the output_json_file() method:
+
+    The result is saved in result.json
 ```
     def output_json_file(best_individual: list, best_fitness: float, t_begin: float, t_end: float):
         ...
