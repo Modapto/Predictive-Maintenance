@@ -48,15 +48,13 @@ source virtual_env/Scripts/activate
 pip install -r requirements.txt
 ```
 
-## Usage
-
+ ## Usage
 Run the program
 ```bash
 cd algorithm
 python algorithm.py
 ```
-## Input/Output description
-
+ ## Input/Output description
 1. input.py
     - setup_cost: is the setup cost which is the same for all components which can be shared if several components are maintained together. (datatype: float)
     - downtime_cost_rate: is a positive constant representing downtime cost rate related to production loss. (datatype: float)
@@ -71,7 +69,7 @@ python algorithm.py
     {
         "Cost savings": 101.42000000000007,                                 # float
         "Grouping maintenance": {
-            "Group 2": [
+            "Group 1": [
                 {
                     "Component ID": 0,                                      # integer
                     "Component name": "POSTE DE CONTRÔLE",                  # string
@@ -104,8 +102,8 @@ python algorithm.py
         }
     }
 ```
-## Service description
-1. Clone the repository: 
+ ## Service description
+1. sffsfsf
 
 ## Contributor
 
