@@ -26,7 +26,7 @@ Predictive-Maintenance/
 │   ├── component.json             # Including data related to specification of the components in the production line
 ├── algorithm/                 
 │   ├── algorithm.py               # Genetic algorithm imlementation
-│   ├── parameters.py               # Parameters of genetic algorithm
+│   ├── parameters.py              # Parameters of genetic algorithm
 ├── input/ 
 │   ├── input.py                   # User input from keyboard
 ├── output/                    
