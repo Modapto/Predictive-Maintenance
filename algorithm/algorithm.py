@@ -12,26 +12,6 @@ shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'use
 sys.path.append(shared_path)
 import input
 
-                                                        
-
-"""
-    Nc -- number of component
-    t_begin
-    t_end
-    C_iM -- preventive cost
-    C_s -- setup cost
-    C_iP -- specific cost
-    C_iU -- unavailability cost
-    C_d -- a positive constant representing downtime cost rate related to production loss
-    d_i -- maintenance duration of component i
-    t_i -- execution time of component i
-    N_RM -- number of repairmem
-    G -- group
-    B_S -- setup cost saving
-    B_U -- unavailability cost saving
-    P -- penalty cost
-    EB -- cost benefit = B_S + B_U + P
-"""
 
 # Path to the JSON files
 file_path_json_1 = '../dataset/component.json'
