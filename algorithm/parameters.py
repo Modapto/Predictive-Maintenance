@@ -1,4 +1,3 @@
-GENOME_LENGTH = 17                                                     
 POPULATION_SIZE = 60
 GENERATIONS = 100
 p_c_min = 0.6

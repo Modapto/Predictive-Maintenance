@@ -12,21 +12,7 @@ shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'use
 sys.path.append(shared_path)
 import input
 
-
-# User input
-C_s = input.setup_cost                          # Setup cost
-C_d = input.downtime_cost_rate                  # Downtime cost rate
-m = input.no_repairmen                          # Number of repairmen
-
-# Algorithm parameter
-GENOME_LENGTH = parameters.GENOME_LENGTH                                                     
-POPULATION_SIZE = parameters.POPULATION_SIZE
-GENERATIONS = parameters.GENERATIONS
-p_c_min = parameters.p_c_min
-p_c_max = parameters.p_c_max
-p_m_min = parameters.p_m_min
-p_m_max = parameters.p_m_max
-w_max = parameters.w_max                                                               
+                                                        
 
 """
     Nc -- number of component
@@ -65,12 +51,28 @@ beta = [entry["Beta"] for entry in data1]
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
 ID_component = [entry["ID component"] for entry in data2["failure"]]
-# print(ID_activity)
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
 
 t_begin = data2['window']['Begin']
 t_end = data2['window']['End']
+
+
+# User input
+C_s = input.setup_cost                          # Setup cost
+C_d = input.downtime_cost_rate                  # Downtime cost rate
+m = input.no_repairmen                          # Number of repairmen
+
+# Algorithm parameter
+GENOME_LENGTH = len(ID_activity)                                                    
+POPULATION_SIZE = parameters.POPULATION_SIZE
+GENERATIONS = parameters.GENERATIONS
+p_c_min = parameters.p_c_min
+p_c_max = parameters.p_c_max
+p_m_min = parameters.p_m_min
+p_m_max = parameters.p_m_max
+w_max = parameters.w_max       
+
 
 
 # initialize genome
