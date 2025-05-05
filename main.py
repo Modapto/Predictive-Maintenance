@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fastapi.openapi.utils import get_openapi
 import os
@@ -19,6 +20,12 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# Set the origins for CORS
+def get_cors_origins():
+    origins_string = os.getenv("CORS_DOMAINS", "http://localhost:8094") # Default DTM URL
+    origins = origins_string.split(",")
+    return [origin.strip() for origin in origins if origin.strip()]
+
 # Custom OpenAPI schema to include server URL
 def custom_openapi():
     if app.openapi_schema:
@@ -37,6 +44,13 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_cors_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ---- Input Model ----
 class MaintenanceInput(BaseModel):
