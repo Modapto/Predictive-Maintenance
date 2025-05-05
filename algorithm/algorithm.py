@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
-import parameters
+from . import parameters
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 sys.path.append(shared_path)
@@ -14,8 +14,9 @@ import input
 
 
 # Path to the JSON files
-file_path_json_1 = '../dataset/component.json'
-file_path_json_2 = '../dataset/activity.json'
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path_json_1 = os.path.join(base_dir, '..', 'dataset', 'component.json')
+file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
 
 # Open and load the files
 with open(file_path_json_1, 'r', encoding='utf-8') as file:
@@ -455,10 +456,45 @@ def output_json_file(best_individual, best_fitness, t_begin, t_end):
 
     print(f"File saved to: {output_path}")
 
+# Function to convert the algorithm output to the proper format
+def format_output(best_individual, best_fitness, t_begin, t_end):
+    """
+    Convert the algorithm output to the proper format for JSON output.
+    Args:
+        best_individual (list): The best individual from the genetic algorithm.
+        best_fitness (float): The fitness value of the best individual.
+        t_begin (float): The beginning of the time window.
+        t_end (float): The end of the time window.
+    Returns:
+        dict: A dictionary containing the formatted output.
+    """
+    # Call your existing mapping functions
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity)
+    
+    # Convert component IDs to names
+    G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
+    group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+    
+    G_component_named_individual = convert_component_ids_to_names(G_component_individual, file_path_json_1)
+    individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
+    
+    # Create output dictionary with proper key names to match the expected format
+    output = {
+        "Cost savings": best_fitness,
+        "Grouping maintenance": group_maintenance,
+        "Individual maintenance": individual_maintenance,
+        "Time window": {
+            "Begin": t_begin,
+            "End": t_end
+        }
+    }
+
+    return output
 ####### Execution ########
 
-best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
-print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+# best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
+# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-output_json_file(best_individual, best_fitness, t_begin, t_end)
+# output_json_file(best_individual, best_fitness, t_begin, t_end)
 
