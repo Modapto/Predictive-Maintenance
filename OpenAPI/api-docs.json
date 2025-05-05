@@ -1,0 +1,250 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Predictive Maintenance API",
+      "description": "Optimize scheduling of maintenance actions for production components.",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/predict": {
+        "post": {
+          "tags": [
+            "Maintenance"
+          ],
+          "summary": "Predict Maintenance",
+          "description": "Predictive maintenance algorithm endpoint.\nThis endpoint accepts parameters for the genetic algorithm and returns the best individual and fitness.",
+          "operationId": "predict_maintenance_predict_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceInput"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MaintenanceOutput"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/health": {
+        "get": {
+          "summary": "Health Check",
+          "description": "Health check endpoint for the API.",
+          "operationId": "health_check_health_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Component": {
+          "properties": {
+            "Component ID": {
+              "type": "integer",
+              "title": "Component Id",
+              "description": "Unique identifier for the component"
+            },
+            "Component name": {
+              "type": "string",
+              "title": "Component Name",
+              "description": "Name of the component"
+            },
+            "Replacement time": {
+              "type": "number",
+              "title": "Replacement Time",
+              "description": "Time at which the component is replaced"
+            },
+            "Duration": {
+              "type": "number",
+              "title": "Duration",
+              "description": "Duration of the maintenance operation"
+            }
+          },
+          "type": "object",
+          "required": [
+            "Component ID",
+            "Component name",
+            "Replacement time",
+            "Duration"
+          ],
+          "title": "Component",
+          "description": "Model for a single component in a maintenance group"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "MaintenanceInput": {
+          "properties": {
+            "setup_cost": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "title": "Setup Cost",
+              "description": "Setup cost for maintenance operations"
+            },
+            "downtime_cost_rate": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "title": "Downtime Cost Rate",
+              "description": "Cost rate of downtime during maintenance"
+            },
+            "no_repairmen": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "title": "No Repairmen",
+              "description": "Number of available repairmen"
+            }
+          },
+          "type": "object",
+          "required": [
+            "setup_cost",
+            "downtime_cost_rate",
+            "no_repairmen"
+          ],
+          "title": "MaintenanceInput"
+        },
+        "MaintenanceOutput": {
+          "properties": {
+            "Cost savings": {
+              "type": "number",
+              "title": "Cost Savings",
+              "description": "Total cost savings from the maintenance optimization"
+            },
+            "Grouping maintenance": {
+              "additionalProperties": {
+                "items": {
+                  "$ref": "#/components/schemas/Component"
+                },
+                "type": "array"
+              },
+              "type": "object",
+              "title": "Grouping Maintenance",
+              "description": "Optimized grouping of maintenance activities"
+            },
+            "Individual maintenance": {
+              "additionalProperties": {
+                "items": {
+                  "$ref": "#/components/schemas/Component"
+                },
+                "type": "array"
+              },
+              "type": "object",
+              "title": "Individual Maintenance",
+              "description": "Individual maintenance activities"
+            },
+            "Time window": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          },
+          "type": "object",
+          "required": [
+            "Cost savings",
+            "Grouping maintenance",
+            "Individual maintenance",
+            "Time window"
+          ],
+          "title": "MaintenanceOutput",
+          "description": "Full maintenance schedule output"
+        },
+        "TimeWindow": {
+          "properties": {
+            "Begin": {
+              "type": "number",
+              "title": "Begin",
+              "description": "Start time of the maintenance window"
+            },
+            "End": {
+              "type": "number",
+              "title": "End",
+              "description": "End time of the maintenance window"
+            }
+          },
+          "type": "object",
+          "required": [
+            "Begin",
+            "End"
+          ],
+          "title": "TimeWindow",
+          "description": "Time window for the maintenance schedule"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      }
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ]
+  }
