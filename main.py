@@ -53,7 +53,7 @@ class Component(BaseModel):
     Duration: float = Field(..., description="Duration of the maintenance operation")
     
     class Config:
-        allow_population_by_field_name = True
+        validate_by_name = True
 
 class TimeWindow(BaseModel):
     """Time window for the maintenance schedule"""
@@ -70,7 +70,7 @@ class MaintenanceOutput(BaseModel):
     Time_window: TimeWindow = Field(..., alias="Time window", description="Time window for the maintenance schedule")
     
     class Config:
-        allow_population_by_field_name = True
+        validate_by_name = True
 
 # Function to process a single request
 def process_maintenance_request(
