@@ -26,7 +26,7 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 
 ## Project Structure
 
-```json
+```sh
 Predictive-Maintenance/
 ├── dataset/                       
 │   ├── activity.json              # Including data related to the failures of the components in the time window
@@ -83,7 +83,7 @@ python algorithm.py
     - "Individual plan": individual maintenance plan.
     - "Time window": maintenance time window.
 
-```json
+```sh
 {
     "Cost savings": 101.42000000000007,  // float
     "Grouping maintenance": {
