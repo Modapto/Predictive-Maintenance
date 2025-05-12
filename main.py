@@ -86,10 +86,12 @@ class TimeWindow(BaseModel):
 class MaintenanceOutput(BaseModel):
     """Full maintenance schedule output"""
     Cost_savings: float = Field(..., alias="Cost savings", description="Total cost savings from the maintenance optimization")
-    Grouping_maintenance: Dict[str, List[Component]] = Field(..., alias="Grouping maintenance", 
-                                                        description="Optimized grouping of maintenance activities")
-    Individual_maintenance: Dict[str, List[Component]] = Field(..., alias="Individual maintenance", 
-                                                          description="Individual maintenance activities")
+    Grouping_maintenance: str = Field(...,alias="Grouping maintenance",
+                                         description="Base64-encoded JSON string representing a dictionary of maintenance groups. "
+                                                        "Decoded format: Dict[str, List[Component]].")
+    Individual_maintenance: str = Field(..., alias="Individual maintenance", 
+                                            description="Base64 individual maintenance activities"
+                                                        "Decoded format: Dict[str, List[Component]].")
     Time_window: TimeWindow = Field(..., alias="Time window", description="Time window for the maintenance schedule")
     
     class Config:
