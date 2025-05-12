@@ -7,6 +7,8 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List, Any
 from functools import partial
+import base64
+import json
 
 # Import the genetic algorithm and output function from the algorithm module
 from algorithm.algorithm import genetic_algorithm, format_output
@@ -52,6 +54,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def encode_output_to_base64(output: Dict[str, Any]) -> str:
+    """
+    Encode a dictionary to a Base64 string.
+    """
+    json_bytes = json.dumps(output, default=str).encode("utf-8")
+    return base64.b64encode(json_bytes).decode("utf-8")
+
 # ---- Input Model ----
 class MaintenanceInput(BaseModel):
     setup_cost: float = Field(..., gt=0, description="Setup cost for maintenance operations")
@@ -85,6 +94,14 @@ class MaintenanceOutput(BaseModel):
     
     class Config:
         validate_by_name = True
+
+    def encode_maintenance_fields(self):
+        """
+        Encode only the maintenance-related fields (Group and Individual maintenance)
+        into Base64.
+        """
+        self.Grouping_maintenance = encode_output_to_base64(self.Grouping_maintenance)
+        self.Individual_maintenance = encode_output_to_base64(self.Individual_maintenance)
 
 # Function to process a single request
 def process_maintenance_request(
@@ -139,8 +156,10 @@ async def predict_maintenance(data: MaintenanceInput):
         )
         
         # Return the result
-        return MaintenanceOutput(**result)
+        maintenance_output = MaintenanceOutput(**result)
+        maintenance_output.encode_maintenance_fields()
 
+        return maintenance_output
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error while executing the algorithm: {str(e)}")
 
