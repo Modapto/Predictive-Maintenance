@@ -157,10 +157,13 @@ async def predict_maintenance(data: MaintenanceInput):
             )
         )
         
+        # Encode fields to Base64
+        result["Grouping maintenance"] = encode_output_to_base64(result["Grouping maintenance"])
+        result["Individual maintenance"] = encode_output_to_base64(result["Individual maintenance"])
+
         # Return the result
         maintenance_output = MaintenanceOutput(**result)
-        maintenance_output.encode_maintenance_fields()
-
+        
         return maintenance_output
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error while executing the algorithm: {str(e)}")
