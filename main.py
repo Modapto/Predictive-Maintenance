@@ -97,14 +97,6 @@ class MaintenanceOutput(BaseModel):
     class Config:
         validate_by_name = True
 
-    def encode_maintenance_fields(self):
-        """
-        Encode only the maintenance-related fields (Group and Individual maintenance)
-        into Base64.
-        """
-        self.Grouping_maintenance = encode_output_to_base64(self.Grouping_maintenance)
-        self.Individual_maintenance = encode_output_to_base64(self.Individual_maintenance)
-
 # Function to process a single request
 def process_maintenance_request(
     setup_cost: float,
