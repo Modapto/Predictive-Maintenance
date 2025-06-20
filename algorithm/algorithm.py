@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
-from . import parameters
+import parameters
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 sys.path.append(shared_path)
@@ -493,8 +493,8 @@ def format_output(best_individual, best_fitness, t_begin, t_end):
     return output
 ####### Execution ########
 
-# best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
-# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
+print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-# output_json_file(best_individual, best_fitness, t_begin, t_end)
+output_json_file(best_individual, best_fitness, t_begin, t_end)
 
