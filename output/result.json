@@ -1,5 +1,5 @@
 {
-    "Cost savings": 639.1370000000001,
+    "Cost savings": 491.578,
     "Grouping maintenance": {
         "Group 1": [
             {
@@ -13,14 +13,8 @@
             {
                 "Component ID": 0,
                 "Component name": "POSTE DE CONTRÔLE",
-                "Replacement time": 349.571,
-                "Duration": 4.957
-            },
-            {
-                "Component ID": 1,
-                "Component name": "CONNECTEURS",
-                "Replacement time": 349.571,
-                "Duration": 4.957
+                "Replacement time": 346.596,
+                "Duration": 1.108
             }
         ],
         "Group 3": [
@@ -59,21 +53,15 @@
             {
                 "Component ID": 1,
                 "Component name": "CONNECTEURS",
-                "Replacement time": 543.054,
-                "Duration": 5.774
-            },
-            {
-                "Component ID": 3,
-                "Component name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
-                "Replacement time": 543.054,
-                "Duration": 5.774
+                "Replacement time": 359.09,
+                "Duration": 3.849
             }
         ],
         "Group 8": [
             {
                 "Component ID": 1,
                 "Component name": "CONNECTEURS",
-                "Replacement time": 718.179,
+                "Replacement time": 538.635,
                 "Duration": 3.849
             }
         ],
@@ -81,11 +69,19 @@
             {
                 "Component ID": 1,
                 "Component name": "CONNECTEURS",
-                "Replacement time": 897.724,
+                "Replacement time": 718.179,
                 "Duration": 3.849
             }
         ],
         "Group 10": [
+            {
+                "Component ID": 1,
+                "Component name": "CONNECTEURS",
+                "Replacement time": 897.724,
+                "Duration": 3.849
+            }
+        ],
+        "Group 11": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -93,7 +89,7 @@
                 "Duration": 0.726
             }
         ],
-        "Group 11": [
+        "Group 12": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -101,7 +97,7 @@
                 "Duration": 0.726
             }
         ],
-        "Group 12": [
+        "Group 13": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -115,7 +111,7 @@
                 "Duration": 1.218
             }
         ],
-        "Group 13": [
+        "Group 14": [
             {
                 "Component ID": 2,
                 "Component name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -123,7 +119,15 @@
                 "Duration": 0.726
             }
         ],
-        "Group 14": [
+        "Group 15": [
+            {
+                "Component ID": 3,
+                "Component name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+                "Replacement time": 548.357,
+                "Duration": 1.925
+            }
+        ],
+        "Group 16": [
             {
                 "Component ID": 5,
                 "Component name": "LIGNE DE MONTAGE MOTG02",
