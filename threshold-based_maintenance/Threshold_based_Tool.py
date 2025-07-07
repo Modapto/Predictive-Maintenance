@@ -20,8 +20,8 @@ df = pd.json_normalize(data)
 df['event date'] = pd.to_datetime(df['event date'], dayfirst=True)
 
 # Define time windows
-today = pd.Timestamp.today().normalize()
-#today = pd.to_datetime("21/08/2024", dayfirst=True)
+#today = pd.Timestamp.today().normalize()
+today = pd.to_datetime("21/08/2024", dayfirst=True)
 window_size_days_ago = today - pd.Timedelta(days=window_size)
 extraction_days_ago = today - pd.Timedelta(days=winds_count_component_replac * window_size)
 
@@ -44,13 +44,37 @@ if inspection_threshold <= module_count < replacement_threshold:
     components_count = recent_failures_window_size['component'].value_counts()
     most_failed_component = components_count.idxmax()
     max_failures = components_count.max()
-    print(f"Please schedule an inspection of sub element {most_failed_component}.\nIt failed {max_failures} times in the last {window_size} days.")
 
+    recommendation = f"schedule an inspection of sub element {most_failed_component}"
+    details = f"it failed {max_failures} times in the last {window_size} days."
+
+    results = {
+    "recommendation": recommendation,
+    "details": details
+    }
+    with open("maintenance_recommendations.json", "w") as file:
+        json.dump(results, file, indent=2)
 elif replacement_threshold <= module_count:
     components_count = recent_failures_extraction['component'].value_counts()
     most_failed_component = components_count.idxmax()
     max_failures = components_count.max()
-    print(f"Please schedule a replacement of sub element {most_failed_component}.\nIt failed {max_failures} times in the last {window_size * winds_count_component_replac} days.")
 
+    recommendation = f"schedule a replacement of sub element {most_failed_component}"
+    details = f"It failed {max_failures} times in the last {window_size * winds_count_component_replac} days"
+
+    results = {
+    "recommendation": recommendation,
+    "details": details
+    }
+    with open("maintenance_recommendations.json", "w") as file:
+        json.dump(results, file, indent=2)
 else:
-    print("The system is under control.")
+    recommendation = "non"
+    details = "The system is under control"
+
+    results = {
+    "recommendation": recommendation,
+    "details": details
+    }
+    with open("maintenance_recommendations.json", "w") as file:
+        json.dump(results, file, indent=2)
