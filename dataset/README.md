@@ -27,200 +27,256 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 ```sh
 [
     {
-        "ID": 0,
+        "Equipment ID": 0,
         "Component": "POSTE DE CONTRÔLE",
         "Alpha": 5,
         "Beta": 16.0,
-        "Average maintenance duration": 1.108
+        "Average maintenance duration": 1.108,
+        "MTBF": 173.298,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 1,
+        "Equipment ID": 1,
         "Component": "CONNECTEURS",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 3.849
+        "Average maintenance duration": 3.849,
+        "MTBF": 179.545,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 2,
+        "Equipment ID": 2,
         "Component": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
         "Alpha": 5,
         "Beta": 20.0,
-        "Average maintenance duration": 0.726
+        "Average maintenance duration": 0.726,
+        "MTBF": 208.829,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 3,
+        "Equipment ID": 3,
         "Component": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
         "Alpha": 5,
         "Beta": 20.0,
-        "Average maintenance duration": 1.925
+        "Average maintenance duration": 1.925,
+        "MTBF": 548.357,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 4,
+        "Equipment ID": 4,
         "Component": "CONVOYEURS",
         "Alpha": 5,
         "Beta": 10.0,
-        "Average maintenance duration": 0.492
+        "Average maintenance duration": 0.492,
+        "MTBF": 627.938,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 5,
+        "Equipment ID": 5,
         "Component": "LIGNE DE MONTAGE MOTG02",
         "Alpha": 5,
         "Beta": 7.2,
-        "Average maintenance duration": 0.89
+        "Average maintenance duration": 0.89,
+        "MTBF": 732.33,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 6,
+        "Equipment ID": 6,
         "Component": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
         "Alpha": 5,
         "Beta": 12.0,
-        "Average maintenance duration": 1.73
+        "Average maintenance duration": 1.73,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 7,
+        "Equipment ID": 7,
         "Component": "POSTE 15 : CONTRÔLE HAUTE TENSION",
         "Alpha": 5,
         "Beta": 12.0,
-        "Average maintenance duration": 1.082
+        "Average maintenance duration": 1.082,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 8,
+        "Equipment ID": 8,
         "Component": "MAGASIN PLATEAUX VIDES",
         "Alpha": 5,
         "Beta": 8.0,
-        "Average maintenance duration": 0.815
+        "Average maintenance duration": 0.815,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 9,
+        "Equipment ID": 9,
         "Component": "ASCENSEUR DE SORTIE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 0.709
+        "Average maintenance duration": 0.709,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 10,
+        "Equipment ID": 10,
         "Component": "MM-TAILLE1",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 13.964
+        "Average maintenance duration": 13.964,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 11,
+        "Equipment ID": 11,
         "Component": "ASCENSEUR",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 0.477
+        "Average maintenance duration": 0.477,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 12,
+        "Equipment ID": 12,
         "Component": "KTM6",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 21.963
+        "Average maintenance duration": 21.963,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 13,
+        "Equipment ID": 13,
         "Component": "PINCE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 4.499
+        "Average maintenance duration": 4.499,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 14,
+        "Equipment ID": 14,
         "Component": "POSTE 05 : MONTAGE ENTRAINEURS",
         "Alpha": 5,
         "Beta": 8.0,
-        "Average maintenance duration": 3.307
+        "Average maintenance duration": 3.307,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 15,
+        "Equipment ID": 15,
         "Component": "KTM5",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 2.632
+        "Average maintenance duration": 2.632,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 16,
+        "Equipment ID": 16,
         "Component": "EMMANCHEMENT",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 2.263
+        "Average maintenance duration": 2.263,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 17,
+        "Equipment ID": 17,
         "Component": "CHAUFFE VENTILATEURS",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 2.15
+        "Average maintenance duration": 2.15,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 18,
+        "Equipment ID": 18,
         "Component": "ECRANS",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 2.024
+        "Average maintenance duration": 2.024,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 19,
+        "Equipment ID": 19,
         "Component": "DIVERS",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 2.022
+        "Average maintenance duration": 2.022,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 20,
+        "Equipment ID": 20,
         "Component": "EI7-BARRETTE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 1.231
+        "Average maintenance duration": 1.231,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 21,
+        "Equipment ID": 21,
         "Component": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
         "Alpha": 5,
         "Beta": 7.0,
-        "Average maintenance duration": 1.109
+        "Average maintenance duration": 1.109,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 22,
+        "Equipment ID": 22,
         "Component": "TRANSLATION",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 1.053
+        "Average maintenance duration": 1.053,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 23,
+        "Equipment ID": 23,
         "Component": "CONVOYEUR CÔTÉ CONTRÔLE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 0.971
+        "Average maintenance duration": 0.971,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 24,
+        "Equipment ID": 24,
         "Component": "ASCENSEUR SORTIE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 0.775
+        "Average maintenance duration": 0.775,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 25,
+        "Equipment ID": 25,
         "Component": "VISSEUSES ÉLECTRIQUE",
         "Alpha": 5,
         "Beta": 6.0,
-        "Average maintenance duration": 0.639
+        "Average maintenance duration": 0.639,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 26,
+        "Equipment ID": 26,
         "Component": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
         "Alpha": 5,
         "Beta": 10.0,
-        "Average maintenance duration": 0.572
+        "Average maintenance duration": 0.572,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     },
     {
-        "ID": 27,
+        "Equipment ID": 27,
         "Component": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
         "Alpha": 5,
         "Beta": 10.0,
-        "Average maintenance duration": 0.371
+        "Average maintenance duration": 0.371,
+        "MTBF": ...,
+        "Last Maintenance Action Time": ...
     }
 ]
 ```
