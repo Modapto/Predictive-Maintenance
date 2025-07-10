@@ -281,9 +281,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 ]
 ```
 ***Note:***
-
-    - "MTBF":Mean time between failure of the component.
-    - "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
+- "MTBF":Mean time between failure of the component.
+- "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
 
 2. "activity.json": Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID). With the format:
 
