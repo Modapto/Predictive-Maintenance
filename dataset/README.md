@@ -22,11 +22,8 @@ It additionally provides an API to retrieve all important information (Input Dat
 
 The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files:
 
-1. "component.json": Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
+1. "component.json": Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration). With the format:
 
-2. "activity.json": Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
-
-**component.json:** 
 ```sh
 [
     {
@@ -227,8 +224,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
     }
 ]
 ```
+2. "activity.json": Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID). With the format:
 
-**activity.json:**
 ```sh
 {   
     "window":   {
