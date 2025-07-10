@@ -280,7 +280,8 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
     }
 ]
 ```
-<u>Note: </u>
+<u>Note:</u>
+
     - "MTBF":Mean time between failure of the component.
     - "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
 
