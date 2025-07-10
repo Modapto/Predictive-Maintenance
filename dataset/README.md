@@ -25,6 +25,7 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 2.activity.json: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
 
 **component.json:** 
+```sh
 [
     {
         "ID": 0,
@@ -223,9 +224,10 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
         "Average maintenance duration": 0.371
     }
 ]
-
+```
 
 **activity.json:**
+```sh
 {   
     "window":   {
                     "Begin": 0.0,
@@ -320,7 +322,7 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
                     }
                 ]
 }
-
+```
 ## Project Structure
 
 ```sh
