@@ -22,9 +22,15 @@ It additionally provides an API to retrieve all important information (Input Dat
 
 "component.json": Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
 
-***Note:***
+**Description:**
+- "Equipment ID": denotes the unique ID number for an equipment in the production line, as defined in CORIM.
+- "Equipment": denotes the name of the equipment.
+- "Alpha" and "Beta": Penalty cost function parameters used in the genetic algorithm; defined by maintenance engineering.
+- "Average maintenance duration": The average time (in hours) to fix the equipment if it fails.
 - "MTBF":Mean time between failure of the component.
 - "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
+
+***Note:***
 - There are some values in "MTBF" and "Last Maintenance Action Time" missing, this will be filled after discussing with SEW about this dataset format later.
 
 ```sh
@@ -76,7 +82,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
 
     ...
-    
+
 ]
 ```
 ## Project Structure
