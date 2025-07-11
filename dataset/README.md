@@ -22,7 +22,7 @@ It additionally provides an API to retrieve all important information (Input Dat
 
 The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files:
 
-1. "component.json": Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration). With the format:
+1. "component.json": Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). With the format:
 
 ```sh
 [
@@ -283,8 +283,9 @@ The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME,
 ***Note:***
 - "MTBF":Mean time between failure of the component.
 - "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
+- There are some values in "MTBF" and "Last Maintenance Action Time" missing, this will be filled after discussing with SEW about this dataset format later.
 
-2. "activity.json": Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID). With the format:
+2. "activity.json": Includes the parameter (Replacement time) related to maintenance activities in the production line and will be calculated from MTBF and Last Maintenance Action Time, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID). With the format:
 
 ```sh
 {   
