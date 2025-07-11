@@ -2,7 +2,7 @@
 
 ## Service description
 
-The threshold-based maintenance triggering service is designed to monitor the health status of SEW production modules every *n* days and give inspection and replacement suggestions for the sub elements that compose a certain module (for more contextual details please refer to Deliverable 5.2). For further versions, this service could be automated to run periodically and provide maintenance recommendations when needed. In the current version, the service is launched manually by the maintenance manager every n days to retrieve maintenance suggestions.
+The threshold-based maintenance triggering service is designed to monitor the health status of SEW production modules every *n* days and give inspection and replacement suggestions for the sub elements that compose a certain module (for more contextual details please refer to Deliverable 5.2). This service is triggered automatically and externally by another component of MODAPTO.
 
 ## Inputs
 
