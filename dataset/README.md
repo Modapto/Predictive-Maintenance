@@ -31,7 +31,7 @@ It additionally provides an API to retrieve all important information (Input Dat
 [
     {
         "Equipment ID": 0,
-        "Component": "POSTE DE CONTRÔLE",
+        "Equipment": "POSTE DE CONTRÔLE",
         "Alpha": 5,
         "Beta": 16.0,
         "Average maintenance duration": 1.108,
@@ -40,7 +40,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
     {
         "Equipment ID": 1,
-        "Component": "CONNECTEURS",
+        "Equipment": "CONNECTEURS",
         "Alpha": 5,
         "Beta": 6.0,
         "Average maintenance duration": 3.849,
@@ -49,7 +49,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
     {
         "Equipment ID": 2,
-        "Component": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+        "Equipment": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
         "Alpha": 5,
         "Beta": 20.0,
         "Average maintenance duration": 0.726,
@@ -58,7 +58,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
     {
         "Equipment ID": 3,
-        "Component": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+        "Equipment": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
         "Alpha": 5,
         "Beta": 20.0,
         "Average maintenance duration": 1.925,
@@ -67,7 +67,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
     {
         "Equipment ID": 4,
-        "Component": "CONVOYEURS",
+        "Equipment": "CONVOYEURS",
         "Alpha": 5,
         "Beta": 10.0,
         "Average maintenance duration": 0.492,
@@ -76,7 +76,7 @@ It additionally provides an API to retrieve all important information (Input Dat
     },
     {
         "Equipment ID": 5,
-        "Component": "LIGNE DE MONTAGE MOTG02",
+        "Equipment": "LIGNE DE MONTAGE MOTG02",
         "Alpha": 5,
         "Beta": 7.2,
         "Average maintenance duration": 0.89,
@@ -151,14 +151,14 @@ python algorithm.py
     "Grouping maintenance": {
         "Group 1": [
             {
-                "Component ID": 0,                                      // integer
-                "Component name": "POSTE DE CONTRÔLE",                  // string
+                "Equipment ID": 0,                                      // integer
+                "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 349.571,                           // float
                 "Duration": 4.957                                       // float
             },
             {
-                "Component ID": 1,                                      // integer
-                "Component name": "CONNECTEURS",                        // string
+                "Equipment ID": 1,                                      // integer
+                "Equipment name": "CONNECTEURS",                        // string
                 "Replacement time": 349.571,                            // float
                 "Duration": 4.957                                       // float
             }
@@ -168,8 +168,8 @@ python algorithm.py
     "Individual maintenance": {
         "Group 1": [
             {  
-            "Component ID": 0,                                          // integer
-                "Component name": "POSTE DE CONTRÔLE",                  // string
+                "Equipment ID": 0,                                      // integer
+                "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 173.298,                            // float
                 "Duration": 1.108                                       // float
             }
