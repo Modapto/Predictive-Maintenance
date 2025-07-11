@@ -30,6 +30,7 @@ The service requires two inputs:
 ]
 ```
 **Description**
+
 In this version, the module ID and sub-element IDs are predefined as internal parameters, since the approach has only been tuned and implemented for the “Press” module, due to data availability. This means that only the second input (the json object) is currently required. Future versions may incorporate the module ID as a user input, allowing the algorithm to dynamically determine the relevant sub-elements based on a predefined hierarchical dictionary of SEW components.
 
 The input json object should contain the following data types: the value of all keys are of type str. The 'module' and 'component' keys store the IDs of the corresponding module and component; these can be either str or int.
