@@ -72,9 +72,9 @@ This service provides predictive maintenance scheduling capabilities within the 
 ]
 ```
 
-## User input 
+## User input ()
 
-Contains global parameters for the maintenance scheduling service including:
+input.py file contains global parameters for the maintenance scheduling service and is set by the user, including:
 - setup_cost: (float) is the setup cost which is the same for all components which can be shared if several components are maintained together.
 - downtime_cost_rate: (float) is a positive constant representing downtime cost rate related to production loss.
 - no_repairmen: (interger) is the number of repairmen available in the production line.
@@ -84,7 +84,7 @@ Contains global parameters for the maintenance scheduling service including:
 
 The service generates an output JSON file (output.json) containing the optimized maintenance scheduling results. The output provides decision support for maintenance planning, considering both individual and grouped maintenance strategies.
 
-output.json: is a json file containing
+output.json is a json file containing:
 - "Cost savings": cost saving for grouping maintenance plan.
 - "Grouping maintenance": grouping maintenance plan.
 - "Individual plan": individual maintenance plan.
