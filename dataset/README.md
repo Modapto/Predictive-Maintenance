@@ -6,7 +6,7 @@ This service provides predictive maintenance scheduling capabilities within the 
 
 ## JSON file input (Component Configuration File)
 
-"component.json": Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
+The "component.json" file: Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
 
 **Description:**
 - "Equipment ID": denotes the unique ID number for an equipment in the production line, as defined in CORIM.
@@ -72,9 +72,9 @@ This service provides predictive maintenance scheduling capabilities within the 
 ]
 ```
 
-## User input ()
+## User input 
 
-input.py file contains global parameters for the maintenance scheduling service and is set by the user, including:
+The "input.py" file contains global parameters for the maintenance scheduling service and is set by the user, including:
 - setup_cost: (float) is the setup cost which is the same for all components which can be shared if several components are maintained together.
 - downtime_cost_rate: (float) is a positive constant representing downtime cost rate related to production loss.
 - no_repairmen: (interger) is the number of repairmen available in the production line.
