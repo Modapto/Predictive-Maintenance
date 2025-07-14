@@ -20,16 +20,76 @@ It additionally provides an API to retrieve all important information (Input Dat
 
 ## Dataset
 
-The dataset are manually extracted from CORIM.xlsx file provided by SEW USOCOME, then divided into 2 files:
-1.component.json: Contains the parameters of the components within the production line (Alpha, Beta, Average maintenance duration).
-2.activity.json: Includes the parameter (Replacement time) related to maintenance activities in the production line, with each activity mapped to its corresponding component (each row of activity has the corresponding Component ID).
+"component.json": Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
 
+**Description:**
+- "Equipment ID": denotes the unique ID number for an equipment in the production line, as defined in CORIM.
+- "Equipment": denotes the name of the equipment.
+- "Alpha" and "Beta": Penalty cost function parameters used in the genetic algorithm; defined by maintenance engineering.
+- "Average maintenance duration": The average time (in hours) to fix the equipment if it fails.
+- "MTBF":Mean time between failure of the component.
+- "Last Maintenance Action Time": this information comes from the CORIM file by requesting the last maintenance action time for the ID component.
+
+***Note:***
+- There are some values in "MTBF" and "Last Maintenance Action Time" missing, this will be filled after discussing with SEW about this dataset format later.
+
+```sh
+[
+    {
+        "Equipment ID": 100054,
+        "Equipment": "POSTE DE CONTRÔLE",
+        "Alpha": 5,
+        "Beta": 16.0,
+        "Average maintenance duration": 1.108,
+        "MTBF": 173.298,
+        "Last Maintenance Action Time": ...
+    },
+    {
+        "Equipment ID": 105678,
+        "Equipment": "CONNECTEURS",
+        "Alpha": 5,
+        "Beta": 6.0,
+        "Average maintenance duration": 3.849,
+        "MTBF": 179.545,
+        "Last Maintenance Action Time": ...
+    },
+    {
+        "Equipment ID": 100045,
+        "Equipment": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+        "Alpha": 5,
+        "Beta": 20.0,
+        "Average maintenance duration": 0.726,
+        "MTBF": 208.829,
+        "Last Maintenance Action Time": ...
+    },
+    {
+        "Equipment ID": 100019,
+        "Equipment": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+        "Alpha": 5,
+        "Beta": 20.0,
+        "Average maintenance duration": 1.925,
+        "MTBF": 548.357,
+        "Last Maintenance Action Time": ...
+    },
+    {
+        "Equipment ID": 100006,
+        "Equipment": "CONVOYEURS",
+        "Alpha": 5,
+        "Beta": 10.0,
+        "Average maintenance duration": 0.492,
+        "MTBF": 627.938,
+        "Last Maintenance Action Time": ...
+    },
+
+    ...
+
+]
+```
 ## Project Structure
 
 ```sh
 Predictive-Maintenance/
 ├── dataset/                       
-│   ├── activity.json              # Including data related to the failures of the components in the time window
 │   ├── component.json             # Including data related to specification of the components in the production line
 ├── algorithm/                 
 │   ├── algorithm.py               # Genetic algorithm imlementation
@@ -89,14 +149,14 @@ python algorithm.py
     "Grouping maintenance": {
         "Group 1": [
             {
-                "Component ID": 0,                                      // integer
-                "Component name": "POSTE DE CONTRÔLE",                  // string
+                "Equipment ID": 100054,                                      // integer
+                "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 349.571,                           // float
                 "Duration": 4.957                                       // float
             },
             {
-                "Component ID": 1,                                      // integer
-                "Component name": "CONNECTEURS",                        // string
+                "Equipment ID": 1,                                      // integer
+                "Equipment name": "CONNECTEURS",                        // string
                 "Replacement time": 349.571,                            // float
                 "Duration": 4.957                                       // float
             }
@@ -106,8 +166,8 @@ python algorithm.py
     "Individual maintenance": {
         "Group 1": [
             {  
-            "Component ID": 0,                                          // integer
-                "Component name": "POSTE DE CONTRÔLE",                  // string
+                "Equipment ID": 100054,                                      // integer
+                "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 173.298,                            // float
                 "Duration": 1.108                                       // float
             }
