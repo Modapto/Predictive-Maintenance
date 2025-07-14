@@ -1,24 +1,12 @@
-# Predictive Maintenance Service
+# Predictive Maintenance Service - Grouping maintenance
 
-## Overview
+## Service description
 
-This is a desktop application that imlements Predictive Maintenance Service. The purpose of the service is to provide an optimal scheduling of the maintenance action to be performed on a line or system. The output of the service will be for a list of maintenance actions and time to be performed for each component/group of components.
+This service provides predictive maintenance scheduling capabilities within the MODAPTO ecosystem. The purpose of the service is to provide an optimal scheduling of the maintenance action to be performed on a line or system. The output of the service will be for a list of maintenance actions and time to be performed for each component/group of components.
 
 It additionally provides an API to retrieve all important information (Input Data, Algorithm parameters and User Input) and execute the genetic algorithm.
 
-## Table of Contents
-
-1. [Dataset](#dataset)
-2. [Project Structure](#project-structure)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Input/Output description](#inputoutput-description)
-6. [Function description](#function-description)
-7. [Deployment](#deployment)
-8. [API](#api)
-9. [Contributors](#contributors)
-
-## Dataset
+## JSON file input
 
 "component.json": Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
 
@@ -85,52 +73,8 @@ It additionally provides an API to retrieve all important information (Input Dat
 
 ]
 ```
-## Project Structure
 
-```sh
-Predictive-Maintenance/
-├── dataset/                       
-│   ├── component.json             # Including data related to specification of the components in the production line
-├── algorithm/                 
-│   ├── algorithm.py               # Genetic algorithm imlementation
-│   ├── parameters.py              # Parameters of genetic algorithm
-├── input/ 
-│   ├── input.py                   # User input from keyboard
-├── output/                    
-│   ├── result.json                # Output of predictive maintenance service within the defined time window
-├── debug/                     
-│   ├── check_fitness.py           # Debugging file
-main.py                            # FastAPI endpoints
-Dockerfile                         # For Containerization
-```
-
-## Installation
-
-1.Clone the repository:
-
-```bash
-git clone https://github.com/Modapto/Predictive-Maintenance.git
-cd Predictive-Maintenance
-```
-
-2.Create, activate a virtual environment, and install the packages from the requirements.txt file:
-
-```bash
-python -m venv virtual_env
-source virtual_env/Scripts/activate
-pip install -r requirements.txt
-```
-
-## Usage
-
-Run the program
-
-```bash
-cd algorithm
-python algorithm.py
-```
-
-## Input/Output description
+## UI input and output
 
 1. input.py
     - setup_cost: (float) is the setup cost which is the same for all components which can be shared if several components are maintained together.
