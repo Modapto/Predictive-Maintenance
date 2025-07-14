@@ -84,7 +84,7 @@ The "input.py" file contains global parameters for the maintenance scheduling se
 
 The service generates an output JSON file (output.json) containing the optimized maintenance scheduling results. The output provides decision support for maintenance planning, considering both individual and grouped maintenance strategies.
 
-output.json is a json file containing:
+The output.json is a json file containing:
 - "Cost savings": cost saving for grouping maintenance plan.
 - "Grouping maintenance": grouping maintenance plan.
 - "Individual plan": individual maintenance plan.
