@@ -200,7 +200,7 @@ async def process_grouping_maintenance_async(
         )
         
         # Get Kafka broker from environment variable and publish event
-        kafka_broker = os.getenv("KAFKA_BROKER", "kafka.modapto.atc.gr:9092")
+        kafka_broker = os.getenv("KAFKA_BROKER", "kafka:9092")
         producer = EventsProducer(kafka_broker)
         
         # Publish event (success or error) to Kafka topic
