@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
 import parameters
+from datetime import datetime
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 sys.path.append(shared_path)
@@ -491,6 +492,88 @@ def format_output(best_individual, best_fitness, t_begin, t_end):
     }
 
     return output
+
+# Function to process API request and prepare Kafka event data
+def async_processing_grouping_maintenance_request(
+    setup_cost: float,
+    downtime_cost_rate: float,
+    no_repairmen: int,
+    components: list,
+    smart_service: str,
+    production_module: str):
+    """
+    Process grouping maintenance request and prepare for Kafka publishing.
+    This function is called from the API and handles the complete workflow:
+    1. Run genetic algorithm with provided parameters
+    2. Format output using existing format_output function
+    3. Prepare Kafka event data with results
+    
+    Args:
+        setup_cost (float): Setup cost for maintenance operations
+        downtime_cost_rate (float): Downtime cost rate
+        no_repairmen (int): Number of available repairmen
+        components (list): List of component data from API request
+        smart_service (str): Smart service identifier
+        production_module (str): Production module identifier
+        
+    Returns:
+        dict: Event data ready for Kafka publishing
+    """
+    try:
+        # Algorithm parameters (using components length or default)
+        genome_length = len(components) if components else 10
+        population_size = 50
+        generations = 100
+        p_c_min, p_c_max = 0.5, 0.9
+        p_m_min, p_m_max = 0.01, 0.1
+        t_begin, t_end = 0.0, 1000.0
+        
+        # Run the genetic algorithm
+        best_individual, best_fitness = genetic_algorithm(
+            genome_length,
+            no_repairmen,
+            population_size,
+            generations,
+            p_c_min, p_c_max,
+            p_m_min, p_m_max,
+            setup_cost,
+            downtime_cost_rate
+        )
+        
+        # Format the algorithm output
+        algorithm_results = format_output(best_individual, best_fitness, t_begin, t_end)
+        
+        # Prepare Kafka event data
+        event_data = {
+            "description": "The grouping maintenance optimization has been successfully completed for the production module '{}'.".format(production_module),
+            "module": production_module,
+            "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+            "priority": "HIGH", # Should be handled appropriately from the algorithm
+            "eventType": "Grouping Maintenance Process Completion",
+            "sourceComponent": "Predictive Maintenance",
+            "smartService": smart_service,
+            "topic": "smart-service-event",
+            "results": algorithm_results
+        }
+        
+        return event_data
+        
+    except Exception as e:
+        # Prepare error event data
+        error_event_data = {
+            "description": f"Grouping maintenance optimization failed: {str(e)}",
+            "module": production_module,
+            "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+            "priority": "HIGH",
+            "eventType": "Grouping Maintenance Process Error",
+            "sourceComponent": "Predictive Maintenanc",
+            "smartService": smart_service,
+            "topic": "smart-service-event",
+            "results": None
+        }
+        
+        return error_event_data
+
 ####### Execution ########
 
 best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
