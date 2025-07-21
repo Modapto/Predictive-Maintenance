@@ -367,7 +367,7 @@ docker run -p 8000:8000 predictive-maintenance-api
 
 - `CORS_DOMAINS`: Comma-separated list of allowed CORS domains (default: "<http://localhost:8094>")
 - `SWAGGER_SERVER_URL`: Server URL for OpenAPI documentation (default: "<http://localhost:8000>")
-- `KAFKA_BROKER`: Kafka broker address for event publishing (default: "<kafka.modapto.atc.gr:9092>")
+- `KAFKA_BROKER`: Kafka broker address for event publishing (default: "<kafka:9092>")
 
 ## API Documentation
 
