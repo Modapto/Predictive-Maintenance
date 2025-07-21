@@ -398,3 +398,7 @@ Both maintenance algorithms use ThreadPoolExecutor for CPU-bound processing to p
 - Configurable via environment variables
 - Supports multiple domain origins
 - Enables credentials and all HTTP methods for development flexibility
+
+## Contributors
+
+- Alkis Aznavouridis (ATC) (<a.aznavouridis@atc.gr>)
