@@ -2,3 +2,11 @@
 OpenAPI/
 .gitignore
 __pycache__/
+dataset
+output
+threshold-based_maintenance/CORIM_test_data.csv
+threshold-based_maintenance/CORIM_tool_test.json
+threshold-based_maintenance/maintenance_recommendations.json
+threshold-based_maintenance/Technical details_Threshold-based maintenance triggering.docx
+threshold-based_maintenance/README.md
+README.md
