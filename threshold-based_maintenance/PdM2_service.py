@@ -28,17 +28,18 @@ class PdM2Service:
 
     def _filter_failures(self):
         today = pd.Timestamp.today().normalize()
+        #today = pd.to_datetime("21/06/2023", dayfirst=True)
         ws_days_ago = today - pd.Timedelta(days=self.window_size)
         ext_days_ago = today - pd.Timedelta(days=self.winds_count_component_replac * self.window_size)
 
         failures_window_size = self.df[
-            (self.df['Module'] == self.module_ID) &
+            (self.df['Module ID'] == self.module_ID) &
             (self.df['TS Intervention started'] >= ws_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
 
         failures_extraction = self.df[
-            (self.df['Module'] == self.module_ID) &
+            (self.df['Module ID'] == self.module_ID) &
             (self.df['TS Intervention started'] >= ext_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
@@ -63,12 +64,18 @@ class PdM2Service:
             }
 
     def _create_result(self, failure_data, action, period):
-        components_count = failure_data['Component'].value_counts()
-        most_failed = components_count.idxmax()
-        max_count = components_count.max()
+        filtered_data = failure_data[failure_data['Component ID'].isin(self.components_ID)]
+        components_count = filtered_data['Component ID'].value_counts()
+        
+        if not components_count.empty:
+            most_failed = components_count.idxmax()
+            max_count = components_count.max()
+        else:
+            most_failed = None
+            max_count = 0
 
         recommendation = f"schedule an {action} of sub element {most_failed}"
-        details = f"it failed {max_count} times in the last {period} days."
+        details = f"it failed {max_count} time(s) in the last {period} days."
 
         return {
             "recommendation": recommendation,
