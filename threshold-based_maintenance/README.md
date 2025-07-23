@@ -7,7 +7,7 @@ PdM2 service is designed to monitor the health status of different SEW productio
 The service is structured as a python class called PdM2, which can be invoked. See below:
 
 ```sh
-PdM2Service( input_data, winds_count_component_replac=3, output_path="maintenance_recommendations.json")
+PdM2Service( input_data, output_path="maintenance_recommendations.json")
 ```
 
 The PdM2Service arguments necessary to instantiate the class are detailed below.
@@ -62,19 +62,18 @@ Description of the content of the JSON object
 
 While the JSON input was provided beforehand,  an input sample is also provided as .json file in the sharepoint repository under the name “CORIM_tool_test.json”. 
 
-The second PdM2Service argument called “winds_count_component_replac” is the number of time windows to measure the health state of the sub elements and used to define the most critical sub element to be replaced. It has a fixed value and is independent of the module or component. Consequently, it does not need to be provided when invoking the class, i.e., the default value is enough. 
-
-The third PdM2Service argument “output_path="maintenance_recommendations.json" corresponds to the path where the maintenance suggestions will be stored, with “maintenance_recommendations.json” as the default path/file name. 
+The second PdM2Service argument “output_path="maintenance_recommendations.json" corresponds to the path where the maintenance suggestions will be stored, with “maintenance_recommendations.json” as the default path/file name. 
 
 ## Output
 
-The output of the algorithm is a .json file with default name “maintenance_recommendations.json”. The file follows the following format when no recommendation is given. 
+The output of the algorithm is a .json file with default name “maintenance_recommendations.json”. The file follows the following format when no recommendation is given.  
 
 ```sh
 {
   "recommendation": "non",
   "details": "The system is under control"
 }
+
 ```
 The file follows the following format when a recommendation is given. 
 ```sh
@@ -95,6 +94,7 @@ An external scheduler triggers the service automatically given the configuration
 
 Given that the logic for generalization (different production modules) was already stablished, the initial set of modules to be monitored for this version could contain just the module press (100019) with the following parameter values:
 
+
 ```sh
 {
   "100019": {
@@ -106,14 +106,14 @@ Given that the logic for generalization (different production modules) was alrea
   }
 }
 ```
-This set can be extended by the user if a new module is added to SEW production or if other modules are considered for monitoring. For the moment more modules are not added since the monitoring parameters have been only  validated for the press. 
+This set can be extended by the user if a new module is added to SEW production or if other modules are considered for monitoring. For the moment more modules are not added since the monitoring parameters have been only validated for the press.  
 
 **Invoking PdM2**
 
 An example for invoking PdM2 is provided below using the JSON example provided in section 2.
 ```sh
 # Example of usage:
-from pdm2_service import PdM2Service
+from PdM2_service import PdM2Service
 # This is where your API receives input_data (e.g., via POST request)
 input_data = {
     "events": [...],
