@@ -4,7 +4,7 @@
     "no_repairmen": 1,
     "component_list": [
         {
-            "Component": 0,
+            "Component": "0",
             "Module": "POSTE DE CONTRÔLE",
             "Alpha": 5,
             "Beta": 16.0,
@@ -13,7 +13,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 1,
+            "Component": "1",
             "Module": "CONNECTEURS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -22,7 +22,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 2,
+            "Component": "2",
             "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
             "Alpha": 5,
             "Beta": 20.0,
@@ -31,7 +31,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 3,
+            "Component": "3",
             "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
             "Alpha": 5,
             "Beta": 20.0,
@@ -40,7 +40,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 4,
+            "Component": "4",
             "Module": "CONVOYEURS",
             "Alpha": 5,
             "Beta": 10.0,
@@ -49,7 +49,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 5,
+            "Component": "5",
             "Module": "LIGNE DE MONTAGE MOTG02",
             "Alpha": 5,
             "Beta": 7.2,
@@ -58,7 +58,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 6,
+            "Component": "6",
             "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
             "Alpha": 5,
             "Beta": 12.0,
@@ -67,7 +67,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 7,
+            "Component": "7",
             "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
             "Alpha": 5,
             "Beta": 12.0,
@@ -76,7 +76,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 8,
+            "Component": "8",
             "Module": "MAGASIN PLATEAUX VIDES",
             "Alpha": 5,
             "Beta": 8.0,
@@ -85,7 +85,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 9,
+            "Component": "9",
             "Module": "ASCENSEUR DE SORTIE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -94,7 +94,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 10,
+            "Component": "10",
             "Module": "MM-TAILLE1",
             "Alpha": 5,
             "Beta": 6.0,
@@ -103,7 +103,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 11,
+            "Component": "11",
             "Module": "ASCENSEUR",
             "Alpha": 5,
             "Beta": 6.0,
@@ -112,7 +112,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 12,
+            "Component": "12",
             "Module": "KTM6",
             "Alpha": 5,
             "Beta": 6.0,
@@ -121,7 +121,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 13,
+            "Component": "13",
             "Module": "PINCE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -130,7 +130,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 14,
+            "Component": "14",
             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
             "Alpha": 5,
             "Beta": 8.0,
@@ -139,7 +139,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 15,
+            "Component": "15",
             "Module": "KTM5",
             "Alpha": 5,
             "Beta": 6.0,
@@ -148,7 +148,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 16,
+            "Component": "16",
             "Module": "EMMANCHEMENT",
             "Alpha": 5,
             "Beta": 6.0,
@@ -157,7 +157,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 17,
+            "Component": "17",
             "Module": "CHAUFFE VENTILATEURS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -166,7 +166,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 18,
+            "Component": "18",
             "Module": "ECRANS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -175,7 +175,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 19,
+            "Component": "19",
             "Module": "DIVERS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -184,7 +184,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 20,
+            "Component": "20",
             "Module": "EI7-BARRETTE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -193,7 +193,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 21,
+            "Component": "21",
             "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
             "Alpha": 5,
             "Beta": 7.0,
@@ -202,7 +202,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 22,
+            "Component": "22",
             "Module": "TRANSLATION",
             "Alpha": 5,
             "Beta": 6.0,
@@ -211,7 +211,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 23,
+            "Component": "23",
             "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -220,7 +220,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 24,
+            "Component": "24",
             "Module": "ASCENSEUR SORTIE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -229,7 +229,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 25,
+            "Component": "25",
             "Module": "VISSEUSES ÉLECTRIQUE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -238,7 +238,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 26,
+            "Component": "26",
             "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
             "Alpha": 5,
             "Beta": 10.0,
@@ -247,7 +247,7 @@
             "Last Maintenance Action Time": "..."
         },
         {
-            "Component": 27,
+            "Component": "27",
             "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
             "Alpha": 5,
             "Beta": 10.0,

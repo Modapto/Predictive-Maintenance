@@ -11,7 +11,6 @@ from datetime import datetime
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 sys.path.append(shared_path)
-import input
 
 
 # Path to the JSON files
@@ -32,88 +31,88 @@ data2 = {
                     {
                         "ID activity": 1,
                         "Replacement time": 173.298,
-                        "ID component": 0
+                        "ID component": "0"
                     },
                     {
                         "ID activity": 2,
                         "Replacement time": 346.596,
-                        "ID component": 0
+                        "ID component": "0"
                     },
                     {
                         "ID activity": 3,
                         "Replacement time": 519.895,
-                        "ID component": 0
+                        "ID component": "0"
                     },
                     {
                         "ID activity": 4,
                         "Replacement time": 693.193,
-                        "ID component": 0
+                        "ID component": "0"
                     },
                     {
                         "ID activity": 5,
                         "Replacement time": 866.491,
-                        "ID component": 0
+                        "ID component": "0"
                     },
                     {
                         "ID activity": 6,
                         "Replacement time": 179.545,
-                        "ID component": 1
+                        "ID component": "1"
                     },
                     {
                         "ID activity": 7,
                         "Replacement time": 359.09,
-                        "ID component": 1
+                        "ID component": "1"
                     },
                     {
                         "ID activity": 8,
                         "Replacement time": 538.635,
-                        "ID component": 1
+                        "ID component": "1"
 
                     },
                     {
                         "ID activity": 9,
                         "Replacement time": 718.179,
-                        "ID component": 1
+                        "ID component": "1"
                     },
                     {
                         "ID activity": 10,
                         "Replacement time": 897.724,
-                        "ID component": 1
+                        "ID component": "1"
                     },
                     {
                         "ID activity": 11,
                         "Replacement time": 208.829,
-                        "ID component": 2
+                        "ID component": "2"
                     },
                     {
                         "ID activity": 12,
                         "Replacement time": 417.658,
-                        "ID component": 2
+                        "ID component": "2"
                     },
                     {
                         "ID activity": 13,
                         "Replacement time": 626.487,
-                        "ID component": 2
+                        "ID component": "2"
                     },
                     {
                         "ID activity": 14,
                         "Replacement time": 835.316,
-                        "ID component": 2
+                        "ID component": "2"
                     },
                     {
                         "ID activity": 15,
                         "Replacement time": 548.357,
-                        "ID component": 3
+                        "ID component": "3"
                     },
                     {
                         "ID activity": 16,
                         "Replacement time": 627.938,
-                        "ID component": 4
+                        "ID component": "4"
                     },
                     {
                         "ID activity": 17,
                         "Replacement time": 732.33,
-                        "ID component": 5
+                        "ID component": "5"
                     }
                 ]
 }
