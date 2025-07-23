@@ -1,27 +1,27 @@
 {
     "events": [
         {
-            "Stage": "LIGNE DE MONTAGE MOTG04",
-            "Cell": 100000,
-            "Module": 100019,
-            "Component": 100020,
-            "Failure type (electrical/mechanical)": "Mechanic",
+            "Stage": "MU MOTG",
+            "Cell": "LIGNE DE MONTAGE MOTG04",
+            "Module ID": 100019,
+            "Component ID": 100020,
+            "Failure Type (electrical/mechanical)": "Mechanic",
             "Failure description": "ascenseur ne monte pas retournement",
-            "Maintenance action performed": "Réglage capteur sorti indexeur\n----- Mickael KLEIN 16/06/2023 08:01 -----",
+            "Maintenance Action performed": "Réglage capteur sorti indexeur\n----- Mickael KLEIN 16/06/2023 08:01 -----",
             "Component replacement (yes/no)": "no",
-            "Name of worker": "Carlos M",
+            "Name": "Carlos M",
             "TS Intervention started": "16/06/2023 06:38:18"
         },
         {
-            "Stage": "LIGNE DE MONTAGE IMS MOTG",
-            "Cell": 100000,
-            "Module": 100019,
-            "Component": 100312,
-            "Failure type (electrical/mechanical)": "Mechanic",
+            "Stage": " MU MOTG ",
+            "Cell": "LIGNE DE MONTAGE MOTG04",
+            "Module ID": 100019,
+            "Component ID": 100025,
+            "Failure Type (electrical/mechanical)": "Mechanic",
             "Failure description": "Donner suite à la panne sur les rippeurs. Remise en état !",
-            "Maintenance action performed": "Intervention réalisée le 22 novembre 2023\r\n----- Damien Kuhn 23/11/2023 08:34 -----",
+            "Maintenance Action performed": "Intervention réalisée le 22 novembre 2023\r\n----- Damien Kuhn 23/11/2023 08:34 -----",
             "Component replacement (yes/no)": "no",
-            "Name of worker": "Carlos M",
+            "Name": "Carlos M",
             "TS Intervention started": "08/11/2023 10:13:56"
         }
     ],
