@@ -9,8 +9,8 @@ This service provides predictive maintenance scheduling capabilities within the 
 The "component.json" file: Contains the parameters of the components within the production line (Equipment ID, Component name, Alpha, Beta, Average maintenance duration, Mean time between failure, Last Maintenance Action Time). 
 
 **Description:**
-- "Equipment ID": denotes the unique ID number for an equipment in the production line, as defined in CORIM.
-- "Equipment": denotes the name of the equipment.
+- "Component": denotes the unique ID number for an equipment in the production line, as defined in CORIM.
+- "Module": denotes the name of the equipment.
 - "Alpha" and "Beta": Penalty cost function parameters used in the genetic algorithm; defined by maintenance engineering.
 - "Average maintenance duration": The average time (in hours) to fix the equipment if it fails.
 - "MTBF":Mean time between failure of the component.
@@ -22,8 +22,8 @@ The "component.json" file: Contains the parameters of the components within the 
 ```sh
 [
     {
-        "Equipment ID": 100054,
-        "Equipment": "POSTE DE CONTRÔLE",
+        "Component": 100054,
+        "Module": "POSTE DE CONTRÔLE",
         "Alpha": 5,
         "Beta": 16.0,
         "Average maintenance duration": 1.108,
@@ -31,8 +31,8 @@ The "component.json" file: Contains the parameters of the components within the 
         "Last Maintenance Action Time": ...
     },
     {
-        "Equipment ID": 105678,
-        "Equipment": "CONNECTEURS",
+        "Component": 105678,
+        "Module": "CONNECTEURS",
         "Alpha": 5,
         "Beta": 6.0,
         "Average maintenance duration": 3.849,
@@ -40,8 +40,8 @@ The "component.json" file: Contains the parameters of the components within the 
         "Last Maintenance Action Time": ...
     },
     {
-        "Equipment ID": 100045,
-        "Equipment": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+        "Component": 100045,
+        "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
         "Alpha": 5,
         "Beta": 20.0,
         "Average maintenance duration": 0.726,
@@ -49,8 +49,8 @@ The "component.json" file: Contains the parameters of the components within the 
         "Last Maintenance Action Time": ...
     },
     {
-        "Equipment ID": 100019,
-        "Equipment": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+        "Component": 100019,
+        "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
         "Alpha": 5,
         "Beta": 20.0,
         "Average maintenance duration": 1.925,
@@ -58,8 +58,8 @@ The "component.json" file: Contains the parameters of the components within the 
         "Last Maintenance Action Time": ...
     },
     {
-        "Equipment ID": 100006,
-        "Equipment": "CONVOYEURS",
+        "Component": 100006,
+        "Module": "CONVOYEURS",
         "Alpha": 5,
         "Beta": 10.0,
         "Average maintenance duration": 0.492,
@@ -96,13 +96,13 @@ The output.json is a json file containing:
     "Grouping maintenance": {
         "Group 1": [
             {
-                "Equipment ID": 100054,                                      // integer
+                "Component": 100054,                                      // integer
                 "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 349.571,                           // float
                 "Duration": 4.957                                       // float
             },
             {
-                "Equipment ID": 1,                                      // integer
+                "Component": 1,                                      // integer
                 "Equipment name": "CONNECTEURS",                        // string
                 "Replacement time": 349.571,                            // float
                 "Duration": 4.957                                       // float
@@ -113,7 +113,7 @@ The output.json is a json file containing:
     "Individual maintenance": {
         "Group 1": [
             {  
-                "Equipment ID": 100054,                                      // integer
+                "Component": 100054,                                      // integer
                 "Equipment name": "POSTE DE CONTRÔLE",                  // string
                 "Replacement time": 173.298,                            // float
                 "Duration": 1.108                                       // float
