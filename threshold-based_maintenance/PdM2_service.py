@@ -5,7 +5,7 @@ import ast
 
 
 class PdM2Service:
-    def __init__(self, input_data, winds_count_component_replac=3,
+    def __init__(self, input_data,
                  output_path="maintenance_recommendations.json"):
 
         self.failure_data = pd.DataFrame(input_data['events'])
@@ -13,7 +13,7 @@ class PdM2Service:
         self.window_size = int(input_data['parameters']['window_size'])
         self.inspection_threshold = int(input_data['parameters']['inspection_threshold'])
         self.replacement_threshold = int(input_data['parameters']['replacement_threshold'])
-        self.winds_count_component_replac = winds_count_component_replac
+        self.winds_count_component_replac = 3
         #self.components_ID = ast.literal_eval(input_data['parameters']['components_ID'])
         self.components_ID = input_data['parameters']['components_ID']
         self.output_path = output_path
