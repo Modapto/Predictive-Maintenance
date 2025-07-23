@@ -22,13 +22,106 @@ file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
 # Open and load the files
 with open(file_path_json_1, 'r', encoding='utf-8') as file:
     data1 = json.load(file)
-with open(file_path_json_2, 'r', encoding='utf-8') as file:
-    data2 = json.load(file)
+
+data2 = {   
+    "window":   {
+                    "Begin": 0.0,
+                    "End": 1000.0
+                },
+    "failure":  [
+                    {
+                        "ID activity": 1,
+                        "Replacement time": 173.298,
+                        "ID component": 0
+                    },
+                    {
+                        "ID activity": 2,
+                        "Replacement time": 346.596,
+                        "ID component": 0
+                    },
+                    {
+                        "ID activity": 3,
+                        "Replacement time": 519.895,
+                        "ID component": 0
+                    },
+                    {
+                        "ID activity": 4,
+                        "Replacement time": 693.193,
+                        "ID component": 0
+                    },
+                    {
+                        "ID activity": 5,
+                        "Replacement time": 866.491,
+                        "ID component": 0
+                    },
+                    {
+                        "ID activity": 6,
+                        "Replacement time": 179.545,
+                        "ID component": 1
+                    },
+                    {
+                        "ID activity": 7,
+                        "Replacement time": 359.09,
+                        "ID component": 1
+                    },
+                    {
+                        "ID activity": 8,
+                        "Replacement time": 538.635,
+                        "ID component": 1
+
+                    },
+                    {
+                        "ID activity": 9,
+                        "Replacement time": 718.179,
+                        "ID component": 1
+                    },
+                    {
+                        "ID activity": 10,
+                        "Replacement time": 897.724,
+                        "ID component": 1
+                    },
+                    {
+                        "ID activity": 11,
+                        "Replacement time": 208.829,
+                        "ID component": 2
+                    },
+                    {
+                        "ID activity": 12,
+                        "Replacement time": 417.658,
+                        "ID component": 2
+                    },
+                    {
+                        "ID activity": 13,
+                        "Replacement time": 626.487,
+                        "ID component": 2
+                    },
+                    {
+                        "ID activity": 14,
+                        "Replacement time": 835.316,
+                        "ID component": 2
+                    },
+                    {
+                        "ID activity": 15,
+                        "Replacement time": 548.357,
+                        "ID component": 3
+                    },
+                    {
+                        "ID activity": 16,
+                        "Replacement time": 627.938,
+                        "ID component": 4
+                    },
+                    {
+                        "ID activity": 17,
+                        "Replacement time": 732.33,
+                        "ID component": 5
+                    }
+                ]
+}
 
 # Load input
-component = [entry["Component"] for entry in data1]
-alpha = [entry["Alpha"] for entry in data1]
-beta = [entry["Beta"] for entry in data1]
+component = [entry["Module"] for entry in data1["component_list"]]
+alpha = [entry["Alpha"] for entry in data1["component_list"]]
+beta = [entry["Beta"] for entry in data1["component_list"]]
 
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
@@ -41,9 +134,9 @@ t_end = data2['window']['End']
 
 
 # User input
-C_s = input.setup_cost                          # Setup cost
-C_d = input.downtime_cost_rate                  # Downtime cost rate
-m = input.no_repairmen                          # Number of repairmen
+C_s = data1['setup_cost']                          # Setup cost
+C_d = data1['downtime_cost_rate']                  # Downtime cost rate
+m = data1['no_repairmen']                          # Number of repairmen
 
 # Algorithm parameter
 GENOME_LENGTH = len(ID_activity)                                                    
@@ -140,7 +233,7 @@ def mapping_IDcomponent_to_duration(G_component):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = next(item["Average maintenance duration"] for item in data1 if item["ID"] == d)
+            value = next(item["Average maintenance duration"] for item in data1["component_list"] if item["Component"] == d)
             duration.append(value)
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
@@ -153,7 +246,7 @@ def mapping_IDcomponent_to_alpha(G_component):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = next(item["Alpha"] for item in data1 if item["ID"] == d)
+            value = next(item["Alpha"] for item in data1["component_list"] if item["Component"] == d)
             alpha.append(value)
         group_to_alpha.append((group, alpha))
     return group_to_alpha
@@ -165,7 +258,7 @@ def mapping_IDcomponent_to_beta(G_component):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = next(item["Beta"] for item in data1 if item["ID"] == d)
+            value = next(item["Beta"] for item in data1["component_list"] if item["Component"] == d)
             beta.append(value)
         group_to_beta.append((group, beta))
     return group_to_beta
@@ -394,7 +487,7 @@ def convert_component_ids_to_names(G_component, json_path):
         component_data = json.load(f)
 
     # Create a mapping from ID to Component name
-    id_to_name = {entry["ID"]: entry["Component"] for entry in component_data}
+    id_to_name = {entry["Component"]: entry["Module"] for entry in component_data["component_list"]}
 
     # Replace component IDs with names
     G_component_named = []
@@ -413,8 +506,8 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
         for comp_id, rep_time, duration, comp_names in zip(components, replacements, durations, names):
             entry = {
-                "Component ID": comp_id,
-                "Component name": comp_names,
+                "Component": comp_id,
+                "Equipment name": comp_names,
                 "Replacement time": rep_time,
                 "Duration": duration
             }
