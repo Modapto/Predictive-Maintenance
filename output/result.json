@@ -1,0 +1,271 @@
+{
+    "Cost savings": -2271.861,
+    "Grouping maintenance": {
+        "Group 1": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 174.785,
+                "Duration": 4.957
+            },
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 174.785,
+                "Duration": 4.957
+            }
+        ],
+        "Group 2": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 394.634,
+                "Duration": 3.033
+            },
+            {
+                "Component": "3",
+                "Equipment name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+                "Replacement time": 394.634,
+                "Duration": 3.033
+            }
+        ],
+        "Group 3": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 519.895,
+                "Duration": 1.108
+            }
+        ],
+        "Group 4": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 693.193,
+                "Duration": 1.108
+            }
+        ],
+        "Group 5": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 873.927,
+                "Duration": 4.957
+            },
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 873.927,
+                "Duration": 4.957
+            }
+        ],
+        "Group 6": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 440.701,
+                "Duration": 7.698
+            },
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 440.701,
+                "Duration": 7.698
+            }
+        ],
+        "Group 7": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 724.611,
+                "Duration": 4.739
+            },
+            {
+                "Component": "5",
+                "Equipment name": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 724.611,
+                "Duration": 4.739
+            }
+        ],
+        "Group 8": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 208.829,
+                "Duration": 0.726
+            }
+        ],
+        "Group 9": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 417.658,
+                "Duration": 0.726
+            }
+        ],
+        "Group 10": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 626.777,
+                "Duration": 1.218
+            },
+            {
+                "Component": "4",
+                "Equipment name": "CONVOYEURS",
+                "Replacement time": 626.777,
+                "Duration": 1.218
+            }
+        ],
+        "Group 11": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 835.316,
+                "Duration": 0.726
+            }
+        ]
+    },
+    "Individual maintenance": {
+        "Group 1": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 173.298,
+                "Duration": 1.108
+            }
+        ],
+        "Group 2": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 346.596,
+                "Duration": 1.108
+            }
+        ],
+        "Group 3": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 519.895,
+                "Duration": 1.108
+            }
+        ],
+        "Group 4": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 693.193,
+                "Duration": 1.108
+            }
+        ],
+        "Group 5": [
+            {
+                "Component": "0",
+                "Equipment name": "POSTE DE CONTRÔLE",
+                "Replacement time": 866.491,
+                "Duration": 1.108
+            }
+        ],
+        "Group 6": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 179.545,
+                "Duration": 3.849
+            }
+        ],
+        "Group 7": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 359.09,
+                "Duration": 3.849
+            }
+        ],
+        "Group 8": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 538.635,
+                "Duration": 3.849
+            }
+        ],
+        "Group 9": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 718.179,
+                "Duration": 3.849
+            }
+        ],
+        "Group 10": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 897.724,
+                "Duration": 3.849
+            }
+        ],
+        "Group 11": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 208.829,
+                "Duration": 0.726
+            }
+        ],
+        "Group 12": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 417.658,
+                "Duration": 0.726
+            }
+        ],
+        "Group 13": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 626.487,
+                "Duration": 0.726
+            }
+        ],
+        "Group 14": [
+            {
+                "Component": "2",
+                "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 835.316,
+                "Duration": 0.726
+            }
+        ],
+        "Group 15": [
+            {
+                "Component": "3",
+                "Equipment name": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+                "Replacement time": 548.357,
+                "Duration": 1.925
+            }
+        ],
+        "Group 16": [
+            {
+                "Component": "4",
+                "Equipment name": "CONVOYEURS",
+                "Replacement time": 627.938,
+                "Duration": 0.492
+            }
+        ],
+        "Group 17": [
+            {
+                "Component": "5",
+                "Equipment name": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 732.33,
+                "Duration": 0.89
+            }
+        ]
+    },
+    "Time window": {
+        "Begin": 0.0,
+        "End": 1000.0
+    }
+}
