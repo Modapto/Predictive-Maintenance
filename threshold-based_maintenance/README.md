@@ -52,17 +52,17 @@ The PdM2Service arguments necessary to instantiate the class are detailed below.
         "replacement_threshold": 7
     }
 }
-
 ```
+
 Description of the content of the JSON object
 
 **Events:** up-to-date failure records (drift table). It contains details about failure and maintenance events such as: “Stage”, “Cell”, “Module ID”, “Component ID”; “Failure Type”, “Failure description”, “Maintenance Action performed”, “Component replacement (yes/no)”, “Name”, “TS Intervention started”.
 
-**Parameters:** parameters for monitoring a module. It contains: the “module ID”, which defines the module to be monitored; “components ID”, which defines an array of components that constitute the module and for which maintenance suggestions are desired; the “window_size”, which defines the amount of data (failure period in days) used to measure the health of the module; “inspection_threshold”, which is the number of failures that triggers an inspection; “replacement_threshold”, which is the number of failures that triggers a replacement. Note that all these parameters are fixed but they are module-specific, as so, the API should enable the user to configure these values for each production module within the MODAPTO environment and add new production modules to be monitored with the respective parameters if necessary. Such values are defined based on expert-knowledge or exploratory analysis of failure data and they do not change dynamically. 
+**Parameters:** parameters for monitoring a module. It contains: the “module ID”, which defines the module to be monitored; “components ID”, which defines an array of components that constitute the module and for which maintenance suggestions are desired; the “window_size”, which defines the amount of data (failure period in days) used to measure the health of the module; “inspection_threshold”, which is the number of failures that triggers an inspection; “replacement_threshold”, which is the number of failures that triggers a replacement. Note that all these parameters are fixed but they are module-specific, as so, the API should enable the user to configure these values for each production module within the MODAPTO environment and add new production modules to be monitored with the respective parameters if necessary. Such values are defined based on expert-knowledge or exploratory analysis of failure data and they do not change dynamically.
 
-While the JSON input was provided beforehand,  an input sample is also provided as .json file in the sharepoint repository under the name “CORIM_tool_test.json”. 
+While the JSON input was provided beforehand,  an input sample is also provided as .json file in the sharepoint repository under the name “CORIM_tool_test.json”.
 
-The second PdM2Service argument “output_path="maintenance_recommendations.json" corresponds to the path where the maintenance suggestions will be stored, with “maintenance_recommendations.json” as the default path/file name. 
+The second PdM2Service argument “output_path="maintenance_recommendations.json" corresponds to the path where the maintenance suggestions will be stored, with “maintenance_recommendations.json” as the default path/file name.
 
 ## Output
 
