@@ -165,25 +165,25 @@ Analyzes failure patterns to provide maintenance recommendations based on config
         {
             "Stage": "LIGNE DE MONTAGE MOTG04",
             "Cell": 100000,
-            "Module": 100019,
-            "Component": 100020,
-            "Failure type (electrical/mechanical)": "Mechanic",
+            "Module ID": 100019,
+            "Component ID": 100020,
+            "Failure Type (electrical/mechanical)": "Mechanic",
             "Failure description": "ascenseur ne monte pas retournement",
-            "Maintenance action performed": "Réglage capteur sorti indexeur",
+            "Maintenance Action performed": "Réglage capteur sorti indexeur",
             "Component replacement (yes/no)": "no",
-            "Name of worker": "Carlos M",
+            "Name": "Carlos M",
             "TS Intervention started": "16/06/2023 06:38:18"
         },
         {
             "Stage": "LIGNE DE MONTAGE IMS MOTG",
             "Cell": 100000,
-            "Module": 100019,
-            "Component": 100312,
-            "Failure type (electrical/mechanical)": "Mechanic",
+            "Module ID": 100019,
+            "Component ID": 100312,
+            "Failure Type (electrical/mechanical)": "Mechanic",
             "Failure description": "Donner suite à la panne sur les rippeurs",
-            "Maintenance action performed": "Intervention réalisée le 22 novembre 2023",
+            "Maintenance Action performed": "Intervention réalisée le 22 novembre 2023",
             "Component replacement (yes/no)": "no",
-            "Name of worker": "Carlos M",
+            "Name": "Carlos M",
             "TS Intervention started": "08/11/2023 10:13:56"
         }
     ],
@@ -202,13 +202,13 @@ Analyzes failure patterns to provide maintenance recommendations based on config
 - `events[]`: Array of historical failure events
   - `Stage`: Production stage where failure occurred
   - `Cell`: Cell identifier where failure occurred
-  - `Module`: Module identifier where failure occurred
-  - `Component`: Component identifier that failed
-  - `Failure type (electrical/mechanical)`: Classification of failure type
+  - `Module ID`: Module identifier where failure occurred
+  - `Component ID`: Component identifier that failed
+  - `Failure Type (electrical/mechanical)`: Classification of failure type
   - `Failure description`: Detailed description of the failure
-  - `Maintenance action performed`: Description of corrective action taken
+  - `Maintenance Action performed`: Description of corrective action taken
   - `Component replacement (yes/no)`: Whether component was replaced
-  - `Name of worker`: Maintenance worker who performed the action
+  - `Name`: Maintenance worker who performed the action
   - `TS Intervention started`: Timestamp when intervention began
 - `parameters`: Analysis configuration
   - `module_ID`: Target module for analysis
