@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
-from . import parameters
+import parameters
 from datetime import datetime
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
