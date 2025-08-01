@@ -659,7 +659,7 @@ def async_processing_grouping_maintenance_request(
             "description": "The grouping maintenance optimization has been successfully completed for the production module '{}'.".format(production_module),
             "module": production_module,
             "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-            "priority": "HIGH", # Should be handled appropriately from the algorithm
+            "priority": "MID", # Should be handled appropriately from the algorithm
             "eventType": "Grouping Maintenance Process Completion",
             "sourceComponent": "Predictive Maintenance",
             "smartService": smart_service,
@@ -675,7 +675,7 @@ def async_processing_grouping_maintenance_request(
             "description": f"Grouping maintenance optimization failed: {str(e)}",
             "module": production_module,
             "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-            "priority": "HIGH",
+            "priority": "MID",
             "eventType": "Grouping Maintenance Process Error",
             "sourceComponent": "Predictive Maintenanc",
             "smartService": smart_service,
