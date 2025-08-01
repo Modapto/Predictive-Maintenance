@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import sys
-from . import parameters
+import parameters
 from datetime import datetime
 
 shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
@@ -16,7 +16,7 @@ sys.path.append(shared_path)
 # Path to the JSON files
 base_dir = os.path.dirname(os.path.abspath(__file__))
 file_path_json_1 = os.path.join(base_dir, '..', 'dataset', 'component.json')
-file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
+# file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
 
 # Open and load the files
 with open(file_path_json_1, 'r', encoding='utf-8') as file:
