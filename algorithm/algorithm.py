@@ -131,6 +131,25 @@ map_activity_to_replacement_time = list(zip(ID_activity, t))            # list o
 t_begin = data2['window']['Begin']
 t_end = data2['window']['End']
 
+# Load input
+# component = [entry["Module"] for entry in components]
+# alpha = [entry["Alpha"] for entry in components]
+# beta = [entry["Beta"] for entry in components]
+
+# t = [entry["Replacement time"] for entry in data2["failure"]]
+# ID_activity = [entry["ID activity"] for entry in data2["failure"]]
+# ID_component = [entry["ID component"] for entry in data2["failure"]]
+# map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
+# map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
+
+# t_begin = data2['window']['Begin']
+# t_end = data2['window']['End']
+
+# genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate):
+#   component = [entry["Module"] for entry in components]
+#   alpha = [entry["Alpha"] for entry in components]
+#   beta = [entry["Beta"] for entry in components]
+
 
 # User input
 C_s = data1['setup_cost']                          # Setup cost
@@ -668,6 +687,10 @@ def async_processing_grouping_maintenance_request(
 
 ####### Execution ########
 
+# Create a List of Components - data1['component_list']
+# Defined setup_cost, no_repairement etc..
+# Create a duplicate genetic algorithm that will take these as input
+# .. = genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate)
 best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
 print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
