@@ -9,18 +9,18 @@ import sys
 import parameters
 from datetime import datetime
 
-shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
-sys.path.append(shared_path)
+# shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
+# sys.path.append(shared_path)
 
 
-# Path to the JSON files
-base_dir = os.path.dirname(os.path.abspath(__file__))
-file_path_json_1 = os.path.join(base_dir, '..', 'dataset', 'component.json')
-# file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
+# # Path to the JSON files
+# base_dir = os.path.dirname(os.path.abspath(__file__))
+# file_path_json_1 = os.path.join(base_dir, '..', 'dataset', 'component.json')
+# # file_path_json_2 = os.path.join(base_dir, '..', 'dataset', 'activity.json')
 
-# Open and load the files
-with open(file_path_json_1, 'r', encoding='utf-8') as file:
-    data1 = json.load(file)
+# # Open and load the files
+# with open(file_path_json_1, 'r', encoding='utf-8') as file:
+#     data1 = json.load(file)
 
 data2 = {   
     "window":   {
@@ -117,10 +117,10 @@ data2 = {
                 ]
 }
 
-# Load input
-component = [entry["Module"] for entry in data1["component_list"]]
-alpha = [entry["Alpha"] for entry in data1["component_list"]]
-beta = [entry["Beta"] for entry in data1["component_list"]]
+# # Load input
+# component = [entry["Module"] for entry in data1["component_list"]]
+# alpha = [entry["Alpha"] for entry in data1["component_list"]]
+# beta = [entry["Beta"] for entry in data1["component_list"]]
 
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
@@ -151,10 +151,14 @@ t_end = data2['window']['End']
 #   beta = [entry["Beta"] for entry in components]
 
 
-# User input
-C_s = data1['setup_cost']                          # Setup cost
-C_d = data1['downtime_cost_rate']                  # Downtime cost rate
-m = data1['no_repairmen']                          # Number of repairmen
+# # User input
+# C_s = data1['setup_cost']                          # Setup cost
+# C_d = data1['downtime_cost_rate']                  # Downtime cost rate
+# m = data1['no_repairmen']                          # Number of repairmen
+
+
+
+
 
 # Algorithm parameter
 GENOME_LENGTH = len(ID_activity)                                                    
@@ -251,7 +255,7 @@ def mapping_IDcomponent_to_duration(G_component):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = next(item["Average maintenance duration"] for item in data1["component_list"] if item["Component"] == d)
+            value = next(item["Average maintenance duration"] for item in component_list if item["Component"] == d)
             duration.append(value)
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
@@ -264,7 +268,7 @@ def mapping_IDcomponent_to_alpha(G_component):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = next(item["Alpha"] for item in data1["component_list"] if item["Component"] == d)
+            value = next(item["Alpha"] for item in component_list if item["Component"] == d)
             alpha.append(value)
         group_to_alpha.append((group, alpha))
     return group_to_alpha
@@ -276,7 +280,7 @@ def mapping_IDcomponent_to_beta(G_component):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = next(item["Beta"] for item in data1["component_list"] if item["Component"] == d)
+            value = next(item["Beta"] for item in component_list if item["Component"] == d)
             beta.append(value)
         group_to_beta.append((group, beta))
     return group_to_beta
@@ -382,7 +386,7 @@ def cost_benefit(B_S, B_U, P):
     return EB
 
 # fitness function
-def fitness_function(genome, C_s, C_d):
+def fitness_function(genome, C_s, C_d, m):
     N, G_activity = decode(genome)  
     B_S = saveup_cost_saving(G_activity, C_s)
     B_U = unavailability_cost_saving(G_activity, C_d, m, w_max)
@@ -435,12 +439,13 @@ def mutate(genome, p_m):
         genome[i], genome[j] = genome[j], genome[i]
     return genome
 
-def genetic_algorithm(genome_length, m, population_size, generations, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d):
+def genetic_algorithm(C_s, C_d, m, component_list, genome_length=GENOME_LENGTH, population_size=POPULATION_SIZE, generations=GENERATIONS, p_c_min=p_c_min, p_c_max=p_c_max, p_m_min=p_m_min, p_m_max=p_m_max):
+    component_load(component_list)
     population = init_population(population_size, genome_length)
     best_solution = None
     best_fitness_value = -float('inf')
     for generation in range(generations):
-        fitness_values = [fitness_function(genome, C_s, C_d) for genome in population]
+        fitness_values = [fitness_function(genome, C_s, C_d, m) for genome in population]
         map_fitness_to_population = sorted(zip(fitness_values, population), reverse=True)
         # print("map value: ", list(map_fitness_to_population))
         # Update best solution
@@ -466,13 +471,13 @@ def genetic_algorithm(genome_length, m, population_size, generations, p_c_min, p
         for i in range(2, len(selected), 2):
             parent1 = selected[i]
             parent2 = selected[i+1]
-            f_c = max(fitness_function(parent1, C_s, C_d), fitness_function(parent2, C_s, C_d))
+            f_c = max(fitness_function(parent1, C_s, C_d, m), fitness_function(parent2, C_s, C_d, m))
             p_c = p_c_max - ((p_c_max - p_c_min) * (f_c - f_avg) / (f_max - f_avg)) if f_c > f_avg else p_c_max
             child1, child2 = crossover(parent1, parent2, p_c)
             new_population.extend([child1, child2])
         # Mutation
         for i in range(2, len(new_population)):
-            f_m = fitness_function(new_population[i], C_s, C_d)
+            f_m = fitness_function(new_population[i], C_s, C_d, m)
             p_m = p_m_max - ((p_m_max - p_m_min) * (f_max - f_m) / (f_max - f_avg)) if f_m > f_avg else p_m_max
             new_population[i] = mutate(new_population[i], p_m)
         
@@ -487,7 +492,7 @@ def convert_right_form(components, durations):
     ]
 
 
-def mapping_to_UI(genome):
+def mapping_to_UI(genome, m):
     N, G_activity = decode(genome)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
     G_duration, _ = mapping_IDcomponent_to_duration(G_component)
@@ -499,13 +504,13 @@ def mapping_to_UI(genome):
     estimate_replacement_time = convert_right_form(G_component, t_group)
     return G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time
 
-def convert_component_ids_to_names(G_component, json_path):
+def convert_component_ids_to_names(G_component, component_list):
     # Load the JSON file with component info
-    with open(json_path, 'r', encoding='utf-8') as f:
-        component_data = json.load(f)
+    # with open(json_path, 'r', encoding='utf-8') as f:
+        # component_data = json.load(f)
 
     # Create a mapping from ID to Component name
-    id_to_name = {entry["Component"]: entry["Module"] for entry in component_data["component_list"]}
+    id_to_name = {entry["Component"]: entry["Module"] for entry in component_list}
 
     # Replace component IDs with names
     G_component_named = []
@@ -533,14 +538,14 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
     return combined_data
 
-def output_json_file(best_individual, best_fitness, t_begin, t_end):
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity) 
+def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component_list):
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m) 
 
-    G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
+    G_component_named = convert_component_ids_to_names(G_component, component_list)
     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
 
-    G_component_named_individual = convert_component_ids_to_names(G_component_individual, file_path_json_1)
+    G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
     individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     final_output = {
                         "Cost savings": best_fitness,
@@ -581,8 +586,8 @@ def format_output(best_individual, best_fitness, t_begin, t_end):
         dict: A dictionary containing the formatted output.
     """
     # Call your existing mapping functions
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity)
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m)
     
     # Convert component IDs to names
     G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
@@ -677,7 +682,7 @@ def async_processing_grouping_maintenance_request(
             "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
             "priority": "MID",
             "eventType": "Grouping Maintenance Process Error",
-            "sourceComponent": "Predictive Maintenanc",
+            "sourceComponent": "Predictive Maintenance",
             "smartService": smart_service,
             "topic": "smart-service-event",
             "results": None
@@ -685,14 +690,283 @@ def async_processing_grouping_maintenance_request(
         
         return error_event_data
 
+def component_load(component_list):
+    component = [entry["Module"] for entry in component_list]
+    alpha = [entry["Alpha"] for entry in component_list]
+    beta = [entry["Beta"] for entry in component_list]
+
+
 ####### Execution ########
 
 # Create a List of Components - data1['component_list']
 # Defined setup_cost, no_repairement etc..
 # Create a duplicate genetic algorithm that will take these as input
 # .. = genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate)
-best_individual, best_fitness = genetic_algorithm(GENOME_LENGTH, m, POPULATION_SIZE, GENERATIONS, p_c_min, p_c_max, p_m_min, p_m_max, C_s, C_d)
+
+
+component_list = [
+        {
+            "Component": "0",
+            "Module": "POSTE DE CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 16.0,
+            "Average maintenance duration": 1.108,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "1",
+            "Module": "CONNECTEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 3.849,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "2",
+            "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 0.726,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "3",
+            "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 1.925,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "4",
+            "Module": "CONVOYEURS",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.492,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "5",
+            "Module": "LIGNE DE MONTAGE MOTG02",
+            "Alpha": 5,
+            "Beta": 7.2,
+            "Average maintenance duration": 0.89,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "6",
+            "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.73,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "7",
+            "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.082,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "8",
+            "Module": "MAGASIN PLATEAUX VIDES",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 0.815,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "9",
+            "Module": "ASCENSEUR DE SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.709,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "10",
+            "Module": "MM-TAILLE1",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 13.964,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "11",
+            "Module": "ASCENSEUR",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.477,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "12",
+            "Module": "KTM6",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 21.963,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "13",
+            "Module": "PINCE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 4.499,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "14",
+            "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 3.307,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "15",
+            "Module": "KTM5",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.632,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "16",
+            "Module": "EMMANCHEMENT",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.263,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "17",
+            "Module": "CHAUFFE VENTILATEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.15,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "18",
+            "Module": "ECRANS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.024,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "19",
+            "Module": "DIVERS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.022,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "20",
+            "Module": "EI7-BARRETTE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.231,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "21",
+            "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
+            "Alpha": 5,
+            "Beta": 7.0,
+            "Average maintenance duration": 1.109,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "22",
+            "Module": "TRANSLATION",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.053,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "23",
+            "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.971,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "24",
+            "Module": "ASCENSEUR SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.775,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "25",
+            "Module": "VISSEUSES ÉLECTRIQUE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.639,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "26",
+            "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.572,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Component": "27",
+            "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.371,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        }
+    ]
+
+
+setup_cost = 500
+downtime_cost_rate = 100
+no_repairmen = 1
+
+
+best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
 print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-output_json_file(best_individual, best_fitness, t_begin, t_end)
+output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
 

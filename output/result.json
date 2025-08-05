@@ -1,18 +1,12 @@
 {
-    "Cost savings": -2668.772,
+    "Cost savings": 733.804,
     "Grouping maintenance": {
         "Group 1": [
             {
                 "Component": "0",
                 "Equipment name": "POSTE DE CONTRÔLE",
-                "Replacement time": 174.785,
-                "Duration": 4.957
-            },
-            {
-                "Component": "1",
-                "Equipment name": "CONNECTEURS",
-                "Replacement time": 174.785,
-                "Duration": 4.957
+                "Replacement time": 173.298,
+                "Duration": 1.108
             }
         ],
         "Group 2": [
@@ -43,17 +37,19 @@
             {
                 "Component": "0",
                 "Equipment name": "POSTE DE CONTRÔLE",
-                "Replacement time": 873.927,
-                "Duration": 4.957
-            },
-            {
-                "Component": "1",
-                "Equipment name": "CONNECTEURS",
-                "Replacement time": 873.927,
-                "Duration": 4.957
+                "Replacement time": 866.491,
+                "Duration": 1.108
             }
         ],
         "Group 6": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 179.545,
+                "Duration": 3.849
+            }
+        ],
+        "Group 7": [
             {
                 "Component": "1",
                 "Equipment name": "CONNECTEURS",
@@ -61,7 +57,7 @@
                 "Duration": 3.849
             }
         ],
-        "Group 7": [
+        "Group 8": [
             {
                 "Component": "1",
                 "Equipment name": "CONNECTEURS",
@@ -75,21 +71,23 @@
                 "Duration": 5.774
             }
         ],
-        "Group 8": [
+        "Group 9": [
             {
                 "Component": "1",
                 "Equipment name": "CONNECTEURS",
-                "Replacement time": 724.611,
-                "Duration": 4.739
-            },
-            {
-                "Component": "5",
-                "Equipment name": "LIGNE DE MONTAGE MOTG02",
-                "Replacement time": 724.611,
-                "Duration": 4.739
+                "Replacement time": 718.179,
+                "Duration": 3.849
             }
         ],
-        "Group 9": [
+        "Group 10": [
+            {
+                "Component": "1",
+                "Equipment name": "CONNECTEURS",
+                "Replacement time": 897.724,
+                "Duration": 3.849
+            }
+        ],
+        "Group 11": [
             {
                 "Component": "2",
                 "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -97,7 +95,7 @@
                 "Duration": 0.726
             }
         ],
-        "Group 10": [
+        "Group 12": [
             {
                 "Component": "2",
                 "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -105,15 +103,21 @@
                 "Duration": 0.726
             }
         ],
-        "Group 11": [
+        "Group 13": [
             {
                 "Component": "2",
                 "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 626.487,
-                "Duration": 0.726
+                "Replacement time": 626.777,
+                "Duration": 1.218
+            },
+            {
+                "Component": "4",
+                "Equipment name": "CONVOYEURS",
+                "Replacement time": 626.777,
+                "Duration": 1.218
             }
         ],
-        "Group 12": [
+        "Group 14": [
             {
                 "Component": "2",
                 "Equipment name": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
@@ -121,12 +125,12 @@
                 "Duration": 0.726
             }
         ],
-        "Group 13": [
+        "Group 15": [
             {
-                "Component": "4",
-                "Equipment name": "CONVOYEURS",
-                "Replacement time": 627.938,
-                "Duration": 0.492
+                "Component": "5",
+                "Equipment name": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 732.33,
+                "Duration": 0.89
             }
         ]
     },
