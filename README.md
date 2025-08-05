@@ -99,14 +99,14 @@ Uses genetic algorithms to optimize maintenance scheduling for component groups.
 
 ```json
 {
-    "setup_cost": 100.0,
-    "downtime_cost_rate": 50.0,
-    "no_repairmen": 3,
-    "smartService": "service_id",
-    "productionModule": "module_id",
+    "setupCost": 100.0,
+    "downtimeCostRate": 50.0,
+    "noRepairmen": 3,
+    "smartServiceId": "service_id",
+    "moduleId": "module_id",
     "components": [
         {
-            "Component": "100203",
+            "Module ID": "100203",
             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
             "Stage": "MU MOTG",
             "Cell": "LIGNE DE MONTAGE MOTG04",

@@ -1,0 +1,1 @@
+# Integration module for Kafka and external services
