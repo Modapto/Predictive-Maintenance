@@ -1,0 +1,1 @@
+# Algorithm module for grouping predictive maintenance (PdM1)

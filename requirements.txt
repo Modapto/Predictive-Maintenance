@@ -26,6 +26,17 @@ statsmodels==0.14.1
 sympy==1.13.3
 tenacity==8.2.3
 tzdata==2024.1
-fastapi
-uvicorn
-pydantic
+# FastAPI and web framework dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Kafka integration
+kafka-python==2.0.2
+
+# Additional web dependencies
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# Logging and monitoring
+structlog==23.2.0

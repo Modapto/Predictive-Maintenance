@@ -11,15 +11,51 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import base64
 import json
+import logging
+import sys
 
-# Import the genetic algorithm and output function from the algorithm module - PdM1
-from algorithm.algorithm import async_processing_grouping_maintenance_request
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler("app.log") if os.path.exists("/app") else logging.StreamHandler(sys.stdout)
+    ]
+)
 
-# Import EventsProducer for Kafka integration
-from integration.EventsProducer import EventsProducer
+logger = logging.getLogger(__name__)
 
-# Import the PdM2 service class for threshold-based maintenance
-from threshold_based_maintenance.PdM2_service import PdM2Service
+# Import modules with error handling
+try:
+    # Import the genetic algorithm and output function from the algorithm module - PdM1
+    from algorithm.algorithm import async_processing_grouping_maintenance_request
+    logger.info("Successfully imported algorithm module")
+except ImportError as e:
+    logger.error(f"Failed to import algorithm module: {e}")
+    async_processing_grouping_maintenance_request = None
+
+try:
+    # Import EventsProducer for Kafka integration
+    from integration.EventsProducer import EventsProducer
+    logger.info("Successfully imported EventsProducer")
+except ImportError as e:
+    logger.error(f"Failed to import EventsProducer: {e}")
+    EventsProducer = None
+
+try:
+     # Import the PdM2 service class for threshold-based maintenance
+    import sys
+    import os
+    # Add the threshold-based_maintenance directory to Python path
+    threshold_dir = os.path.join(os.path.dirname(__file__), 'threshold-based_maintenance')
+    if threshold_dir not in sys.path:
+        sys.path.append(threshold_dir)
+    from PdM2_service import PdM2Service
+    logger.info("Successfully imported PdM2Service")
+except ImportError as e:
+    logger.error(f"Failed to import PdM2Service: {e}")
+    PdM2Service = None
 
 # Create a thread pool executor for parallel processing
 executor = ThreadPoolExecutor()
@@ -27,10 +63,14 @@ executor = ThreadPoolExecutor()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    logger.info("Starting up FastAPI application...")
     app.state.executor = ThreadPoolExecutor(max_workers=5)
+    logger.info("Application startup complete")
     yield
     # Shutdown
+    logger.info("Shutting down FastAPI application...")
     app.state.executor.shutdown()
+    logger.info("Application shutdown complete")
 
 app = FastAPI(
     title="Predictive Maintenance API",
@@ -78,10 +118,21 @@ def encode_output_to_base64(output: Dict[str, Any]) -> str:
     json_bytes = json.dumps(output, default=str).encode("utf-8")
     return base64.b64encode(json_bytes).decode("utf-8")
 
+def decode_base64_to_dict(base64_string: str) -> Dict[str, Any]:
+    """
+    Decode a Base64 string to a dictionary.
+    """
+    try:
+        json_bytes = base64.b64decode(base64_string.encode("utf-8"))
+        return json.loads(json_bytes.decode("utf-8"))
+    except Exception as e:
+        logger.error(f"Error decoding Base64 string: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Invalid Base64 encoded request: {str(e)}")
+
 # ---- Input Models ----
 class ComponentData(BaseModel):
-    Component: str = Field(..., description="Component identifier")
-    Module: str = Field(..., description="Module name")
+    Module: str = Field(..., alias="Module", description="Module name")
+    Module_ID: str = Field(...,  alias="Module ID", description="Module identifier")
     Stage: str = Field(..., description="Stage name")
     Cell: str = Field(..., description="Cell name")
     Alpha: int = Field(..., description="Alpha parameter")
@@ -90,16 +141,14 @@ class ComponentData(BaseModel):
     MTBF: float = Field(..., description="Mean Time Between Failures")
     Last_Maintenance_Action_Time: str = Field(..., alias="Last Maintenance Action Time", description="Last maintenance timestamp in ISO format")
     
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
+    model_config = {"populate_by_name": True}
 
 class GroupingMaintenanceInput(BaseModel):
-    setup_cost: float = Field(..., gt=0, description="Setup cost for maintenance operations")
-    downtime_cost_rate: float = Field(..., gt=0, description="Cost rate of downtime during maintenance")
-    no_repairmen: int = Field(..., gt=0, description="Number of available repairmen")
-    smartService: str = Field(..., description="Smart service identifier")
-    productionModule: str = Field(..., description="Production module identifier")
+    setupCost: float = Field(..., gt=0, description="Setup cost for maintenance operations")
+    downtimeCostRate: float = Field(..., gt=0, description="Cost rate of downtime during maintenance")
+    noRepairmen: int = Field(..., gt=0, description="Number of available repairmen")
+    smartServiceId: str = Field(..., description="Smart service identifier")
+    moduleId: str = Field(..., description="MODAPTO module identifier")
     components: List[ComponentData] = Field(..., description="List of components with their maintenance data")
 
 class FailureEvent(BaseModel):
@@ -114,9 +163,7 @@ class FailureEvent(BaseModel):
     Name_of_worker: str = Field(..., alias="Name", description="Worker name")
     TS_Intervention_started: str = Field(..., alias="TS Intervention started", description="Intervention start timestamp")
     
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
+    model_config = {"populate_by_name": True}
 
 class ThresholdParameters(BaseModel):
     module_ID: int = Field(..., description="Module identifier")
@@ -126,6 +173,8 @@ class ThresholdParameters(BaseModel):
     replacement_threshold: int = Field(..., description="Threshold for replacement recommendation")
 
 class ThresholdMaintenanceInput(BaseModel):
+    smartServiceId: str = Field(..., description="Smart service identifier")
+    moduleId: str = Field(..., description="Production module identifier")
     events: List[FailureEvent] = Field(..., description="List of failure events")
     parameters: ThresholdParameters = Field(..., description="Analysis parameters")
 
@@ -137,8 +186,7 @@ class Component(BaseModel):
     Replacement_time: float = Field(..., alias="Replacement time", description="Time at which the component is replaced")
     Duration: float = Field(..., description="Duration of the maintenance operation")
     
-    class Config:
-        validate_by_name = True
+    model_config = {"populate_by_name": True}
 
 class TimeWindow(BaseModel):
     """Time window for the maintenance schedule"""
@@ -154,16 +202,18 @@ class GroupingMaintenanceOutput(BaseModel):
                                                           description="Individual maintenance activities")
     Time_window: TimeWindow = Field(..., alias="Time window", description="Time window for the maintenance schedule")
     
-    class Config:
-        validate_by_name = True
+    model_config = {"populate_by_name": True}
 
 class ThresholdBasedMaintenanceOutput(BaseModel):
     """Full threshold-based maintenance schedule output"""
     recommendation: str = Field(..., description="Maintenance recommendation based on failure analysis")
     details: str = Field(..., description="Details of the recommendation, including failure counts and periods")
 
-    class Config:
-        validate_by_name = True
+    model_config = {"populate_by_name": True}
+
+class Base64Request(BaseModel):
+    """Unified input model for Base64 encoded requests"""
+    request: str = Field(..., description="Base64 encoded JSON request data")
 
 class Base64Response(BaseModel):
     """Unified response model for Base64 encoded results"""
@@ -270,13 +320,32 @@ def _process_threshold_maintenance_core(input_data):
     return pdm2_service.run()
 
 # ---- Main Endpoints ----
-@app.post("/predict/threshold-based-maintenance", response_model=Base64Response, tags=["Threshold Based Maintenance", "PdM2"])
-async def predict_threshold_based_maintenance(data: ThresholdMaintenanceInput):
+@app.post("/predict/threshold-based-maintenance", response_model=Base64Response, tags=["Threshold Based Maintenance (PdM2)"])
+async def predict_threshold_based_maintenance(base64_data: Base64Request):
     """
     Predictive maintenance algorithm endpoint for Threshold-Based maintenance.
-    This endpoint uses the PdM2 service for threshold-based analysis.
+    This endpoint accepts a Base64 encoded JSON request and uses the PdM2 service for threshold-based analysis.
+    
+    Request format: {"request": "base64_encoded_json_data"}
     """
+    if PdM2Service is None:
+        logger.warning("PdM2Service not available - module import failed")
+        raise HTTPException(status_code=503, detail="PdM2 service is not available due to import errors")
+    
     try:
+        logger.info("Processing threshold-based maintenance request")
+        
+        # Decode Base64 request
+        decoded_data = decode_base64_to_dict(base64_data.request)
+        logger.info("Successfully decoded Base64 request")
+        
+        # Parse decoded data into ThresholdMaintenanceInput model
+        try:
+            data = ThresholdMaintenanceInput(**decoded_data)
+        except Exception as e:
+            logger.error(f"Error parsing decoded data: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Invalid request format: {str(e)}")
+        
         # Use ThreadPoolExecutor for CPU-bound tasks
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
@@ -289,35 +358,76 @@ async def predict_threshold_based_maintenance(data: ThresholdMaintenanceInput):
         
         # Encode response to Base64
         encoded_result = encode_output_to_base64(result)
+        logger.info("Successfully processed threshold-based maintenance request")
         
         return Base64Response(result=encoded_result)
+    except HTTPException:
+        # Re-raise HTTP exceptions (400, 503)
+        raise
     except Exception as e:
+        logger.error(f"Error in threshold-based maintenance: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error while executing the threshold-based maintenance algorithm: {str(e)}")
     
-@app.post("/predict/grouping-maintenance", tags=["Grouping Maintenance", "PdM1"])
-async def predict_grouping_maintenance(data: GroupingMaintenanceInput):
+@app.post("/predict/grouping-maintenance", tags=["Grouping Predictive Maintenance (PdM1)"])
+async def predict_grouping_maintenance(base64_data: Base64Request):
     """
     Predictive maintenance algorithm endpoint for Grouping Maintenance.
-    This endpoint initializes the genetic algorithm asynchronously and publishes results to Kafka.
+    This endpoint accepts a Base64 encoded JSON request, initializes the genetic algorithm asynchronously and publishes results to Kafka.
+    
+    Request format: {"request": "base64_encoded_json_data"}
     """
+    if async_processing_grouping_maintenance_request is None:
+        logger.warning("Grouping maintenance algorithm not available - module import failed")
+        raise HTTPException(status_code=503, detail="Grouping maintenance service is not available due to import errors")
+    
     try:
+        logger.info("Processing grouping maintenance request")
+        
+        # Decode Base64 request
+        decoded_data = decode_base64_to_dict(base64_data.request)
+        logger.info("Successfully decoded Base64 request")
+        
+        # Parse decoded data into GroupingMaintenanceInput model
+        try:
+            data = GroupingMaintenanceInput(**decoded_data)
+        except Exception as e:
+            logger.error(f"Error parsing decoded data: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Invalid request format: {str(e)}")
+            
         # Start the async algorithm processing (fire and forget)
         asyncio.create_task(process_grouping_maintenance_async(
-            data.setup_cost,
-            data.downtime_cost_rate,
-            data.no_repairmen,
+            data.setupCost,
+            data.downtimeCostRate,
+            data.noRepairmen,
             data.components,
-            data.smartService,
-            data.productionModule
+            data.smartServiceId,
+            data.moduleId
         ))
         
+        logger.info("Successfully initialized grouping maintenance algorithm")
         return {"message": "Grouping maintenance algorithm has been successfully initialized"}
+    except HTTPException:
+        # Re-raise HTTP exceptions (400, 503)
+        raise
     except Exception as e:
+        logger.error(f"Error in grouping maintenance: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error while initializing the grouping maintenance algorithm: {str(e)}")
 
-@app.get("/health")
+@app.get("/health" , tags=["Health Check"])
 def health_check():
     """
     Health check endpoint for the API.
     """
-    return {"status": "healthy"}
+    services_status = {
+        "Grouping Predictive Maintenance": async_processing_grouping_maintenance_request is not None,
+        "Kafka Events Producer": EventsProducer is not None,
+        "Threshold-Based Predictive Maintenance": PdM2Service is not None
+    }
+    
+    logger.info(f"Health check requested - Services status: {services_status}")
+    
+    return {
+        "status": "healthy",
+        "services": services_status,
+        "message": "Predictive Maintenance API is running"
+    }
