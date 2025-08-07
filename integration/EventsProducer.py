@@ -1,4 +1,5 @@
 import json
+import logging
 from kafka import KafkaProducer
 from datetime import datetime
 
@@ -9,11 +10,13 @@ class EventsProducer:
         
         :param bootstrap_servers: List of Kafka broker addresses (comma-separated)
         """
+        self.logger = logging.getLogger(__name__)
         self.producer = KafkaProducer(
             bootstrap_servers=bootstrap_servers,
             client_id='self-awareness-producer',
             value_serializer=lambda v: json.dumps(v).encode('utf-8'), # Serialize JSON
         )
+        self.logger.info(f"EventsProducer initialized with bootstrap servers: {bootstrap_servers}")
 
     def validate_event_data(self, event_data):
         """
@@ -54,22 +57,33 @@ class EventsProducer:
         # Validate event data
         validated_event = self.validate_event_data(event_data)
 
-        # Convert to JSON string
-        event_json = json.dumps(validated_event)
-        
         try:
-            # Produce message to Kafka topic
-            self.producer.send(
+            # Log what we're about to send
+            self.logger.info(f"=== KAFKA EVENT PRODUCTION ===")
+            self.logger.info(f"Topic: {topic}")
+            self.logger.info(f"Event Type: {validated_event.get('eventType', 'Unknown')}")
+            self.logger.info(f"Priority: {validated_event.get('priority', 'Unknown')}")
+            self.logger.debug(f"Full event data: {json.dumps(validated_event, indent=2, default=str)}")
+            
+            # Produce message to Kafka topic (value_serializer will handle JSON conversion)
+            future = self.producer.send(
                 topic,
-                event_json
+                validated_event  # Send dict directly, serializer will convert to JSON
             )
             
             # Flush to ensure message is sent
             self.producer.flush()
             
+            # Get the result to confirm successful sending
+            record_metadata = future.get(timeout=10)
+            self.logger.info(f"Event successfully sent to Kafka topic '{record_metadata.topic}' "
+                           f"partition {record_metadata.partition} offset {record_metadata.offset}")
+            
             return
         
         except Exception as e:
+            self.logger.error(f"Failed to produce event to Kafka: {str(e)}")
+            self.logger.error(f"Event data: {validated_event}")
             raise RuntimeError(f"Failed to produce event: {str(e)}")
 
     def close(self):
