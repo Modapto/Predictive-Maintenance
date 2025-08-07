@@ -332,6 +332,8 @@ def process_threshold_maintenance_request(data):
         "events": [event.model_dump() for event in data.events],
         "parameters": data.parameters.model_dump()
     }
+    logger.info("Processing threshold-based maintenance request")
+    logger.info(f"Input data keys: {list(input_data.keys()) if input_data else 'None'}")
     
     return _process_threshold_maintenance_core(input_data)
 
@@ -342,9 +344,7 @@ def _process_threshold_maintenance_core(input_data):
     """
     # Initialize PdM2 service with input data
     pdm2_service = PdM2Service(
-        input_data=input_data,
-        winds_count_component_replac=3,
-        output_path="maintenance_recommendations.json"
+        input_data=input_data
     )
     
     # Run analysis and return result
