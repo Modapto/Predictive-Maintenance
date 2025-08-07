@@ -333,18 +333,40 @@ async def predict_threshold_based_maintenance(base64_data: Base64Request):
         raise HTTPException(status_code=503, detail="PdM2 service is not available due to import errors")
     
     try:
-        logger.info("Processing threshold-based maintenance request")
+        logger.info("=== THRESHOLD-BASED MAINTENANCE REQUEST RECEIVED ===")
+        logger.info(f"Raw Base64 request length: {len(base64_data.request) if base64_data.request else 'None'}")
+        
+        # Log first 200 characters of Base64 data for debugging (not full data for security)
+        if base64_data.request:
+            logger.debug(f"Base64 request preview: {base64_data.request[:200]}...")
         
         # Decode Base64 request
         decoded_data = decode_base64_to_dict(base64_data.request)
         logger.info("Successfully decoded Base64 request")
+        logger.info(f"Decoded data keys: {list(decoded_data.keys()) if decoded_data else 'None'}")
+        logger.debug(f"Decoded data structure: {json.dumps(decoded_data, indent=2, default=str)}")
         
         # Parse decoded data into ThresholdMaintenanceInput model
         try:
+            logger.info("Attempting to parse decoded data into ThresholdMaintenanceInput model")
             data = ThresholdMaintenanceInput(**decoded_data)
+            logger.info("✓ Successfully parsed request data")
+            logger.info(f"Request summary - Events count: {len(data.events)}, "
+                       f"Smart Service: {data.smartServiceId}, Module: {data.moduleId}")
         except Exception as e:
-            logger.error(f"Error parsing decoded data: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Invalid request format: {str(e)}")
+            logger.error("✗ Failed to parse decoded data into model")
+            logger.error(f"Validation error details: {str(e)}")
+            logger.error(f"Validation error type: {type(e).__name__}")
+            
+            # Log specific field validation issues if it's a Pydantic validation error
+            if hasattr(e, 'errors'):
+                logger.error("Detailed validation errors:")
+                for error in e.errors():
+                    logger.error(f"  Field: {error.get('loc', 'unknown')}")
+                    logger.error(f"  Error: {error.get('msg', 'unknown')}")
+                    logger.error(f"  Input: {error.get('input', 'unknown')}")
+            
+            raise HTTPException(status_code=422, detail=f"Request validation failed: {str(e)}")
         
         # Use ThreadPoolExecutor for CPU-bound tasks
         loop = asyncio.get_event_loop()
@@ -381,18 +403,41 @@ async def predict_grouping_maintenance(base64_data: Base64Request):
         raise HTTPException(status_code=503, detail="Grouping maintenance service is not available due to import errors")
     
     try:
-        logger.info("Processing grouping maintenance request")
+        logger.info("=== GROUPING MAINTENANCE REQUEST RECEIVED ===")
+        logger.info(f"Raw Base64 request length: {len(base64_data.request) if base64_data.request else 'None'}")
+        
+        # Log first 200 characters of Base64 data for debugging (not full data for security)
+        if base64_data.request:
+            logger.debug(f"Base64 request preview: {base64_data.request[:200]}...")
         
         # Decode Base64 request
         decoded_data = decode_base64_to_dict(base64_data.request)
         logger.info("Successfully decoded Base64 request")
+        logger.info(f"Decoded data keys: {list(decoded_data.keys()) if decoded_data else 'None'}")
+        logger.debug(f"Decoded data structure: {json.dumps(decoded_data, indent=2, default=str)}")
         
         # Parse decoded data into GroupingMaintenanceInput model
         try:
+            logger.info("Attempting to parse decoded data into GroupingMaintenanceInput model")
             data = GroupingMaintenanceInput(**decoded_data)
+            logger.info("✓ Successfully parsed request data")
+            logger.info(f"Request summary - Setup Cost: {data.setupCost}, Downtime Cost Rate: {data.downtimeCostRate}, "
+                       f"Repairmen: {data.noRepairmen}, Components: {len(data.components)}, "
+                       f"Smart Service: {data.smartServiceId}, Module: {data.moduleId}")
         except Exception as e:
-            logger.error(f"Error parsing decoded data: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Invalid request format: {str(e)}")
+            logger.error("✗ Failed to parse decoded data into model")
+            logger.error(f"Validation error details: {str(e)}")
+            logger.error(f"Validation error type: {type(e).__name__}")
+            
+            # Log specific field validation issues if it's a Pydantic validation error
+            if hasattr(e, 'errors'):
+                logger.error("Detailed validation errors:")
+                for error in e.errors():
+                    logger.error(f"  Field: {error.get('loc', 'unknown')}")
+                    logger.error(f"  Error: {error.get('msg', 'unknown')}")
+                    logger.error(f"  Input: {error.get('input', 'unknown')}")
+            
+            raise HTTPException(status_code=422, detail=f"Request validation failed: {str(e)}")
             
         # Start the async algorithm processing (fire and forget)
         asyncio.create_task(process_grouping_maintenance_async(
