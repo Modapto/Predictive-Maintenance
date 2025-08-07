@@ -243,7 +243,7 @@ class Base64Request(BaseModel):
 
 class Base64Response(BaseModel):
     """Unified response model for Base64 encoded results"""
-    result: str = Field(..., description="Base64 encoded JSON result")                            
+    response: str = Field(..., description="Base64 encoded JSON result")                            
                                 
 # Async function to process grouping maintenance and publish to Kafka
 async def process_grouping_maintenance_async(
