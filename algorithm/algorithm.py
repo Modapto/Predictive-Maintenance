@@ -5,8 +5,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
+import logging
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 # shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 # sys.path.append(shared_path)
@@ -640,21 +641,44 @@ def async_processing_grouping_maintenance_request(
     Returns:
         dict: Event data ready for Kafka publishing
     """
+    # Configure logging for this function
+    logger = logging.getLogger(__name__)
+    
     try:
+        logger.info(f"Starting async grouping maintenance processing for module: {production_module}")
+        logger.info(f"Input parameters - Setup cost: {setup_cost}, Downtime cost rate: {downtime_cost_rate}, "
+                   f"No. repairmen: {no_repairmen}, Components count: {len(components) if components else 0}")
+        logger.debug(f"Smart service: {smart_service}")
+        
+        # Validate input parameters
+        if not components:
+            raise ValueError("Components list is empty or None")
+        
+        if setup_cost < 0 or downtime_cost_rate < 0 or no_repairmen <= 0:
+            raise ValueError("Invalid input parameters: costs cannot be negative and repairmen count must be positive")
+        
+        logger.debug("Input validation passed successfully")
+        
         # Algorithm parameters (using components length or default)
         t_begin, t_end = 0.0, 1000.0
         
         # Run the genetic algorithm
+        logger.info("Executing genetic algorithm for maintenance optimization")
         best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, components)
+        logger.info(f"Genetic algorithm completed - Best fitness: {best_fitness}")
+        logger.info(f"Best individual solution: {best_individual}")
         
         # Format the algorithm output
+        logger.info("Formatting algorithm output for API response")
         algorithm_results = format_output(best_individual, best_fitness, t_begin, t_end)
+        logger.info("Algorithm results formatted successfully")
         
         # Prepare Kafka event data
+        logger.info("Preparing Kafka event data for successful completion")
         event_data = {
             "description": "The grouping maintenance optimization has been successfully completed for the production module '{}'.".format(production_module),
             "module": production_module,
-            "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
             "priority": "MID", # Should be handled appropriately from the algorithm
             "eventType": "Grouping Maintenance Process Completion",
             "sourceComponent": "Predictive Maintenance",
@@ -663,23 +687,45 @@ def async_processing_grouping_maintenance_request(
             "results": algorithm_results
         }
         
+        logger.info(f"Async grouping maintenance processing completed successfully for module: {production_module}")
         return event_data
         
     except Exception as e:
-        # Prepare error event data
-        error_event_data = {
-            "description": f"Grouping maintenance optimization failed: {str(e)}",
-            "module": production_module,
-            "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-            "priority": "MID",
-            "eventType": "Grouping Maintenance Process Error",
-            "sourceComponent": "Predictive Maintenance",
-            "smartService": smart_service,
-            "topic": "smart-service-event",
-            "results": None
-        }
+        logger.error(f"Critical error in async grouping maintenance processing: {str(e)}")
+        logger.exception("Full exception details:")
         
-        return error_event_data
+        try:
+            # Prepare error event data
+            logger.info("Preparing error event data for Kafka publishing")
+            error_event_data = {
+                "description": f"Grouping maintenance optimization failed: {str(e)}",
+                "module": production_module,
+                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+                "priority": "MID",
+                "eventType": "Grouping Maintenance Process Error",
+                "sourceComponent": "Predictive Maintenance",
+                "smartService": smart_service,
+                "topic": "smart-service-event",
+                "results": None
+            }
+            
+            logger.info("Error event data prepared successfully")
+            return error_event_data
+            
+        except Exception as kafka_error:
+            logger.error(f"Failed to prepare error event data: {str(kafka_error)}")
+            # Return minimal error response
+            return {
+                "description": f"Critical system error: {str(e)}",
+                "module": production_module,
+                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+                "priority": "MID",
+                "eventType": "System Error",
+                "sourceComponent": "Predictive Maintenance",
+                "smartService": smart_service,
+                "topic": "smart-service-event",
+                "results": None
+            }
 
 def component_load(component_list):
     component = [entry["Module"] for entry in component_list]
