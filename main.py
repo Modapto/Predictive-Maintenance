@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, Field
@@ -103,6 +103,32 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+# Add request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    # Log basic request info
+    logger.info(f"=== INCOMING HTTP REQUEST ===")
+    logger.info(f"Method: {request.method}")
+    logger.info(f"URL: {request.url}")
+    logger.info(f"Headers: {dict(request.headers)}")
+    
+    # Log raw request body for POST requests to our endpoints
+    if request.method == "POST" and any(path in str(request.url) for path in ["/predict/grouping-maintenance", "/predict/threshold-based-maintenance"]):
+        body = await request.body()
+        logger.info(f"Raw request body length: {len(body)}")
+        logger.info(f"Raw request body (first 500 chars): {body[:500].decode('utf-8', errors='ignore')}")
+        
+        # FastAPI consumes the request body, so we need to set it back for the actual handler
+        async def receive():
+            return {"type": "http.request", "body": body}
+        
+        request._receive = receive
+    
+    response = await call_next(request)
+    logger.info(f"Response status code: {response.status_code}")
+    return response
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
@@ -233,6 +259,11 @@ async def process_grouping_maintenance_async(
     try:
         # Convert ComponentData objects to simple list for the algorithm
         component_list = [component.model_dump() for component in components]
+        
+        # Log component structure after model_dump for debugging
+        if component_list:
+            logger.info(f"First component keys after model_dump: {list(component_list[0].keys())}")
+            logger.debug(f"First component data: {component_list[0]}")
         
         # Run the CPU-intensive algorithm in thread pool
         loop = asyncio.get_event_loop()
@@ -398,17 +429,38 @@ async def predict_grouping_maintenance(base64_data: Base64Request):
     
     Request format: {"request": "base64_encoded_json_data"}
     """
+    # Log raw incoming request FIRST - before any validation
+    logger.info("=== RAW GROUPING MAINTENANCE REQUEST RECEIVED ===")
+    logger.info(f"Request type: {type(base64_data)}")
+    logger.info(f"Request attributes: {dir(base64_data)}")
+    
+    if hasattr(base64_data, 'request'):
+        logger.info(f"base64_data.request exists: {base64_data.request is not None}")
+        logger.info(f"base64_data.request type: {type(base64_data.request)}")
+        logger.info(f"base64_data.request length: {len(base64_data.request) if base64_data.request else 'None'}")
+        if base64_data.request:
+            logger.info(f"Base64 request preview (first 100 chars): {base64_data.request[:100]}")
+    else:
+        logger.error("base64_data.request attribute missing!")
+    
+    # Log the entire raw request object
+    try:
+        logger.info(f"Raw request object: {base64_data}")
+        logger.info(f"Raw request dict: {base64_data.model_dump() if hasattr(base64_data, 'model_dump') else 'No model_dump method'}")
+    except Exception as e:
+        logger.error(f"Error logging raw request: {str(e)}")
+    
     if async_processing_grouping_maintenance_request is None:
         logger.warning("Grouping maintenance algorithm not available - module import failed")
         raise HTTPException(status_code=503, detail="Grouping maintenance service is not available due to import errors")
     
     try:
-        logger.info("=== GROUPING MAINTENANCE REQUEST RECEIVED ===")
-        logger.info(f"Raw Base64 request length: {len(base64_data.request) if base64_data.request else 'None'}")
+        logger.info("=== STARTING REQUEST PROCESSING ===")
         
-        # Log first 200 characters of Base64 data for debugging (not full data for security)
-        if base64_data.request:
-            logger.debug(f"Base64 request preview: {base64_data.request[:200]}...")
+        # Validate base64_data.request exists before proceeding
+        if not hasattr(base64_data, 'request') or base64_data.request is None:
+            logger.error("Request validation failed: base64_data.request is missing or None")
+            raise HTTPException(status_code=400, detail="Missing 'request' field in Base64Request")
         
         # Decode Base64 request
         decoded_data = decode_base64_to_dict(base64_data.request)
