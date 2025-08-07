@@ -652,25 +652,10 @@ def async_processing_grouping_maintenance_request(
         
         # Validate input parameters
         if not components:
-            logger.error("Components list is empty or None")
             raise ValueError("Components list is empty or None")
         
         if setup_cost < 0 or downtime_cost_rate < 0 or no_repairmen <= 0:
-            logger.error(f"Invalid input parameters: setup_cost={setup_cost}, downtime_cost_rate={downtime_cost_rate}, no_repairmen={no_repairmen}")
             raise ValueError("Invalid input parameters: costs cannot be negative and repairmen count must be positive")
-        
-        # Log component structure for validation
-        logger.debug("Component validation details:")
-        for i, component in enumerate(components[:3]):  # Log first 3 components only
-            logger.debug(f"  Component {i+1}: {type(component).__name__} with keys: {list(component.keys()) if isinstance(component, dict) else 'Not a dict'}")
-        
-        # Validate that components have required fields
-        required_fields = ["Component", "Module", "Alpha", "Beta", "Average maintenance duration"]
-        for i, component in enumerate(components):
-            missing_fields = [field for field in required_fields if field not in component]
-            if missing_fields:
-                logger.error(f"Component {i+1} missing required fields: {missing_fields}")
-                raise ValueError(f"Component {i+1} missing required fields: {missing_fields}")
         
         logger.debug("Input validation passed successfully")
         
@@ -696,7 +681,7 @@ def async_processing_grouping_maintenance_request(
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
             "priority": "MID", # Should be handled appropriately from the algorithm
             "eventType": "Grouping Maintenance Process Completion",
-            "sourceComponent": "Predictive Maintenance",
+            "sourceComponent": "Grouping Predictive Maintenance",
             "smartService": smart_service,
             "topic": "smart-service-event",
             "results": algorithm_results
@@ -718,7 +703,7 @@ def async_processing_grouping_maintenance_request(
                 "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
                 "priority": "MID",
                 "eventType": "Grouping Maintenance Process Error",
-                "sourceComponent": "Predictive Maintenance",
+                "sourceComponent": "Grouping Predictive Maintenance",
                 "smartService": smart_service,
                 "topic": "smart-service-event",
                 "results": None
@@ -731,12 +716,12 @@ def async_processing_grouping_maintenance_request(
             logger.error(f"Failed to prepare error event data: {str(kafka_error)}")
             # Return minimal error response
             return {
-                "description": f"Critical system error: {str(e)}",
+                "description": f"Unable to process input data for Grouping Maintenance: {str(e)}",
                 "module": production_module,
                 "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-                "priority": "MID",
+                "priority": "HIGH",
                 "eventType": "System Error",
-                "sourceComponent": "Predictive Maintenance",
+                "sourceComponent": "Grouping Predictive Maintenance",
                 "smartService": smart_service,
                 "topic": "smart-service-event",
                 "results": None
