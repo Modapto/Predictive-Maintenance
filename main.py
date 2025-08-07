@@ -328,13 +328,14 @@ def process_threshold_maintenance_request(data):
     This function is called by the threshold-based maintenance endpoint.
     """
     # Create input data structure for PdM2Service (excluding smartService and productionModule)
+    # Use by_alias=True to preserve original field names from the JSON
     input_data = {
-        "events": [event.model_dump() for event in data.events],
-        "parameters": data.parameters.model_dump()
+        "events": [event.model_dump(by_alias=True) for event in data.events],
+        "parameters": data.parameters.model_dump(by_alias=True)
     }
     logger.info("Processing threshold-based maintenance request")
     logger.info(f"Input data keys: {list(input_data.keys()) if input_data else 'None'}")
-    
+    logger.debug(f"First event fields: {list(input_data['events'][0].keys()) if input_data.get('events') else 'No events'}")
     return _process_threshold_maintenance_core(input_data)
 
 # Core function for threshold maintenance processing
@@ -413,7 +414,7 @@ async def predict_threshold_based_maintenance(base64_data: Base64Request):
         encoded_result = encode_output_to_base64(result)
         logger.info("Successfully processed threshold-based maintenance request")
         
-        return Base64Response(result=encoded_result)
+        return Base64Response(response=encoded_result)
     except HTTPException:
         # Re-raise HTTP exceptions (400, 503)
         raise
