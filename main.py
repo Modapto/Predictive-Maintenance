@@ -179,9 +179,9 @@ class GroupingMaintenanceInput(BaseModel):
 
 class FailureEvent(BaseModel):
     Stage: str = Field(..., description="Stage name")
-    Cell: int = Field(..., description="Cell identifier")
-    Module: int = Field(..., alias="Module ID",description="Module identifier")
-    Component: int = Field(..., alias="Component ID", description="Component identifier")
+    Cell: str = Field(..., description="Cell identifier")
+    Module: str = Field(..., alias="Module ID",description="Module identifier")
+    Component: str = Field(..., alias="Component ID", description="Component identifier")
     Failure_type: str = Field(..., alias="Failure Type (electrical/mechanical)", description="Type of failure")
     Failure_description: str = Field(..., alias="Failure description", description="Description of the failure")
     Maintenance_action_performed: str = Field(..., alias="Maintenance Action performed", description="Maintenance action taken")
