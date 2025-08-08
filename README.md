@@ -271,7 +271,7 @@ Returns immediate confirmation message:
 }
 ```
 
-### Threshold-Based Maintenance Response
+### Grouping Predictive Maintenance Response
 
 Returns Base64-encoded JSON:
 
@@ -281,13 +281,13 @@ Returns Base64-encoded JSON:
 }
 ```
 
-### Decoding Threshold Response
+### Decoding Grouping Predictive Maintenance Response
 
 1. Extract the `result` field from the JSON response
 2. Base64 decode the string value
 3. Parse the resulting JSON string
 
-### Threshold Response (decoded)
+### Grouping Predictive Maintenance Response (decoded)
 
 ```json
 {
