@@ -31,88 +31,88 @@ data2 = {
                     {
                         "ID activity": 1,
                         "Replacement time": 173.298,
-                        "ID component": "0"
+                        "Module_ID": "0"
                     },
                     {
                         "ID activity": 2,
                         "Replacement time": 346.596,
-                        "ID component": "0"
+                        "Module_ID": "0"
                     },
                     {
                         "ID activity": 3,
                         "Replacement time": 519.895,
-                        "ID component": "0"
+                        "Module_ID": "0"
                     },
                     {
                         "ID activity": 4,
                         "Replacement time": 693.193,
-                        "ID component": "0"
+                        "Module_ID": "0"
                     },
                     {
                         "ID activity": 5,
                         "Replacement time": 866.491,
-                        "ID component": "0"
+                        "Module_ID": "0"
                     },
                     {
                         "ID activity": 6,
                         "Replacement time": 179.545,
-                        "ID component": "1"
+                        "Module_ID": "1"
                     },
                     {
                         "ID activity": 7,
                         "Replacement time": 359.09,
-                        "ID component": "1"
+                        "Module_ID": "1"
                     },
                     {
                         "ID activity": 8,
                         "Replacement time": 538.635,
-                        "ID component": "1"
+                        "Module_ID": "1"
 
                     },
                     {
                         "ID activity": 9,
                         "Replacement time": 718.179,
-                        "ID component": "1"
+                        "Module_ID": "1"
                     },
                     {
                         "ID activity": 10,
                         "Replacement time": 897.724,
-                        "ID component": "1"
+                        "Module_ID": "1"
                     },
                     {
                         "ID activity": 11,
                         "Replacement time": 208.829,
-                        "ID component": "2"
+                        "Module_ID": "2"
                     },
                     {
                         "ID activity": 12,
                         "Replacement time": 417.658,
-                        "ID component": "2"
+                        "Module_ID": "2"
                     },
                     {
                         "ID activity": 13,
                         "Replacement time": 626.487,
-                        "ID component": "2"
+                        "Module_ID": "2"
                     },
                     {
                         "ID activity": 14,
                         "Replacement time": 835.316,
-                        "ID component": "2"
+                        "Module_ID": "2"
                     },
                     {
                         "ID activity": 15,
                         "Replacement time": 548.357,
-                        "ID component": "3"
+                        "Module_ID": "3"
                     },
                     {
                         "ID activity": 16,
                         "Replacement time": 627.938,
-                        "ID component": "4"
+                        "Module_ID": "4"
                     },
                     {
                         "ID activity": 17,
                         "Replacement time": 732.33,
-                        "ID component": "5"
+                        "Module_ID": "5"
                     }
                 ]
 }
@@ -124,7 +124,7 @@ data2 = {
 
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
-ID_component = [entry["ID component"] for entry in data2["failure"]]
+ID_component = [entry["Module_ID"] for entry in data2["failure"]]
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
 
@@ -171,7 +171,7 @@ GENOME_LENGTH = len(ID_activity)
 # w_max = parameters.w_max       
 
 POPULATION_SIZE = 60
-GENERATIONS = 100
+GENERATIONS = 5
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
@@ -261,7 +261,7 @@ def mapping_IDcomponent_to_duration(G_component):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = next(item["Average maintenance duration"] for item in component_list if item["Component"] == d)
+            value = next(item["Average maintenance duration"] for item in component_list if item["Module_ID"] == d)
             duration.append(value)
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
@@ -274,7 +274,7 @@ def mapping_IDcomponent_to_alpha(G_component):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = next(item["Alpha"] for item in component_list if item["Component"] == d)
+            value = next(item["Alpha"] for item in component_list if item["Module_ID"] == d)
             alpha.append(value)
         group_to_alpha.append((group, alpha))
     return group_to_alpha
@@ -286,7 +286,7 @@ def mapping_IDcomponent_to_beta(G_component):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = next(item["Beta"] for item in component_list if item["Component"] == d)
+            value = next(item["Beta"] for item in component_list if item["Module_ID"] == d)
             beta.append(value)
         group_to_beta.append((group, beta))
     return group_to_beta
@@ -516,7 +516,7 @@ def convert_component_ids_to_names(G_component, component_list):
         # component_data = json.load(f)
 
     # Create a mapping from ID to Component name
-    id_to_name = {entry["Component"]: entry["Module"] for entry in component_list}
+    id_to_name = {entry["Module_ID"]: entry["Module"] for entry in component_list}
 
     # Replace component IDs with names
     G_component_named = []
@@ -535,8 +535,8 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
         for comp_id, rep_time, duration, comp_names in zip(components, replacements, durations, names):
             entry = {
-                "Component": comp_id,
-                "Equipment name": comp_names,
+                "Module_ID": comp_id,
+                "Module": comp_names,
                 "Replacement time": rep_time,
                 "Duration": duration
             }
@@ -741,269 +741,269 @@ def component_load(component_list):
 # .. = genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate)
 
 
-# component_list = [
-#         {
-#             "Component": "0",
-#             "Module": "POSTE DE CONTRÔLE",
-#             "Alpha": 5,
-#             "Beta": 16.0,
-#             "Average maintenance duration": 1.108,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "1",
-#             "Module": "CONNECTEURS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 3.849,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "2",
-#             "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-#             "Alpha": 5,
-#             "Beta": 20.0,
-#             "Average maintenance duration": 0.726,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "3",
-#             "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
-#             "Alpha": 5,
-#             "Beta": 20.0,
-#             "Average maintenance duration": 1.925,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "4",
-#             "Module": "CONVOYEURS",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.492,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "5",
-#             "Module": "LIGNE DE MONTAGE MOTG02",
-#             "Alpha": 5,
-#             "Beta": 7.2,
-#             "Average maintenance duration": 0.89,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "6",
-#             "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
-#             "Alpha": 5,
-#             "Beta": 12.0,
-#             "Average maintenance duration": 1.73,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "7",
-#             "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
-#             "Alpha": 5,
-#             "Beta": 12.0,
-#             "Average maintenance duration": 1.082,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "8",
-#             "Module": "MAGASIN PLATEAUX VIDES",
-#             "Alpha": 5,
-#             "Beta": 8.0,
-#             "Average maintenance duration": 0.815,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "9",
-#             "Module": "ASCENSEUR DE SORTIE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.709,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "10",
-#             "Module": "MM-TAILLE1",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 13.964,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "11",
-#             "Module": "ASCENSEUR",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.477,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "12",
-#             "Module": "KTM6",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 21.963,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "13",
-#             "Module": "PINCE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 4.499,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "14",
-#             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
-#             "Alpha": 5,
-#             "Beta": 8.0,
-#             "Average maintenance duration": 3.307,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "15",
-#             "Module": "KTM5",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.632,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "16",
-#             "Module": "EMMANCHEMENT",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.263,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "17",
-#             "Module": "CHAUFFE VENTILATEURS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.15,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "18",
-#             "Module": "ECRANS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.024,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "19",
-#             "Module": "DIVERS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.022,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "20",
-#             "Module": "EI7-BARRETTE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 1.231,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "21",
-#             "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
-#             "Alpha": 5,
-#             "Beta": 7.0,
-#             "Average maintenance duration": 1.109,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "22",
-#             "Module": "TRANSLATION",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 1.053,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "23",
-#             "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.971,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "24",
-#             "Module": "ASCENSEUR SORTIE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.775,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "25",
-#             "Module": "VISSEUSES ÉLECTRIQUE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.639,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "26",
-#             "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.572,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Component": "27",
-#             "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.371,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         }
-#     ]
+component_list = [
+        {
+            "Module_ID": "0",
+            "Module": "POSTE DE CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 16.0,
+            "Average maintenance duration": 1.108,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "1",
+            "Module": "CONNECTEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 3.849,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "2",
+            "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 0.726,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "3",
+            "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 1.925,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "4",
+            "Module": "CONVOYEURS",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.492,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "5",
+            "Module": "LIGNE DE MONTAGE MOTG02",
+            "Alpha": 5,
+            "Beta": 7.2,
+            "Average maintenance duration": 0.89,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "6",
+            "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.73,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "7",
+            "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.082,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "8",
+            "Module": "MAGASIN PLATEAUX VIDES",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 0.815,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "9",
+            "Module": "ASCENSEUR DE SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.709,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "10",
+            "Module": "MM-TAILLE1",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 13.964,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "11",
+            "Module": "ASCENSEUR",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.477,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "12",
+            "Module": "KTM6",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 21.963,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "13",
+            "Module": "PINCE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 4.499,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "14",
+            "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 3.307,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "15",
+            "Module": "KTM5",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.632,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "16",
+            "Module": "EMMANCHEMENT",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.263,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "17",
+            "Module": "CHAUFFE VENTILATEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.15,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "18",
+            "Module": "ECRANS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.024,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "19",
+            "Module": "DIVERS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.022,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "20",
+            "Module": "EI7-BARRETTE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.231,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "21",
+            "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
+            "Alpha": 5,
+            "Beta": 7.0,
+            "Average maintenance duration": 1.109,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "22",
+            "Module": "TRANSLATION",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.053,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "23",
+            "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.971,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "24",
+            "Module": "ASCENSEUR SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.775,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "25",
+            "Module": "VISSEUSES ÉLECTRIQUE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.639,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "26",
+            "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.572,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module_ID": "27",
+            "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.371,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        }
+    ]
 
 
-# setup_cost = 500
-# downtime_cost_rate = 100
-# no_repairmen = 1
+setup_cost = 500
+downtime_cost_rate = 100
+no_repairmen = 1
 
 
-# best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
-# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
+print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-# output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
+output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
 
