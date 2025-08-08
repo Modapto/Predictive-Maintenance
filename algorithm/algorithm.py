@@ -31,88 +31,88 @@ data2 = {
                     {
                         "ID activity": 1,
                         "Replacement time": 173.298,
-                        "Module_ID": "0"
+                        "Module ID": "0"
                     },
                     {
                         "ID activity": 2,
                         "Replacement time": 346.596,
-                        "Module_ID": "0"
+                        "Module ID": "0"
                     },
                     {
                         "ID activity": 3,
                         "Replacement time": 519.895,
-                        "Module_ID": "0"
+                        "Module ID": "0"
                     },
                     {
                         "ID activity": 4,
                         "Replacement time": 693.193,
-                        "Module_ID": "0"
+                        "Module ID": "0"
                     },
                     {
                         "ID activity": 5,
                         "Replacement time": 866.491,
-                        "Module_ID": "0"
+                        "Module ID": "0"
                     },
                     {
                         "ID activity": 6,
                         "Replacement time": 179.545,
-                        "Module_ID": "1"
+                        "Module ID": "1"
                     },
                     {
                         "ID activity": 7,
                         "Replacement time": 359.09,
-                        "Module_ID": "1"
+                        "Module ID": "1"
                     },
                     {
                         "ID activity": 8,
                         "Replacement time": 538.635,
-                        "Module_ID": "1"
+                        "Module ID": "1"
 
                     },
                     {
                         "ID activity": 9,
                         "Replacement time": 718.179,
-                        "Module_ID": "1"
+                        "Module ID": "1"
                     },
                     {
                         "ID activity": 10,
                         "Replacement time": 897.724,
-                        "Module_ID": "1"
+                        "Module ID": "1"
                     },
                     {
                         "ID activity": 11,
                         "Replacement time": 208.829,
-                        "Module_ID": "2"
+                        "Module ID": "2"
                     },
                     {
                         "ID activity": 12,
                         "Replacement time": 417.658,
-                        "Module_ID": "2"
+                        "Module ID": "2"
                     },
                     {
                         "ID activity": 13,
                         "Replacement time": 626.487,
-                        "Module_ID": "2"
+                        "Module ID": "2"
                     },
                     {
                         "ID activity": 14,
                         "Replacement time": 835.316,
-                        "Module_ID": "2"
+                        "Module ID": "2"
                     },
                     {
                         "ID activity": 15,
                         "Replacement time": 548.357,
-                        "Module_ID": "3"
+                        "Module ID": "3"
                     },
                     {
                         "ID activity": 16,
                         "Replacement time": 627.938,
-                        "Module_ID": "4"
+                        "Module ID": "4"
                     },
                     {
                         "ID activity": 17,
                         "Replacement time": 732.33,
-                        "Module_ID": "5"
+                        "Module ID": "5"
                     }
                 ]
 }
@@ -124,7 +124,7 @@ data2 = {
 
 t = [entry["Replacement time"] for entry in data2["failure"]]
 ID_activity = [entry["ID activity"] for entry in data2["failure"]]
-ID_component = [entry["Module_ID"] for entry in data2["failure"]]
+ID_component = [entry["Module ID"] for entry in data2["failure"]]
 map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
 map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
 
@@ -261,7 +261,7 @@ def mapping_IDcomponent_to_duration(G_component):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = next(item["Average maintenance duration"] for item in component_list if item["Module_ID"] == d)
+            value = next(item["Average maintenance duration"] for item in component_list if item["Module ID"] == d)
             duration.append(value)
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
@@ -274,7 +274,7 @@ def mapping_IDcomponent_to_alpha(G_component):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = next(item["Alpha"] for item in component_list if item["Module_ID"] == d)
+            value = next(item["Alpha"] for item in component_list if item["Module ID"] == d)
             alpha.append(value)
         group_to_alpha.append((group, alpha))
     return group_to_alpha
@@ -286,7 +286,7 @@ def mapping_IDcomponent_to_beta(G_component):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = next(item["Beta"] for item in component_list if item["Module_ID"] == d)
+            value = next(item["Beta"] for item in component_list if item["Module ID"] == d)
             beta.append(value)
         group_to_beta.append((group, beta))
     return group_to_beta
@@ -516,7 +516,7 @@ def convert_component_ids_to_names(G_component, component_list):
         # component_data = json.load(f)
 
     # Create a mapping from ID to Component name
-    id_to_name = {entry["Module_ID"]: entry["Module"] for entry in component_list}
+    id_to_name = {entry["Module ID"]: entry["Module"] for entry in component_list}
 
     # Replace component IDs with names
     G_component_named = []
@@ -535,7 +535,7 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
         for comp_id, rep_time, duration, comp_names in zip(components, replacements, durations, names):
             entry = {
-                "Module_ID": comp_id,
+                "Module ID": comp_id,
                 "Module": comp_names,
                 "Replacement time": rep_time,
                 "Duration": duration
@@ -743,7 +743,7 @@ def component_load(component_list):
 
 component_list = [
         {
-            "Module_ID": "0",
+            "Module ID": "0",
             "Module": "POSTE DE CONTRÔLE",
             "Alpha": 5,
             "Beta": 16.0,
@@ -752,7 +752,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "1",
+            "Module ID": "1",
             "Module": "CONNECTEURS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -761,7 +761,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "2",
+            "Module ID": "2",
             "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
             "Alpha": 5,
             "Beta": 20.0,
@@ -770,7 +770,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "3",
+            "Module ID": "3",
             "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
             "Alpha": 5,
             "Beta": 20.0,
@@ -779,7 +779,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "4",
+            "Module ID": "4",
             "Module": "CONVOYEURS",
             "Alpha": 5,
             "Beta": 10.0,
@@ -788,7 +788,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "5",
+            "Module ID": "5",
             "Module": "LIGNE DE MONTAGE MOTG02",
             "Alpha": 5,
             "Beta": 7.2,
@@ -797,7 +797,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "6",
+            "Module ID": "6",
             "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
             "Alpha": 5,
             "Beta": 12.0,
@@ -806,7 +806,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "7",
+            "Module ID": "7",
             "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
             "Alpha": 5,
             "Beta": 12.0,
@@ -815,7 +815,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "8",
+            "Module ID": "8",
             "Module": "MAGASIN PLATEAUX VIDES",
             "Alpha": 5,
             "Beta": 8.0,
@@ -824,7 +824,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "9",
+            "Module ID": "9",
             "Module": "ASCENSEUR DE SORTIE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -833,7 +833,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "10",
+            "Module ID": "10",
             "Module": "MM-TAILLE1",
             "Alpha": 5,
             "Beta": 6.0,
@@ -842,7 +842,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "11",
+            "Module ID": "11",
             "Module": "ASCENSEUR",
             "Alpha": 5,
             "Beta": 6.0,
@@ -851,7 +851,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "12",
+            "Module ID": "12",
             "Module": "KTM6",
             "Alpha": 5,
             "Beta": 6.0,
@@ -860,7 +860,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "13",
+            "Module ID": "13",
             "Module": "PINCE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -869,7 +869,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "14",
+            "Module ID": "14",
             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
             "Alpha": 5,
             "Beta": 8.0,
@@ -878,7 +878,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "15",
+            "Module ID": "15",
             "Module": "KTM5",
             "Alpha": 5,
             "Beta": 6.0,
@@ -887,7 +887,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "16",
+            "Module ID": "16",
             "Module": "EMMANCHEMENT",
             "Alpha": 5,
             "Beta": 6.0,
@@ -896,7 +896,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "17",
+            "Module ID": "17",
             "Module": "CHAUFFE VENTILATEURS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -905,7 +905,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "18",
+            "Module ID": "18",
             "Module": "ECRANS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -914,7 +914,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "19",
+            "Module ID": "19",
             "Module": "DIVERS",
             "Alpha": 5,
             "Beta": 6.0,
@@ -923,7 +923,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "20",
+            "Module ID": "20",
             "Module": "EI7-BARRETTE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -932,7 +932,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "21",
+            "Module ID": "21",
             "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
             "Alpha": 5,
             "Beta": 7.0,
@@ -941,7 +941,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "22",
+            "Module ID": "22",
             "Module": "TRANSLATION",
             "Alpha": 5,
             "Beta": 6.0,
@@ -950,7 +950,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "23",
+            "Module ID": "23",
             "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -959,7 +959,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "24",
+            "Module ID": "24",
             "Module": "ASCENSEUR SORTIE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -968,7 +968,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "25",
+            "Module ID": "25",
             "Module": "VISSEUSES ÉLECTRIQUE",
             "Alpha": 5,
             "Beta": 6.0,
@@ -977,7 +977,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "26",
+            "Module ID": "26",
             "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
             "Alpha": 5,
             "Beta": 10.0,
@@ -986,7 +986,7 @@ component_list = [
             "Last Maintenance Action Time": "..."
         },
         {
-            "Module_ID": "27",
+            "Module ID": "27",
             "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
             "Alpha": 5,
             "Beta": 10.0,
