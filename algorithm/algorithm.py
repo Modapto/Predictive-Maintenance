@@ -255,7 +255,7 @@ def mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_act
 
 # mapping group of component to group of duration using output from mapping_activity_to_componentID()
 # and calculate total duration of each group
-def mapping_IDcomponent_to_duration(G_component):
+def mapping_IDcomponent_to_duration(G_component, component_list):
     group_to_duration = []
     total_duration = []
     for group, id_component in G_component:
@@ -269,7 +269,7 @@ def mapping_IDcomponent_to_duration(G_component):
 
 
 # mapping group of component to group of alpha using output from mapping_activity_to_componentID()
-def mapping_IDcomponent_to_alpha(G_component):
+def mapping_IDcomponent_to_alpha(G_component, component_list):
     group_to_alpha = []
     for group, id_component in G_component:
         alpha = []
@@ -281,7 +281,7 @@ def mapping_IDcomponent_to_alpha(G_component):
 
 
 # mapping group of component to group of beta using output from mapping_activity_to_componentID()
-def mapping_IDcomponent_to_beta(G_component):
+def mapping_IDcomponent_to_beta(G_component, component_list):
     group_to_beta = []
     for group, id_component in G_component:
         beta = []
@@ -339,9 +339,9 @@ def saveup_cost_saving(G_activity, C_s):
     return B_S                                                          # shape(B_S) = number of group
 
 # unavailability cost saving
-def unavailability_cost_saving(G_activity, C_d, m, w_max):
+def unavailability_cost_saving(G_activity, C_d, m, w_max, component_list):
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
-    G_duration, G_total_duration = mapping_IDcomponent_to_duration(G_component)
+    G_duration, G_total_duration = mapping_IDcomponent_to_duration(G_component, component_list)
     d_Gk = calculate_d_Gk(G_duration, m, w_max)
     B_U = (np.array(G_total_duration) - np.array(d_Gk)) * C_d
     return B_U
@@ -366,10 +366,10 @@ def wrapper_P_Gk(t, t_i_list, alpha_i_list, beta_i_list):
     return P_Gk(t[0], t_i_list, alpha_i_list, beta_i_list)
 
 # penalty cost
-def penalty_cost(G_activity):
+def penalty_cost(G_activity, component_list):
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
-    G_alpha = mapping_IDcomponent_to_alpha(G_component)
-    G_beta = mapping_IDcomponent_to_beta(G_component)
+    G_alpha = mapping_IDcomponent_to_alpha(G_component, component_list)
+    G_beta = mapping_IDcomponent_to_beta(G_component, component_list)
     replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
     P = []                                                                  # penalty cost in each group
     t_group = []                                                            # optimal time to minimize penalty cost in each group
@@ -392,11 +392,11 @@ def cost_benefit(B_S, B_U, P):
     return EB
 
 # fitness function
-def fitness_function(genome, C_s, C_d, m):
+def fitness_function(genome, C_s, C_d, m, component_list):
     N, G_activity = decode(genome)  
     B_S = saveup_cost_saving(G_activity, C_s)
-    B_U = unavailability_cost_saving(G_activity, C_d, m, w_max)
-    P, _ = penalty_cost(G_activity)
+    B_U = unavailability_cost_saving(G_activity, C_d, m, w_max, component_list)
+    P, _ = penalty_cost(G_activity, component_list)
     EB = cost_benefit(B_S, B_U, P)
     fitness_value = np.sum(EB)
     return fitness_value
@@ -451,7 +451,7 @@ def genetic_algorithm(C_s, C_d, m, component_list, genome_length=GENOME_LENGTH, 
     best_solution = None
     best_fitness_value = -float('inf')
     for generation in range(generations):
-        fitness_values = [fitness_function(genome, C_s, C_d, m) for genome in population]
+        fitness_values = [fitness_function(genome, C_s, C_d, m, component_list) for genome in population]
         map_fitness_to_population = sorted(zip(fitness_values, population), reverse=True)
         # print("map value: ", list(map_fitness_to_population))
         # Update best solution
@@ -477,13 +477,13 @@ def genetic_algorithm(C_s, C_d, m, component_list, genome_length=GENOME_LENGTH, 
         for i in range(2, len(selected), 2):
             parent1 = selected[i]
             parent2 = selected[i+1]
-            f_c = max(fitness_function(parent1, C_s, C_d, m), fitness_function(parent2, C_s, C_d, m))
+            f_c = max(fitness_function(parent1, C_s, C_d, m, component_list), fitness_function(parent2, C_s, C_d, m, component_list))
             p_c = p_c_max - ((p_c_max - p_c_min) * (f_c - f_avg) / (f_max - f_avg)) if f_c > f_avg else p_c_max
             child1, child2 = crossover(parent1, parent2, p_c)
             new_population.extend([child1, child2])
         # Mutation
         for i in range(2, len(new_population)):
-            f_m = fitness_function(new_population[i], C_s, C_d, m)
+            f_m = fitness_function(new_population[i], C_s, C_d, m, component_list)
             p_m = p_m_max - ((p_m_max - p_m_min) * (f_max - f_m) / (f_max - f_avg)) if f_m > f_avg else p_m_max
             new_population[i] = mutate(new_population[i], p_m)
         
@@ -498,14 +498,14 @@ def convert_right_form(components, durations):
     ]
 
 
-def mapping_to_UI(genome, m):
+def mapping_to_UI(genome, m, component_list):
     N, G_activity = decode(genome)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
-    G_duration, _ = mapping_IDcomponent_to_duration(G_component)
+    G_duration, _ = mapping_IDcomponent_to_duration(G_component, component_list)
     replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
     
     d_Gk = calculate_d_Gk(G_duration, m, w_max)
-    _ , t_group = penalty_cost(G_activity)
+    _ , t_group = penalty_cost(G_activity, component_list)
     estimate_duration = convert_right_form(G_component, d_Gk)
     estimate_replacement_time = convert_right_form(G_component, t_group)
     return G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time
@@ -545,8 +545,8 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
     return combined_data
 
 def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component_list):
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m) 
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list) 
 
     G_component_named = convert_component_ids_to_names(G_component, component_list)
     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
@@ -580,7 +580,7 @@ def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component
     print(f"File saved to: {output_path}")
 
 # Function to convert the algorithm output to the proper format
-def format_output(best_individual, best_fitness, t_begin, t_end):
+def format_output(best_individual, best_fitness, t_begin, t_end, m, component_list):
     """
     Convert the algorithm output to the proper format for JSON output.
     Args:
@@ -592,14 +592,14 @@ def format_output(best_individual, best_fitness, t_begin, t_end):
         dict: A dictionary containing the formatted output.
     """
     # Call your existing mapping functions
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m)
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list)
     
     # Convert component IDs to names
-    G_component_named = convert_component_ids_to_names(G_component, file_path_json_1)
+    G_component_named = convert_component_ids_to_names(G_component, component_list)
     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
     
-    G_component_named_individual = convert_component_ids_to_names(G_component_individual, file_path_json_1)
+    G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
     individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     
     # Create output dictionary with proper key names to match the expected format
@@ -614,6 +614,14 @@ def format_output(best_individual, best_fitness, t_begin, t_end):
     }
 
     return output
+
+
+def component_load(component_list):
+    component = [entry["Module"] for entry in component_list]
+    alpha = [entry["Alpha"] for entry in component_list]
+    beta = [entry["Beta"] for entry in component_list]
+
+
 
 # Function to process API request and prepare Kafka event data
 def async_processing_grouping_maintenance_request(
@@ -670,7 +678,7 @@ def async_processing_grouping_maintenance_request(
         
         # Format the algorithm output
         logger.info("Formatting algorithm output for API response")
-        algorithm_results = format_output(best_individual, best_fitness, t_begin, t_end)
+        algorithm_results = format_output(best_individual, best_fitness, t_begin, t_end, no_repairmen, components)
         logger.info("Algorithm results formatted successfully")
         
         # Prepare Kafka event data
@@ -727,11 +735,6 @@ def async_processing_grouping_maintenance_request(
                 "results": None
             }
 
-def component_load(component_list):
-    component = [entry["Module"] for entry in component_list]
-    alpha = [entry["Alpha"] for entry in component_list]
-    beta = [entry["Beta"] for entry in component_list]
-
 
 ####### Execution ########
 
@@ -741,269 +744,269 @@ def component_load(component_list):
 # .. = genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate)
 
 
-# component_list = [
-#         {
-#             "Module ID": "0",
-#             "Module": "POSTE DE CONTRÔLE",
-#             "Alpha": 5,
-#             "Beta": 16.0,
-#             "Average maintenance duration": 1.108,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "1",
-#             "Module": "CONNECTEURS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 3.849,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "2",
-#             "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-#             "Alpha": 5,
-#             "Beta": 20.0,
-#             "Average maintenance duration": 0.726,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "3",
-#             "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
-#             "Alpha": 5,
-#             "Beta": 20.0,
-#             "Average maintenance duration": 1.925,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "4",
-#             "Module": "CONVOYEURS",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.492,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "5",
-#             "Module": "LIGNE DE MONTAGE MOTG02",
-#             "Alpha": 5,
-#             "Beta": 7.2,
-#             "Average maintenance duration": 0.89,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "6",
-#             "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
-#             "Alpha": 5,
-#             "Beta": 12.0,
-#             "Average maintenance duration": 1.73,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "7",
-#             "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
-#             "Alpha": 5,
-#             "Beta": 12.0,
-#             "Average maintenance duration": 1.082,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "8",
-#             "Module": "MAGASIN PLATEAUX VIDES",
-#             "Alpha": 5,
-#             "Beta": 8.0,
-#             "Average maintenance duration": 0.815,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "9",
-#             "Module": "ASCENSEUR DE SORTIE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.709,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "10",
-#             "Module": "MM-TAILLE1",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 13.964,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "11",
-#             "Module": "ASCENSEUR",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.477,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "12",
-#             "Module": "KTM6",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 21.963,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "13",
-#             "Module": "PINCE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 4.499,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "14",
-#             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
-#             "Alpha": 5,
-#             "Beta": 8.0,
-#             "Average maintenance duration": 3.307,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "15",
-#             "Module": "KTM5",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.632,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "16",
-#             "Module": "EMMANCHEMENT",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.263,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "17",
-#             "Module": "CHAUFFE VENTILATEURS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.15,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "18",
-#             "Module": "ECRANS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.024,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "19",
-#             "Module": "DIVERS",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 2.022,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "20",
-#             "Module": "EI7-BARRETTE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 1.231,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "21",
-#             "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
-#             "Alpha": 5,
-#             "Beta": 7.0,
-#             "Average maintenance duration": 1.109,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "22",
-#             "Module": "TRANSLATION",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 1.053,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "23",
-#             "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.971,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "24",
-#             "Module": "ASCENSEUR SORTIE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.775,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "25",
-#             "Module": "VISSEUSES ÉLECTRIQUE",
-#             "Alpha": 5,
-#             "Beta": 6.0,
-#             "Average maintenance duration": 0.639,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "26",
-#             "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.572,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         },
-#         {
-#             "Module ID": "27",
-#             "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
-#             "Alpha": 5,
-#             "Beta": 10.0,
-#             "Average maintenance duration": 0.371,
-#             "MTBF": 0.0,
-#             "Last Maintenance Action Time": "..."
-#         }
-#     ]
+component_list = [
+        {
+            "Module ID": "0",
+            "Module": "POSTE DE CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 16.0,
+            "Average maintenance duration": 1.108,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "1",
+            "Module": "CONNECTEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 3.849,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "2",
+            "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 0.726,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "3",
+            "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+            "Alpha": 5,
+            "Beta": 20.0,
+            "Average maintenance duration": 1.925,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "4",
+            "Module": "CONVOYEURS",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.492,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "5",
+            "Module": "LIGNE DE MONTAGE MOTG02",
+            "Alpha": 5,
+            "Beta": 7.2,
+            "Average maintenance duration": 0.89,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "6",
+            "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.73,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "7",
+            "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
+            "Alpha": 5,
+            "Beta": 12.0,
+            "Average maintenance duration": 1.082,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "8",
+            "Module": "MAGASIN PLATEAUX VIDES",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 0.815,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "9",
+            "Module": "ASCENSEUR DE SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.709,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "10",
+            "Module": "MM-TAILLE1",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 13.964,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "11",
+            "Module": "ASCENSEUR",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.477,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "12",
+            "Module": "KTM6",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 21.963,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "13",
+            "Module": "PINCE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 4.499,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "14",
+            "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
+            "Alpha": 5,
+            "Beta": 8.0,
+            "Average maintenance duration": 3.307,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "15",
+            "Module": "KTM5",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.632,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "16",
+            "Module": "EMMANCHEMENT",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.263,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "17",
+            "Module": "CHAUFFE VENTILATEURS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.15,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "18",
+            "Module": "ECRANS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.024,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "19",
+            "Module": "DIVERS",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 2.022,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "20",
+            "Module": "EI7-BARRETTE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.231,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "21",
+            "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
+            "Alpha": 5,
+            "Beta": 7.0,
+            "Average maintenance duration": 1.109,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "22",
+            "Module": "TRANSLATION",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 1.053,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "23",
+            "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.971,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "24",
+            "Module": "ASCENSEUR SORTIE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.775,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "25",
+            "Module": "VISSEUSES ÉLECTRIQUE",
+            "Alpha": 5,
+            "Beta": 6.0,
+            "Average maintenance duration": 0.639,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "26",
+            "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.572,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        },
+        {
+            "Module ID": "27",
+            "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
+            "Alpha": 5,
+            "Beta": 10.0,
+            "Average maintenance duration": 0.371,
+            "MTBF": 0.0,
+            "Last Maintenance Action Time": "..."
+        }
+    ]
 
 
-# setup_cost = 500
-# downtime_cost_rate = 100
-# no_repairmen = 1
+setup_cost = 500
+downtime_cost_rate = 100
+no_repairmen = 1
 
 
-# best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
-# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
+print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-# output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
+output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
 
