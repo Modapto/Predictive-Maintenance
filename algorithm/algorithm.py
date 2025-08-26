@@ -670,6 +670,11 @@ def async_processing_grouping_maintenance_request(
         # Algorithm parameters (using components length or default)
         t_begin, t_end = 0.0, 1000.0
         
+        logger.info("-------------------------------------")
+        logger.info("Complete Input Data:")
+        logger.info({components})
+        logger.info("-------------------------------------")
+        
         # Run the genetic algorithm
         logger.info("Executing genetic algorithm for maintenance optimization")
         best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, components)
