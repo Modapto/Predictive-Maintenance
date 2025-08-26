@@ -1006,4 +1006,3 @@ def component_load(component_list):
 # print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
 # output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
-

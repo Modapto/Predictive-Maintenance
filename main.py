@@ -258,7 +258,7 @@ async def process_grouping_maintenance_async(
     """
     try:
         # Convert ComponentData objects to simple list for the algorithm
-        component_list = [component.model_dump() for component in components]
+        component_list = [component.model_dump(by_alias=True) for component in components]
         
         # Log component structure after model_dump for debugging
         if component_list:
