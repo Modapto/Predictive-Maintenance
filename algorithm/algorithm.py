@@ -9,6 +9,9 @@ import logging
 
 from datetime import datetime, timezone
 
+# Configure logging for this module
+logger = logging.getLogger(__name__)
+
 # shared_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'user_input'))
 # sys.path.append(shared_path)
 
@@ -660,10 +663,7 @@ def async_processing_grouping_maintenance_request(
         
     Returns:
         dict: Event data ready for Kafka publishing
-    """
-    # Configure logging for this function
-    logger = logging.getLogger(__name__)
-    
+    """    
     try:
         logger.info(f"Starting async grouping maintenance processing for module: {production_module}")
         logger.info(f"Input parameters - Setup cost: {setup_cost}, Downtime cost rate: {downtime_cost_rate}, "
