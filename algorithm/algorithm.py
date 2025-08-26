@@ -261,8 +261,12 @@ def mapping_IDcomponent_to_duration(G_component, component_list):
     for group, id_component in G_component:
         duration = []
         for d in id_component:
-            value = next(item["Average maintenance duration"] for item in component_list if item["Module ID"] == d)
-            duration.append(value)
+            try:
+                value = next(item["Average maintenance duration"] for item in component_list if item["Module ID"] == d)
+                duration.append(value)
+            except StopIteration:
+                logger.error(f"Component with Module ID '{d}' not found in component_list for duration mapping")
+                raise ValueError(f"Component with Module ID '{d}' not found in component list")
         group_to_duration.append((group, duration))
         total_duration.append(sum(duration))
     return group_to_duration, total_duration                            # total_duration: sum_di
@@ -274,8 +278,12 @@ def mapping_IDcomponent_to_alpha(G_component, component_list):
     for group, id_component in G_component:
         alpha = []
         for d in id_component:
-            value = next(item["Alpha"] for item in component_list if item["Module ID"] == d)
-            alpha.append(value)
+            try:
+                value = next(item["Alpha"] for item in component_list if item["Module ID"] == d)
+                alpha.append(value)
+            except StopIteration:
+                logger.error(f"Component with Module ID '{d}' not found in component_list for alpha mapping")
+                raise ValueError(f"Component with Module ID '{d}' not found in component list")
         group_to_alpha.append((group, alpha))
     return group_to_alpha
 
@@ -286,8 +294,12 @@ def mapping_IDcomponent_to_beta(G_component, component_list):
     for group, id_component in G_component:
         beta = []
         for d in id_component:
-            value = next(item["Beta"] for item in component_list if item["Module ID"] == d)
-            beta.append(value)
+            try:
+                value = next(item["Beta"] for item in component_list if item["Module ID"] == d)
+                beta.append(value)
+            except StopIteration:
+                logger.error(f"Component with Module ID '{d}' not found in component_list for beta mapping")
+                raise ValueError(f"Component with Module ID '{d}' not found in component list")
         group_to_beta.append((group, beta))
     return group_to_beta
 
