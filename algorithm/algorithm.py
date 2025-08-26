@@ -672,7 +672,7 @@ def async_processing_grouping_maintenance_request(
         
         logger.info("-------------------------------------")
         logger.info("Complete Input Data:")
-        logger.info({components})
+        logger.info(f"Components: {components}")
         logger.info("-------------------------------------")
         
         # Run the genetic algorithm
