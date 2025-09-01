@@ -1,5 +1,5 @@
 {
-    "Cost savings": -140192.91999999998,
+    "Cost savings": -166729.285,
     "Grouping maintenance": {
         "Group 1": [
             {
@@ -13,68 +13,50 @@
             {
                 "Module ID": "0",
                 "Module": "POSTE DE CONTRÔLE",
-                "Replacement time": 346.596,
-                "Duration": 1.108
+                "Replacement time": 363.516,
+                "Duration": 1.834
+            },
+            {
+                "Module ID": "2",
+                "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+                "Replacement time": 363.516,
+                "Duration": 1.834
             }
         ],
         "Group 3": [
             {
                 "Module ID": "0",
                 "Module": "POSTE DE CONTRÔLE",
-                "Replacement time": 543.799,
-                "Duration": 5.683
-            },
-            {
-                "Module ID": "1",
-                "Module": "CONNECTEURS",
-                "Replacement time": 543.799,
-                "Duration": 5.683
+                "Replacement time": 545.274,
+                "Duration": 1.834
             },
             {
                 "Module ID": "2",
                 "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 543.799,
-                "Duration": 5.683
+                "Replacement time": 545.274,
+                "Duration": 1.834
             }
         ],
         "Group 4": [
             {
                 "Module ID": "0",
                 "Module": "POSTE DE CONTRÔLE",
-                "Replacement time": 699.142,
-                "Duration": 4.957
-            },
-            {
-                "Module ID": "1",
-                "Module": "CONNECTEURS",
-                "Replacement time": 699.142,
-                "Duration": 4.957
+                "Replacement time": 693.193,
+                "Duration": 1.108
             }
         ],
         "Group 5": [
             {
                 "Module ID": "0",
                 "Module": "POSTE DE CONTRÔLE",
-                "Replacement time": 822.992,
-                "Duration": 6.573
-            },
-            {
-                "Module ID": "1",
-                "Module": "CONNECTEURS",
-                "Replacement time": 822.992,
-                "Duration": 6.573
+                "Replacement time": 841.551,
+                "Duration": 1.834
             },
             {
                 "Module ID": "2",
                 "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 822.992,
-                "Duration": 6.573
-            },
-            {
-                "Module ID": "5",
-                "Module": "LIGNE DE MONTAGE MOTG02",
-                "Replacement time": 822.992,
-                "Duration": 6.573
+                "Replacement time": 841.551,
+                "Duration": 1.834
             }
         ],
         "Group 6": [
@@ -95,21 +77,43 @@
         ],
         "Group 8": [
             {
+                "Module ID": "1",
+                "Module": "CONNECTEURS",
+                "Replacement time": 626.678,
+                "Duration": 4.739
+            },
+            {
+                "Module ID": "5",
+                "Module": "LIGNE DE MONTAGE MOTG02",
+                "Replacement time": 626.678,
+                "Duration": 4.739
+            }
+        ],
+        "Group 9": [
+            {
+                "Module ID": "1",
+                "Module": "CONNECTEURS",
+                "Replacement time": 718.179,
+                "Duration": 3.849
+            }
+        ],
+        "Group 10": [
+            {
+                "Module ID": "1",
+                "Module": "CONNECTEURS",
+                "Replacement time": 897.724,
+                "Duration": 3.849
+            }
+        ],
+        "Group 11": [
+            {
                 "Module ID": "2",
                 "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
                 "Replacement time": 208.829,
                 "Duration": 0.726
             }
         ],
-        "Group 9": [
-            {
-                "Module ID": "2",
-                "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-                "Replacement time": 417.658,
-                "Duration": 0.726
-            }
-        ],
-        "Group 10": [
+        "Group 12": [
             {
                 "Module ID": "3",
                 "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
@@ -117,7 +121,7 @@
                 "Duration": 1.925
             }
         ],
-        "Group 11": [
+        "Group 13": [
             {
                 "Module ID": "4",
                 "Module": "CONVOYEURS",
