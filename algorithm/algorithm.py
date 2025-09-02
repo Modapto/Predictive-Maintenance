@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import logging
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
@@ -25,100 +26,100 @@ logger = logging.getLogger(__name__)
 # with open(file_path_json_1, 'r', encoding='utf-8') as file:
 #     data1 = json.load(file)
 
-data2 = {   
-    "window":   {
-                    "Begin": 0.0,
-                    "End": 1000.0
-                },
-    "failure":  [
-                    {
-                        "ID activity": 1,
-                        "Replacement time": 173.298,
-                        "Module ID": "0"
-                    },
-                    {
-                        "ID activity": 2,
-                        "Replacement time": 346.596,
-                        "Module ID": "0"
-                    },
-                    {
-                        "ID activity": 3,
-                        "Replacement time": 519.895,
-                        "Module ID": "0"
-                    },
-                    {
-                        "ID activity": 4,
-                        "Replacement time": 693.193,
-                        "Module ID": "0"
-                    },
-                    {
-                        "ID activity": 5,
-                        "Replacement time": 866.491,
-                        "Module ID": "0"
-                    },
-                    {
-                        "ID activity": 6,
-                        "Replacement time": 179.545,
-                        "Module ID": "1"
-                    },
-                    {
-                        "ID activity": 7,
-                        "Replacement time": 359.09,
-                        "Module ID": "1"
-                    },
-                    {
-                        "ID activity": 8,
-                        "Replacement time": 538.635,
-                        "Module ID": "1"
+# data2 = {   
+#     "window":   {
+#                     "Begin": 0.0,
+#                     "End": 1000.0
+#                 },
+#     "failure":  [
+#                     {
+#                         "ID activity": 1,
+#                         "Replacement time": 173.298,
+#                         "Module ID": "0"
+#                     },
+#                     {
+#                         "ID activity": 2,
+#                         "Replacement time": 346.596,
+#                         "Module ID": "0"
+#                     },
+#                     {
+#                         "ID activity": 3,
+#                         "Replacement time": 519.895,
+#                         "Module ID": "0"
+#                     },
+#                     {
+#                         "ID activity": 4,
+#                         "Replacement time": 693.193,
+#                         "Module ID": "0"
+#                     },
+#                     {
+#                         "ID activity": 5,
+#                         "Replacement time": 866.491,
+#                         "Module ID": "0"
+#                     },
+#                     {
+#                         "ID activity": 6,
+#                         "Replacement time": 179.545,
+#                         "Module ID": "1"
+#                     },
+#                     {
+#                         "ID activity": 7,
+#                         "Replacement time": 359.09,
+#                         "Module ID": "1"
+#                     },
+#                     {
+#                         "ID activity": 8,
+#                         "Replacement time": 538.635,
+#                         "Module ID": "1"
 
-                    },
-                    {
-                        "ID activity": 9,
-                        "Replacement time": 718.179,
-                        "Module ID": "1"
-                    },
-                    {
-                        "ID activity": 10,
-                        "Replacement time": 897.724,
-                        "Module ID": "1"
-                    },
-                    {
-                        "ID activity": 11,
-                        "Replacement time": 208.829,
-                        "Module ID": "2"
-                    },
-                    {
-                        "ID activity": 12,
-                        "Replacement time": 417.658,
-                        "Module ID": "2"
-                    },
-                    {
-                        "ID activity": 13,
-                        "Replacement time": 626.487,
-                        "Module ID": "2"
-                    },
-                    {
-                        "ID activity": 14,
-                        "Replacement time": 835.316,
-                        "Module ID": "2"
-                    },
-                    {
-                        "ID activity": 15,
-                        "Replacement time": 548.357,
-                        "Module ID": "3"
-                    },
-                    {
-                        "ID activity": 16,
-                        "Replacement time": 627.938,
-                        "Module ID": "4"
-                    },
-                    {
-                        "ID activity": 17,
-                        "Replacement time": 732.33,
-                        "Module ID": "5"
-                    }
-                ]
-}
+#                     },
+#                     {
+#                         "ID activity": 9,
+#                         "Replacement time": 718.179,
+#                         "Module ID": "1"
+#                     },
+#                     {
+#                         "ID activity": 10,
+#                         "Replacement time": 897.724,
+#                         "Module ID": "1"
+#                     },
+#                     {
+#                         "ID activity": 11,
+#                         "Replacement time": 208.829,
+#                         "Module ID": "2"
+#                     },
+#                     {
+#                         "ID activity": 12,
+#                         "Replacement time": 417.658,
+#                         "Module ID": "2"
+#                     },
+#                     {
+#                         "ID activity": 13,
+#                         "Replacement time": 626.487,
+#                         "Module ID": "2"
+#                     },
+#                     {
+#                         "ID activity": 14,
+#                         "Replacement time": 835.316,
+#                         "Module ID": "2"
+#                     },
+#                     {
+#                         "ID activity": 15,
+#                         "Replacement time": 548.357,
+#                         "Module ID": "3"
+#                     },
+#                     {
+#                         "ID activity": 16,
+#                         "Replacement time": 627.938,
+#                         "Module ID": "4"
+#                     },
+#                     {
+#                         "ID activity": 17,
+#                         "Replacement time": 732.33,
+#                         "Module ID": "5"
+#                     }
+#                 ]
+# }
 
 # # Load input
 # component = [entry["Module"] for entry in data1["component_list"]]
@@ -638,6 +639,121 @@ def component_load(component_list):
 
 
 
+
+
+def schedule_maintenance_relative(LMAT, MTBF, MD, TW_start, TW_end):
+    """
+    Calculate all maintenance actions in the given time window (relative hours).
+
+    Args:
+        LMAT (datetime): Last maintenance action time
+        MTBF (float): Mean time between failures (hours)
+        MD (float): Maintenance duration (hours)
+        TW_start (datetime): Start of time window
+        TW_end (datetime): End of time window
+
+    Returns:
+        list of tuples: [(start_hour, end_hour), ...] relative to TW_start
+    """
+    results = []
+    k = 1
+
+    # Convert datetimes to relative hours from TW_start
+    LMAT_h = (LMAT - TW_start).total_seconds() / 3600.0
+    TW_start_h = 0
+    TW_end_h = (TW_end - TW_start).total_seconds() / 3600.0
+
+    while True:
+        # Expected failure (relative hours)
+        T_failure_h = LMAT_h + k * MTBF
+        T_latest_h = T_failure_h - MD
+
+        # Check feasibility inside the time window
+        if T_latest_h >= TW_start_h and (T_latest_h + MD) <= TW_end_h:
+            results.append((T_latest_h, T_latest_h + MD))
+        elif T_latest_h > TW_end_h:
+            break  # Beyond time window, stop
+
+        k += 1
+
+        # Safety stop
+        if k > 1000:
+            break
+
+    return results
+
+
+
+def convert_to_datetime(schedule_rel, TW_start):
+    """
+    Convert relative maintenance hours back to datetime intervals.
+
+    Args:
+        schedule_rel (list of tuples): [(start_hour, end_hour), ...]
+        TW_start (datetime): Start of time window
+
+    Returns:
+        list of tuples: [(start_datetime, end_datetime), ...]
+    """
+    results = []
+    for start_h, end_h in schedule_rel:
+        start_dt = TW_start + timedelta(hours=start_h)
+        end_dt = TW_start + timedelta(hours=end_h)
+        results.append((start_dt, end_dt))
+    return results
+
+
+def generate_failure_json(component_list, TW_start, TW_end):
+    """
+    Generate failure schedule JSON for all components within the time window.
+
+    Args:
+        component_list (list): list of component dicts with MTBF, Last Maintenance Action Time, etc.
+        TW_start (datetime): window start time
+        TW_end (datetime): window end time
+
+    Returns:
+        dict: JSON structure with window and failure activities
+    """
+    data = {
+        "window": {
+            "Begin": 0.0,
+            "End": (TW_end - TW_start).total_seconds() / 3600.0
+        },
+        "failure": []
+    }
+
+    activity_id = 1
+
+    for comp in component_list:
+        MTBF = comp["MTBF"]
+        LMAT = comp["Last Maintenance Action Time"]
+        ModuleID = comp["Module ID"]
+
+        if MTBF <= 0:
+            continue  # skip modules with invalid MTBF
+
+        # Convert LMAT to relative hours from TW_start
+        LMAT_h = (LMAT - TW_start).total_seconds() / 3600.0
+        TW_end_h = (TW_end - TW_start).total_seconds() / 3600.0
+
+        k = 1
+        while True:
+            replacement_time = LMAT_h + k * MTBF
+            if replacement_time > TW_end_h:
+                break
+            data["failure"].append({
+                "ID activity": activity_id,
+                "Replacement time": round(replacement_time, 3),
+                "Module ID": ModuleID
+            })
+            activity_id += 1
+            k += 1
+
+    return data
+
+
+
 # Function to process API request and prepare Kafka event data
 def async_processing_grouping_maintenance_request(
     setup_cost: float,
@@ -769,7 +885,7 @@ component_list = [
             "Beta": 16.0,
             "Average maintenance duration": 1.108,
             "MTBF": 173.298,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "1",
@@ -778,7 +894,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 3.849,
             "MTBF": 179.545,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "2",
@@ -787,7 +903,7 @@ component_list = [
             "Beta": 20.0,
             "Average maintenance duration": 0.726,
             "MTBF": 208.829,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "3",
@@ -796,7 +912,7 @@ component_list = [
             "Beta": 20.0,
             "Average maintenance duration": 1.925,
             "MTBF": 548.357,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "4",
@@ -805,7 +921,7 @@ component_list = [
             "Beta": 10.0,
             "Average maintenance duration": 0.492,
             "MTBF": 627.938,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "5",
@@ -814,7 +930,7 @@ component_list = [
             "Beta": 7.2,
             "Average maintenance duration": 0.89,
             "MTBF": 732.33,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "6",
@@ -823,7 +939,7 @@ component_list = [
             "Beta": 12.0,
             "Average maintenance duration": 1.73,
             "MTBF": 1465.24,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "7",
@@ -832,7 +948,7 @@ component_list = [
             "Beta": 12.0,
             "Average maintenance duration": 1.082,
             "MTBF": 1464.842,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "8",
@@ -841,7 +957,7 @@ component_list = [
             "Beta": 8.0,
             "Average maintenance duration": 0.815,
             "MTBF": 1465.945,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "9",
@@ -850,7 +966,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 0.709,
             "MTBF": 1466.076,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "10",
@@ -859,7 +975,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 13.964,
             "MTBF": 2186.109,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "11",
@@ -868,7 +984,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 0.477,
             "MTBF": 2199.594,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "12",
@@ -877,7 +993,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 21.963,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "13",
@@ -886,7 +1002,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 4.499,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "14",
@@ -895,7 +1011,7 @@ component_list = [
             "Beta": 8.0,
             "Average maintenance duration": 3.307,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "15",
@@ -904,7 +1020,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 2.632,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "16",
@@ -913,7 +1029,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 2.263,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "17",
@@ -922,7 +1038,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 2.15,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "18",
@@ -931,7 +1047,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 2.024,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "19",
@@ -940,7 +1056,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 2.022,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "20",
@@ -949,7 +1065,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 1.231,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "21",
@@ -958,7 +1074,7 @@ component_list = [
             "Beta": 7.0,
             "Average maintenance duration": 1.109,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "22",
@@ -967,7 +1083,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 1.053,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "23",
@@ -976,7 +1092,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 0.971,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "24",
@@ -985,7 +1101,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 0.775,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "25",
@@ -994,7 +1110,7 @@ component_list = [
             "Beta": 6.0,
             "Average maintenance duration": 0.639,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "26",
@@ -1003,7 +1119,7 @@ component_list = [
             "Beta": 10.0,
             "Average maintenance duration": 0.572,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         },
         {
             "Module ID": "27",
@@ -1012,7 +1128,7 @@ component_list = [
             "Beta": 10.0,
             "Average maintenance duration": 0.371,
             "MTBF": 0.0,
-            "Last Maintenance Action Time": "..."
+            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
         }
     ]
 
@@ -1021,19 +1137,53 @@ setup_cost = 500
 downtime_cost_rate = 100
 no_repairmen = 1
 
-window =    {
-                    "Begin": 0.0,
-                    "End": 1000.0
-            }
+# window =    {
+#                     "Begin": datetime(2025, 9, 5, 0, 0),
+#                     "End": datetime(2025, 10, 20, 0, 0)
+#             }
 
 
-t_begin = window["Begin"]
-t_end = window["End"]
-
-window_size = t_end - t_begin
+# TW_start = window["Begin"]
+# TW_end = window["End"]
 
 
-best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
-print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+# best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
+# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
+# output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
+
+
+# # Example
+# LMAT = datetime(2025, 9, 1, 0, 0)
+# MTBF = 100  # hours
+# MD = 10     # hours
+
+
+# schedule_rel = schedule_maintenance_relative(LMAT, MTBF, MD, TW_start, TW_end)
+# print(schedule_rel)
+
+
+# # Example conversion
+# schedule_back = convert_to_datetime(schedule_rel, TW_start)
+# print(schedule_back)
+
+
+# Example window for demo
+TW_start = datetime(2025, 9, 1, 0, 0)
+TW_end = datetime(2025, 10, 13, 0, 0)
+
+
+
+
+
+def calculate_maintenance_time(component_list, TW_start, TW_end):
+    data = generate_failure_json(component_list, TW_start, TW_end)
+    t = [entry["Replacement time"] for entry in data["failure"]]
+    ID_activity = [entry["ID activity"] for entry in data["failure"]]
+    ID_component = [entry["Module ID"] for entry in data["failure"]]
+    map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
+    map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
+    return data, map_activity_to_IDcomponent, map_activity_to_replacement_time
+
+
+
