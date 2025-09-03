@@ -606,42 +606,42 @@ def output_json_file(best_individual, best_fitness, TW_start, TW_end, m, compone
     print(f"File saved to: {output_path}")
 
 # Function to convert the algorithm output to the proper format
-def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_list):
-    """
-    Convert the algorithm output to the proper format for JSON output.
-    Args:
-        best_individual (list): The best individual from the genetic algorithm.
-        best_fitness (float): The fitness value of the best individual.
-        TW_start (float): The beginning of the time window.
-        TW_end (float): The end of the time window.
-    Returns:
-        dict: A dictionary containing the formatted output.
-    """
-    ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
+# def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_list):
+#     """
+#     Convert the algorithm output to the proper format for JSON output.
+#     Args:
+#         best_individual (list): The best individual from the genetic algorithm.
+#         best_fitness (float): The fitness value of the best individual.
+#         TW_start (float): The beginning of the time window.
+#         TW_end (float): The end of the time window.
+#     Returns:
+#         dict: A dictionary containing the formatted output.
+#     """
+#     ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
 
-    # Call your existing mapping functions
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
+#     # Call your existing mapping functions
+#     _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
+#     G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
     
-    # Convert component IDs to names
-    G_component_named = convert_component_ids_to_names(G_component, component_list)
-    group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+#     # Convert component IDs to names
+#     G_component_named = convert_component_ids_to_names(G_component, component_list)
+#     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
     
-    G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
-    individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
+#     G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
+#     individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     
-    # Create output dictionary with proper key names to match the expected format
-    output = {
-        "Cost savings": best_fitness,
-        "Grouping maintenance": group_maintenance,
-        "Individual maintenance": individual_maintenance,
-        "Time window": {
-            "Begin": TW_start,
-            "End": TW_end
-        }
-    }
+#     # Create output dictionary with proper key names to match the expected format
+#     output = {
+#         "Cost savings": best_fitness,
+#         "Grouping maintenance": group_maintenance,
+#         "Individual maintenance": individual_maintenance,
+#         "Time window": {
+#             "Begin": TW_start,
+#             "End": TW_end
+#         }
+#     }
 
-    return output
+#     return output
 
 
 def component_load(component_list):
