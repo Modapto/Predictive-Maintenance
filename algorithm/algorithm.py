@@ -605,43 +605,43 @@ def output_json_file(best_individual, best_fitness, TW_start, TW_end, m, compone
 
     print(f"File saved to: {output_path}")
 
-# Function to convert the algorithm output to the proper format
-# def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_list):
-#     """
-#     Convert the algorithm output to the proper format for JSON output.
-#     Args:
-#         best_individual (list): The best individual from the genetic algorithm.
-#         best_fitness (float): The fitness value of the best individual.
-#         TW_start (float): The beginning of the time window.
-#         TW_end (float): The end of the time window.
-#     Returns:
-#         dict: A dictionary containing the formatted output.
-#     """
-#     ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
+#Function to convert the algorithm output to the proper format
+def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_list):
+    """
+    Convert the algorithm output to the proper format for JSON output.
+    Args:
+        best_individual (list): The best individual from the genetic algorithm.
+        best_fitness (float): The fitness value of the best individual.
+        TW_start (float): The beginning of the time window.
+        TW_end (float): The end of the time window.
+    Returns:
+        dict: A dictionary containing the formatted output.
+    """
+    ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
 
-#     # Call your existing mapping functions
-#     _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
-#     G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
+    # Call your existing mapping functions
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
     
-#     # Convert component IDs to names
-#     G_component_named = convert_component_ids_to_names(G_component, component_list)
-#     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+    # Convert component IDs to names
+    G_component_named = convert_component_ids_to_names(G_component, component_list)
+    group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
     
-#     G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
-#     individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
+    G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
+    individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     
-#     # Create output dictionary with proper key names to match the expected format
-#     output = {
-#         "Cost savings": best_fitness,
-#         "Grouping maintenance": group_maintenance,
-#         "Individual maintenance": individual_maintenance,
-#         "Time window": {
-#             "Begin": TW_start,
-#             "End": TW_end
-#         }
-#     }
+    # Create output dictionary with proper key names to match the expected format
+    output = {
+        "Cost savings": best_fitness,
+        "Grouping maintenance": group_maintenance,
+        "Individual maintenance": individual_maintenance,
+        "Time window": {
+            "Begin": TW_start,
+            "End": TW_end
+        }
+    }
 
-#     return output
+    return output
 
 
 def component_load(component_list):
@@ -783,7 +783,9 @@ def async_processing_grouping_maintenance_request(
     no_repairmen: int,
     components: list,
     smart_service: str,
-    production_module: str):
+    module: str,
+    TW_start,
+    TW_end):
     """
     Process grouping maintenance request and prepare for Kafka publishing.
     This function is called from the API and handles the complete workflow:
@@ -797,13 +799,15 @@ def async_processing_grouping_maintenance_request(
         no_repairmen (int): Number of available repairmen
         components (list): List of component data from API request
         smart_service (str): Smart service identifier
-        production_module (str): Production module identifier
+        module (str): Production module identifier
+        TW_start (datetime): Start of time window
+        TW_end (datetime): End of time window
         
     Returns:
         dict: Event data ready for Kafka publishing
     """    
     try:
-        logger.info(f"Starting async grouping maintenance processing for module: {production_module}")
+        logger.info(f"Starting async grouping maintenance processing for module: {module}")
         logger.info(f"Input parameters - Setup cost: {setup_cost}, Downtime cost rate: {downtime_cost_rate}, "
                    f"No. repairmen: {no_repairmen}, Components count: {len(components) if components else 0}")
         logger.debug(f"Smart service: {smart_service}")
@@ -817,30 +821,28 @@ def async_processing_grouping_maintenance_request(
         
         logger.debug("Input validation passed successfully")
         
-        # Algorithm parameters (using components length or default)
-        t_begin, t_end = 0.0, 1000.0
-        
         logger.info("-------------------------------------")
         logger.info("Complete Input Data:")
         logger.info(f"Components: {components}")
+        logger.info(f"Time Window: {TW_start} to {TW_end}")
         logger.info("-------------------------------------")
         
-        # Run the genetic algorithm
+        # Run the genetic algorithm with provided time window
         logger.info("Executing genetic algorithm for maintenance optimization")
-        best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, components)
+        best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, components, TW_start, TW_end)
         logger.info(f"Genetic algorithm completed - Best fitness: {best_fitness}")
         logger.info(f"Best individual solution: {best_individual}")
         
         # Format the algorithm output
         logger.info("Formatting algorithm output for API response")
-        algorithm_results = format_output(best_individual, best_fitness, t_begin, t_end, no_repairmen, components)
+        algorithm_results = format_output(best_individual, best_fitness, TW_start, TW_end, no_repairmen, components)
         logger.info("Algorithm results formatted successfully")
         
         # Prepare Kafka event data
         logger.info("Preparing Kafka event data for successful completion")
         event_data = {
-            "description": "The grouping maintenance optimization has been successfully completed for the production module '{}'.".format(production_module),
-            "module": production_module,
+            "description": "The grouping maintenance optimization has been successfully completed for the production module '{}'.".format(module),
+            "module": module,
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
             "priority": "MID", # Should be handled appropriately from the algorithm
             "eventType": "Grouping Maintenance Process Completion",
@@ -850,7 +852,7 @@ def async_processing_grouping_maintenance_request(
             "results": algorithm_results
         }
         
-        logger.info(f"Async grouping maintenance processing completed successfully for module: {production_module}")
+        logger.info(f"Async grouping maintenance processing completed successfully for module: {module}")
         return event_data
         
     except Exception as e:
@@ -862,7 +864,7 @@ def async_processing_grouping_maintenance_request(
             logger.info("Preparing error event data for Kafka publishing")
             error_event_data = {
                 "description": f"Grouping maintenance optimization failed: {str(e)}",
-                "module": production_module,
+                "module": module,
                 "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
                 "priority": "MID",
                 "eventType": "Grouping Maintenance Process Error",
@@ -880,7 +882,7 @@ def async_processing_grouping_maintenance_request(
             # Return minimal error response
             return {
                 "description": f"Unable to process input data for Grouping Maintenance: {str(e)}",
-                "module": production_module,
+                "module": module,
                 "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
                 "priority": "HIGH",
                 "eventType": "System Error",
@@ -899,272 +901,272 @@ def async_processing_grouping_maintenance_request(
 # .. = genetic_algorithm_v2(components, setup_cost, no_repairmen, downtime_cost_rate)
 
 
-component_list = [
-        {
-            "Module ID": "0",
-            "Module": "POSTE DE CONTRÔLE",
-            "Alpha": 5,
-            "Beta": 16.0,
-            "Average maintenance duration": 1.108,
-            "MTBF": 173.298,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "1",
-            "Module": "CONNECTEURS",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 3.849,
-            "MTBF": 179.545,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "2",
-            "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
-            "Alpha": 5,
-            "Beta": 20.0,
-            "Average maintenance duration": 0.726,
-            "MTBF": 208.829,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "3",
-            "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
-            "Alpha": 5,
-            "Beta": 20.0,
-            "Average maintenance duration": 1.925,
-            "MTBF": 548.357,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "4",
-            "Module": "CONVOYEURS",
-            "Alpha": 5,
-            "Beta": 10.0,
-            "Average maintenance duration": 0.492,
-            "MTBF": 627.938,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "5",
-            "Module": "LIGNE DE MONTAGE MOTG02",
-            "Alpha": 5,
-            "Beta": 7.2,
-            "Average maintenance duration": 0.89,
-            "MTBF": 732.33,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "6",
-            "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
-            "Alpha": 5,
-            "Beta": 12.0,
-            "Average maintenance duration": 1.73,
-            "MTBF": 1465.24,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "7",
-            "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
-            "Alpha": 5,
-            "Beta": 12.0,
-            "Average maintenance duration": 1.082,
-            "MTBF": 1464.842,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "8",
-            "Module": "MAGASIN PLATEAUX VIDES",
-            "Alpha": 5,
-            "Beta": 8.0,
-            "Average maintenance duration": 0.815,
-            "MTBF": 1465.945,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "9",
-            "Module": "ASCENSEUR DE SORTIE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 0.709,
-            "MTBF": 1466.076,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "10",
-            "Module": "MM-TAILLE1",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 13.964,
-            "MTBF": 2186.109,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "11",
-            "Module": "ASCENSEUR",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 0.477,
-            "MTBF": 2199.594,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "12",
-            "Module": "KTM6",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 21.963,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "13",
-            "Module": "PINCE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 4.499,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "14",
-            "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
-            "Alpha": 5,
-            "Beta": 8.0,
-            "Average maintenance duration": 3.307,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "15",
-            "Module": "KTM5",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 2.632,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "16",
-            "Module": "EMMANCHEMENT",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 2.263,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "17",
-            "Module": "CHAUFFE VENTILATEURS",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 2.15,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "18",
-            "Module": "ECRANS",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 2.024,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "19",
-            "Module": "DIVERS",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 2.022,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "20",
-            "Module": "EI7-BARRETTE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 1.231,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "21",
-            "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
-            "Alpha": 5,
-            "Beta": 7.0,
-            "Average maintenance duration": 1.109,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "22",
-            "Module": "TRANSLATION",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 1.053,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "23",
-            "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 0.971,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "24",
-            "Module": "ASCENSEUR SORTIE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 0.775,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "25",
-            "Module": "VISSEUSES ÉLECTRIQUE",
-            "Alpha": 5,
-            "Beta": 6.0,
-            "Average maintenance duration": 0.639,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "26",
-            "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
-            "Alpha": 5,
-            "Beta": 10.0,
-            "Average maintenance duration": 0.572,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        },
-        {
-            "Module ID": "27",
-            "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
-            "Alpha": 5,
-            "Beta": 10.0,
-            "Average maintenance duration": 0.371,
-            "MTBF": 0.0,
-            "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
-        }
-    ]
+# component_list = [
+#         {
+#             "Module ID": "0",
+#             "Module": "POSTE DE CONTRÔLE",
+#             "Alpha": 5,
+#             "Beta": 16.0,
+#             "Average maintenance duration": 1.108,
+#             "MTBF": 173.298,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "1",
+#             "Module": "CONNECTEURS",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 3.849,
+#             "MTBF": 179.545,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "2",
+#             "Module": "POSTE 09 : MONTAGE CÔTÉ A (RETOURNEMENTS)",
+#             "Alpha": 5,
+#             "Beta": 20.0,
+#             "Average maintenance duration": 0.726,
+#             "MTBF": 208.829,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "3",
+#             "Module": "POSTE 04  : EMMANCHEMENTS ROULEMENTS (PRESSE)",
+#             "Alpha": 5,
+#             "Beta": 20.0,
+#             "Average maintenance duration": 1.925,
+#             "MTBF": 548.357,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "4",
+#             "Module": "CONVOYEURS",
+#             "Alpha": 5,
+#             "Beta": 10.0,
+#             "Average maintenance duration": 0.492,
+#             "MTBF": 627.938,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "5",
+#             "Module": "LIGNE DE MONTAGE MOTG02",
+#             "Alpha": 5,
+#             "Beta": 7.2,
+#             "Average maintenance duration": 0.89,
+#             "MTBF": 732.33,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "6",
+#             "Module": "POSTE 02 : ENTRÉE PLATEAUX PLEIN",
+#             "Alpha": 5,
+#             "Beta": 12.0,
+#             "Average maintenance duration": 1.73,
+#             "MTBF": 1465.24,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "7",
+#             "Module": "POSTE 15 : CONTRÔLE HAUTE TENSION",
+#             "Alpha": 5,
+#             "Beta": 12.0,
+#             "Average maintenance duration": 1.082,
+#             "MTBF": 1464.842,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "8",
+#             "Module": "MAGASIN PLATEAUX VIDES",
+#             "Alpha": 5,
+#             "Beta": 8.0,
+#             "Average maintenance duration": 0.815,
+#             "MTBF": 1465.945,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "9",
+#             "Module": "ASCENSEUR DE SORTIE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 0.709,
+#             "MTBF": 1466.076,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "10",
+#             "Module": "MM-TAILLE1",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 13.964,
+#             "MTBF": 2186.109,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "11",
+#             "Module": "ASCENSEUR",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 0.477,
+#             "MTBF": 2199.594,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "12",
+#             "Module": "KTM6",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 21.963,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "13",
+#             "Module": "PINCE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 4.499,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "14",
+#             "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
+#             "Alpha": 5,
+#             "Beta": 8.0,
+#             "Average maintenance duration": 3.307,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "15",
+#             "Module": "KTM5",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 2.632,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "16",
+#             "Module": "EMMANCHEMENT",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 2.263,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "17",
+#             "Module": "CHAUFFE VENTILATEURS",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 2.15,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "18",
+#             "Module": "ECRANS",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 2.024,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "19",
+#             "Module": "DIVERS",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 2.022,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "20",
+#             "Module": "EI7-BARRETTE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 1.231,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "21",
+#             "Module": "POSTE 06A : MONTAGE FREINS + SERRAGE TIRANTS",
+#             "Alpha": 5,
+#             "Beta": 7.0,
+#             "Average maintenance duration": 1.109,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "22",
+#             "Module": "TRANSLATION",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 1.053,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "23",
+#             "Module": "CONVOYEUR CÔTÉ CONTRÔLE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 0.971,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "24",
+#             "Module": "ASCENSEUR SORTIE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 0.775,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "25",
+#             "Module": "VISSEUSES ÉLECTRIQUE",
+#             "Alpha": 5,
+#             "Beta": 6.0,
+#             "Average maintenance duration": 0.639,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "26",
+#             "Module": "POSTE 07 : MONTAGE CAPOT + SOUPAPES",
+#             "Alpha": 5,
+#             "Beta": 10.0,
+#             "Average maintenance duration": 0.572,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         },
+#         {
+#             "Module ID": "27",
+#             "Module": "POSTE 14 : CONTRÔLE MISE Á LA TERRE",
+#             "Alpha": 5,
+#             "Beta": 10.0,
+#             "Average maintenance duration": 0.371,
+#             "MTBF": 0.0,
+#             "Last Maintenance Action Time": datetime(2025, 9, 1, 0, 0)
+#         }
+#     ]
 
 
-setup_cost = 500
-downtime_cost_rate = 100
-no_repairmen = 1
+# setup_cost = 500
+# downtime_cost_rate = 100
+# no_repairmen = 1
 
-# Example window for demo
-TW_start = datetime(2025, 9, 1, 0, 0)
-TW_end = datetime(2025, 9, 30, 0, 0)
+# # Example window for demo
+# TW_start = datetime(2025, 9, 1, 0, 0)
+# TW_end = datetime(2025, 9, 30, 0, 0)
 
 
-best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list, TW_start, TW_end)
-print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
+# best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list, TW_start, TW_end)
+# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-output_json_file(best_individual, best_fitness, TW_start, TW_end, no_repairmen, component_list)
+# output_json_file(best_individual, best_fitness, TW_start, TW_end, no_repairmen, component_list)

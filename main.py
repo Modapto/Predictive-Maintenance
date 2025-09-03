@@ -176,6 +176,8 @@ class GroupingMaintenanceInput(BaseModel):
     smartServiceId: str = Field(..., description="Smart service identifier")
     moduleId: str = Field(..., description="MODAPTO module identifier")
     components: List[ComponentData] = Field(..., description="List of components with their maintenance data")
+    timeWindowStart: str = Field(..., description="Time window start in ISO format (e.g., '2025-09-01T00:00:00')")
+    timeWindowEnd: str = Field(..., description="Time window end in ISO format (e.g., '2025-09-30T00:00:00')")
 
 class FailureEvent(BaseModel):
     Stage: str = Field(..., description="Stage name")
@@ -252,13 +254,36 @@ async def process_grouping_maintenance_async(
     no_repairmen: int,
     components: List[ComponentData],
     smart_service: str,
-    production_module: str):
+    module: str,
+    time_window_start: str,
+    time_window_end: str):
     """
     Process grouping maintenance request asynchronously and publish results to Kafka.
     """
     try:
+        # Parse datetime strings to datetime objects
+        from datetime import datetime
+        try:
+            TW_start = datetime.fromisoformat(time_window_start.replace('Z', '+00:00'))
+            TW_end = datetime.fromisoformat(time_window_end.replace('Z', '+00:00'))
+            logger.info(f"Parsed time window: {TW_start} to {TW_end}")
+        except ValueError as e:
+            logger.error(f"Invalid datetime format: {str(e)}")
+            raise ValueError(f"Invalid datetime format. Use ISO format like '2025-09-01T00:00:00': {str(e)}")
+        
         # Convert ComponentData objects to simple list for the algorithm
         component_list = [component.model_dump(by_alias=True) for component in components]
+        
+        # Parse Last Maintenance Action Time strings to datetime objects for each component
+        for comp in component_list:
+            if "Last Maintenance Action Time" in comp:
+                try:
+                    comp["Last Maintenance Action Time"] = datetime.fromisoformat(
+                        comp["Last Maintenance Action Time"].replace('Z', '+00:00')
+                    )
+                except ValueError as e:
+                    logger.error(f"Invalid datetime format in component {comp.get('Module ID', 'unknown')}: {str(e)}")
+                    raise ValueError(f"Invalid datetime format in component data: {str(e)}")
         
         # Log component structure after model_dump for debugging
         if component_list:
@@ -276,7 +301,9 @@ async def process_grouping_maintenance_async(
                 no_repairmen,
                 component_list,
                 smart_service,
-                production_module
+                module,
+                TW_start,
+                TW_end
             )
         )
         
@@ -305,7 +332,7 @@ async def process_grouping_maintenance_async(
             
             critical_error_event = {
                 "description": f"Critical error in maintenance API processing: {str(e)}",
-                "module": production_module,
+                "module": module,
                 "timestamp": datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
                 "priority": "HIGH",
                 "eventType": "Critical Processing Error",
@@ -327,7 +354,7 @@ def process_threshold_maintenance_request(data):
     Process threshold-based maintenance request using PdM2Service.
     This function is called by the threshold-based maintenance endpoint.
     """
-    # Create input data structure for PdM2Service (excluding smartService and productionModule)
+    # Create input data structure for PdM2Service (excluding smartService and module)
     # Use by_alias=True to preserve original field names from the JSON
     input_data = {
         "events": [event.model_dump(by_alias=True) for event in data.events],
@@ -476,7 +503,8 @@ async def predict_grouping_maintenance(base64_data: Base64Request):
             logger.info("✓ Successfully parsed request data")
             logger.info(f"Request summary - Setup Cost: {data.setupCost}, Downtime Cost Rate: {data.downtimeCostRate}, "
                        f"Repairmen: {data.noRepairmen}, Components: {len(data.components)}, "
-                       f"Smart Service: {data.smartServiceId}, Module: {data.moduleId}")
+                       f"Smart Service: {data.smartServiceId}, Module: {data.moduleId}, "
+                       f"Time Window: {data.timeWindowStart} to {data.timeWindowEnd}")
         except Exception as e:
             logger.error("✗ Failed to parse decoded data into model")
             logger.error(f"Validation error details: {str(e)}")
@@ -499,7 +527,9 @@ async def predict_grouping_maintenance(base64_data: Base64Request):
             data.noRepairmen,
             data.components,
             data.smartServiceId,
-            data.moduleId
+            data.moduleId,
+            data.timeWindowStart,
+            data.timeWindowEnd
         ))
         
         logger.info("Successfully initialized grouping maintenance algorithm")
