@@ -126,14 +126,14 @@ logger = logging.getLogger(__name__)
 # alpha = [entry["Alpha"] for entry in data1["component_list"]]
 # beta = [entry["Beta"] for entry in data1["component_list"]]
 
-t = [entry["Replacement time"] for entry in data2["failure"]]
-ID_activity = [entry["ID activity"] for entry in data2["failure"]]
-ID_component = [entry["Module ID"] for entry in data2["failure"]]
-map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
-map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
+# t = [entry["Replacement time"] for entry in data2["failure"]]
+# ID_activity = [entry["ID activity"] for entry in data2["failure"]]
+# ID_component = [entry["Module ID"] for entry in data2["failure"]]
+# map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
+# map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
 
-t_begin = data2['window']['Begin']
-t_end = data2['window']['End']
+# t_begin = data2['window']['Begin']
+# t_end = data2['window']['End']
 
 # Load input
 # component = [entry["Module"] for entry in components]
@@ -165,7 +165,7 @@ t_end = data2['window']['End']
 
 
 # Algorithm parameter
-GENOME_LENGTH = len(ID_activity)                                                    
+# GENOME_LENGTH = len(ID_activity)                                                    
 # POPULATION_SIZE = parameters.POPULATION_SIZE
 # GENERATIONS = parameters.GENERATIONS
 # p_c_min = parameters.p_c_min
@@ -174,6 +174,7 @@ GENOME_LENGTH = len(ID_activity)
 # p_m_max = parameters.p_m_max
 # w_max = parameters.w_max       
 
+# GENOME_LENGTH = 17
 POPULATION_SIZE = 60
 GENERATIONS = 5
 p_c_min = 0.6
@@ -355,7 +356,8 @@ def saveup_cost_saving(G_activity, C_s):
     return B_S                                                          # shape(B_S) = number of group
 
 # unavailability cost saving
-def unavailability_cost_saving(G_activity, C_d, m, w_max, component_list):
+def unavailability_cost_saving(G_activity, C_d, m, w_max, component_list, TW_start, TW_end):
+    _, map_activity_to_IDcomponent, _, _ = calculate_maintenance_time(component_list, TW_start, TW_end)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
     G_duration, G_total_duration = mapping_IDcomponent_to_duration(G_component, component_list)
     d_Gk = calculate_d_Gk(G_duration, m, w_max)
@@ -382,7 +384,8 @@ def wrapper_P_Gk(t, t_i_list, alpha_i_list, beta_i_list):
     return P_Gk(t[0], t_i_list, alpha_i_list, beta_i_list)
 
 # penalty cost
-def penalty_cost(G_activity, component_list):
+def penalty_cost(G_activity, component_list, TW_start, TW_end):
+    _, map_activity_to_IDcomponent, map_activity_to_replacement_time, _ = calculate_maintenance_time(component_list, TW_start, TW_end)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
     G_alpha = mapping_IDcomponent_to_alpha(G_component, component_list)
     G_beta = mapping_IDcomponent_to_beta(G_component, component_list)
@@ -408,11 +411,11 @@ def cost_benefit(B_S, B_U, P):
     return EB
 
 # fitness function
-def fitness_function(genome, C_s, C_d, m, component_list):
+def fitness_function(genome, C_s, C_d, m, component_list, TW_start, TW_end):
     N, G_activity = decode(genome)  
     B_S = saveup_cost_saving(G_activity, C_s)
-    B_U = unavailability_cost_saving(G_activity, C_d, m, w_max, component_list)
-    P, _ = penalty_cost(G_activity, component_list)
+    B_U = unavailability_cost_saving(G_activity, C_d, m, w_max, component_list, TW_start, TW_end)
+    P, _ = penalty_cost(G_activity, component_list, TW_start, TW_end)
     EB = cost_benefit(B_S, B_U, P)
     fitness_value = np.sum(EB)
     return fitness_value
@@ -461,13 +464,16 @@ def mutate(genome, p_m):
         genome[i], genome[j] = genome[j], genome[i]
     return genome
 
-def genetic_algorithm(C_s, C_d, m, component_list, genome_length=GENOME_LENGTH, population_size=POPULATION_SIZE, generations=GENERATIONS, p_c_min=p_c_min, p_c_max=p_c_max, p_m_min=p_m_min, p_m_max=p_m_max):
+def genetic_algorithm(C_s, C_d, m, component_list, TW_start, TW_end, population_size=POPULATION_SIZE, generations=GENERATIONS, p_c_min=p_c_min, p_c_max=p_c_max, p_m_min=p_m_min, p_m_max=p_m_max):
     component_load(component_list)
+    ID_activity, _, _, individual_plan = calculate_maintenance_time(component_list, TW_start, TW_end)
+    print(individual_plan)
+    genome_length = len(ID_activity)
     population = init_population(population_size, genome_length)
     best_solution = None
     best_fitness_value = -float('inf')
     for generation in range(generations):
-        fitness_values = [fitness_function(genome, C_s, C_d, m, component_list) for genome in population]
+        fitness_values = [fitness_function(genome, C_s, C_d, m, component_list, TW_start, TW_end) for genome in population]
         map_fitness_to_population = sorted(zip(fitness_values, population), reverse=True)
         # print("map value: ", list(map_fitness_to_population))
         # Update best solution
@@ -493,13 +499,13 @@ def genetic_algorithm(C_s, C_d, m, component_list, genome_length=GENOME_LENGTH, 
         for i in range(2, len(selected), 2):
             parent1 = selected[i]
             parent2 = selected[i+1]
-            f_c = max(fitness_function(parent1, C_s, C_d, m, component_list), fitness_function(parent2, C_s, C_d, m, component_list))
+            f_c = max(fitness_function(parent1, C_s, C_d, m, component_list, TW_start, TW_end), fitness_function(parent2, C_s, C_d, m, component_list, TW_start, TW_end))
             p_c = p_c_max - ((p_c_max - p_c_min) * (f_c - f_avg) / (f_max - f_avg)) if f_c > f_avg else p_c_max
             child1, child2 = crossover(parent1, parent2, p_c)
             new_population.extend([child1, child2])
         # Mutation
         for i in range(2, len(new_population)):
-            f_m = fitness_function(new_population[i], C_s, C_d, m, component_list)
+            f_m = fitness_function(new_population[i], C_s, C_d, m, component_list, TW_start, TW_end)
             p_m = p_m_max - ((p_m_max - p_m_min) * (f_max - f_m) / (f_max - f_avg)) if f_m > f_avg else p_m_max
             new_population[i] = mutate(new_population[i], p_m)
         
@@ -514,14 +520,15 @@ def convert_right_form(components, durations):
     ]
 
 
-def mapping_to_UI(genome, m, component_list):
+def mapping_to_UI(genome, m, component_list, TW_start, TW_end):
+    _, map_activity_to_IDcomponent, map_activity_to_replacement_time, _ = calculate_maintenance_time(component_list, TW_start, TW_end)
     N, G_activity = decode(genome)
     G_component = mapping_activity_to_componentID(map_activity_to_IDcomponent, G_activity)
     G_duration, _ = mapping_IDcomponent_to_duration(G_component, component_list)
     replacement_time = mapping_activity_to_replacement_time(map_activity_to_replacement_time, G_activity)
     
     d_Gk = calculate_d_Gk(G_duration, m, w_max)
-    _ , t_group = penalty_cost(G_activity, component_list)
+    _ , t_group = penalty_cost(G_activity, component_list, TW_start, TW_end)
     estimate_duration = convert_right_form(G_component, d_Gk)
     estimate_replacement_time = convert_right_form(G_component, t_group)
     return G_duration, G_component, replacement_time, estimate_duration, estimate_replacement_time
@@ -560,9 +567,11 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
 
     return combined_data
 
-def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component_list):
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list) 
+def output_json_file(best_individual, best_fitness, TW_start, TW_end, m, component_list):
+    ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
+
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end) 
 
     G_component_named = convert_component_ids_to_names(G_component, component_list)
     group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
@@ -574,8 +583,8 @@ def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component
                         "Grouping maintenance": group_maintenance,
                         "Individual maintenance": individual_maintenance,
                         "Time window": {
-                            "Begin": t_begin,
-                            "End": t_end
+                            "Begin": TW_start,
+                            "End": TW_end
                         }
                    }
 
@@ -588,28 +597,31 @@ def output_json_file(best_individual, best_fitness, t_begin, t_end, m, component
 
     # Create the full path
     output_path = os.path.join(output_folder, output_filename)
+    # print(final_output)
 
     # Write the JSON file with correct formatting
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(final_output, f, indent=4, ensure_ascii=False)
+        json.dump(final_output, f, indent=4, ensure_ascii=False, default=str)
 
     print(f"File saved to: {output_path}")
 
 # Function to convert the algorithm output to the proper format
-def format_output(best_individual, best_fitness, t_begin, t_end, m, component_list):
+def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_list):
     """
     Convert the algorithm output to the proper format for JSON output.
     Args:
         best_individual (list): The best individual from the genetic algorithm.
         best_fitness (float): The fitness value of the best individual.
-        t_begin (float): The beginning of the time window.
-        t_end (float): The end of the time window.
+        TW_start (float): The beginning of the time window.
+        TW_end (float): The end of the time window.
     Returns:
         dict: A dictionary containing the formatted output.
     """
+    ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
+
     # Call your existing mapping functions
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list)
+    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
+    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
     
     # Convert component IDs to names
     G_component_named = convert_component_ids_to_names(G_component, component_list)
@@ -624,8 +636,8 @@ def format_output(best_individual, best_fitness, t_begin, t_end, m, component_li
         "Grouping maintenance": group_maintenance,
         "Individual maintenance": individual_maintenance,
         "Time window": {
-            "Begin": t_begin,
-            "End": t_end
+            "Begin": TW_start,
+            "End": TW_end
         }
     }
 
@@ -641,66 +653,66 @@ def component_load(component_list):
 
 
 
-def schedule_maintenance_relative(LMAT, MTBF, MD, TW_start, TW_end):
-    """
-    Calculate all maintenance actions in the given time window (relative hours).
+# def schedule_maintenance_relative(LMAT, MTBF, MD, TW_start, TW_end):
+#     """
+#     Calculate all maintenance actions in the given time window (relative hours).
 
-    Args:
-        LMAT (datetime): Last maintenance action time
-        MTBF (float): Mean time between failures (hours)
-        MD (float): Maintenance duration (hours)
-        TW_start (datetime): Start of time window
-        TW_end (datetime): End of time window
+#     Args:
+#         LMAT (datetime): Last maintenance action time
+#         MTBF (float): Mean time between failures (hours)
+#         MD (float): Maintenance duration (hours)
+#         TW_start (datetime): Start of time window
+#         TW_end (datetime): End of time window
 
-    Returns:
-        list of tuples: [(start_hour, end_hour), ...] relative to TW_start
-    """
-    results = []
-    k = 1
+#     Returns:
+#         list of tuples: [(start_hour, end_hour), ...] relative to TW_start
+#     """
+#     results = []
+#     k = 1
 
-    # Convert datetimes to relative hours from TW_start
-    LMAT_h = (LMAT - TW_start).total_seconds() / 3600.0
-    TW_start_h = 0
-    TW_end_h = (TW_end - TW_start).total_seconds() / 3600.0
+#     # Convert datetimes to relative hours from TW_start
+#     LMAT_h = (LMAT - TW_start).total_seconds() / 3600.0
+#     TW_start_h = 0
+#     TW_end_h = (TW_end - TW_start).total_seconds() / 3600.0
 
-    while True:
-        # Expected failure (relative hours)
-        T_failure_h = LMAT_h + k * MTBF
-        T_latest_h = T_failure_h - MD
+#     while True:
+#         # Expected failure (relative hours)
+#         T_failure_h = LMAT_h + k * MTBF
+#         T_latest_h = T_failure_h - MD
 
-        # Check feasibility inside the time window
-        if T_latest_h >= TW_start_h and (T_latest_h + MD) <= TW_end_h:
-            results.append((T_latest_h, T_latest_h + MD))
-        elif T_latest_h > TW_end_h:
-            break  # Beyond time window, stop
+#         # Check feasibility inside the time window
+#         if T_latest_h >= TW_start_h and (T_latest_h + MD) <= TW_end_h:
+#             results.append((T_latest_h, T_latest_h + MD))
+#         elif T_latest_h > TW_end_h:
+#             break  # Beyond time window, stop
 
-        k += 1
+#         k += 1
 
-        # Safety stop
-        if k > 1000:
-            break
+#         # Safety stop
+#         if k > 1000:
+#             break
 
-    return results
+#     return results
 
 
 
-def convert_to_datetime(schedule_rel, TW_start):
-    """
-    Convert relative maintenance hours back to datetime intervals.
+# def convert_to_datetime(schedule_rel, TW_start):
+#     """
+#     Convert relative maintenance hours back to datetime intervals.
 
-    Args:
-        schedule_rel (list of tuples): [(start_hour, end_hour), ...]
-        TW_start (datetime): Start of time window
+#     Args:
+#         schedule_rel (list of tuples): [(start_hour, end_hour), ...]
+#         TW_start (datetime): Start of time window
 
-    Returns:
-        list of tuples: [(start_datetime, end_datetime), ...]
-    """
-    results = []
-    for start_h, end_h in schedule_rel:
-        start_dt = TW_start + timedelta(hours=start_h)
-        end_dt = TW_start + timedelta(hours=end_h)
-        results.append((start_dt, end_dt))
-    return results
+#     Returns:
+#         list of tuples: [(start_datetime, end_datetime), ...]
+#     """
+#     results = []
+#     for start_h, end_h in schedule_rel:
+#         start_dt = TW_start + timedelta(hours=start_h)
+#         end_dt = TW_start + timedelta(hours=end_h)
+#         results.append((start_dt, end_dt))
+#     return results
 
 
 def generate_failure_json(component_list, TW_start, TW_end):
@@ -752,6 +764,16 @@ def generate_failure_json(component_list, TW_start, TW_end):
 
     return data
 
+
+def calculate_maintenance_time(component_list, TW_start, TW_end):
+    data = generate_failure_json(component_list, TW_start, TW_end)
+    # print(data)
+    t = [entry["Replacement time"] for entry in data["failure"]]
+    ID_activity = [entry["ID activity"] for entry in data["failure"]]
+    ID_component = [entry["Module ID"] for entry in data["failure"]]
+    map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
+    map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
+    return ID_activity, map_activity_to_IDcomponent, map_activity_to_replacement_time, data
 
 
 # Function to process API request and prepare Kafka event data
@@ -1137,53 +1159,12 @@ setup_cost = 500
 downtime_cost_rate = 100
 no_repairmen = 1
 
-# window =    {
-#                     "Begin": datetime(2025, 9, 5, 0, 0),
-#                     "End": datetime(2025, 10, 20, 0, 0)
-#             }
-
-
-# TW_start = window["Begin"]
-# TW_end = window["End"]
-
-
-# best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list)
-# print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
-
-# output_json_file(best_individual, best_fitness, t_begin, t_end, no_repairmen, component_list)
-
-
-# # Example
-# LMAT = datetime(2025, 9, 1, 0, 0)
-# MTBF = 100  # hours
-# MD = 10     # hours
-
-
-# schedule_rel = schedule_maintenance_relative(LMAT, MTBF, MD, TW_start, TW_end)
-# print(schedule_rel)
-
-
-# # Example conversion
-# schedule_back = convert_to_datetime(schedule_rel, TW_start)
-# print(schedule_back)
-
-
 # Example window for demo
 TW_start = datetime(2025, 9, 1, 0, 0)
-TW_end = datetime(2025, 10, 13, 0, 0)
+TW_end = datetime(2025, 9, 30, 0, 0)
 
 
+best_individual, best_fitness = genetic_algorithm(setup_cost, downtime_cost_rate, no_repairmen, component_list, TW_start, TW_end)
+print(f"The best individual is: {best_individual} with fitness: {best_fitness}")
 
-
-
-def calculate_maintenance_time(component_list, TW_start, TW_end):
-    data = generate_failure_json(component_list, TW_start, TW_end)
-    t = [entry["Replacement time"] for entry in data["failure"]]
-    ID_activity = [entry["ID activity"] for entry in data["failure"]]
-    ID_component = [entry["Module ID"] for entry in data["failure"]]
-    map_activity_to_IDcomponent = list(zip(ID_activity, ID_component))      # list of tuple (ID_component, ID_activity)   
-    map_activity_to_replacement_time = list(zip(ID_activity, t))            # list of tuple (ID_component, ID_activity)
-    return data, map_activity_to_IDcomponent, map_activity_to_replacement_time
-
-
-
+output_json_file(best_individual, best_fitness, TW_start, TW_end, no_repairmen, component_list)
