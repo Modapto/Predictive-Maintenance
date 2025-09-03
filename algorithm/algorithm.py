@@ -557,10 +557,12 @@ def combine_group_data(G_duration, G_component, replacement_time, G_component_na
         combined_data[group_key] = []
 
         for comp_id, rep_time, duration, comp_names in zip(components, replacements, durations, names):
+            # Ensure all values are JSON serializable
+            replacement_time_value = rep_time.isoformat() if hasattr(rep_time, 'isoformat') else rep_time
             entry = {
                 "Module ID": comp_id,
                 "Module": comp_names,
-                "Replacement time": rep_time,
+                "Replacement time": replacement_time_value,
                 "Duration": duration
             }
             combined_data[group_key].append(entry)
@@ -636,8 +638,8 @@ def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_
         "Grouping maintenance": group_maintenance,
         "Individual maintenance": individual_maintenance,
         "Time window": {
-            "Begin": TW_start,
-            "End": TW_end
+            "Begin": TW_start.isoformat() if hasattr(TW_start, 'isoformat') else TW_start,
+            "End": TW_end.isoformat() if hasattr(TW_end, 'isoformat') else TW_end
         }
     }
 
