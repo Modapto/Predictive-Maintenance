@@ -46,6 +46,13 @@ This FastAPI service provides predictive maintenance scheduling capabilities wit
 - Number of available repairmen
 - Smart service and production module identifiers (for Kafka Event Messages)
 
+**Time Window Output:**
+
+The algorithm now provides time window information in ISO datetime format:
+- **Begin**: Time window start as ISO datetime string (e.g., "2025-09-01T00:00:00")
+- **End**: Time window end as ISO datetime string (e.g., "2025-09-30T00:00:00")
+- **Timezone support**: All time window timestamps are in ISO format for consistent handling across systems
+
 ### 2. Threshold-Based Maintenance Algorithm (PdM2)
 
 **Location:** `threshold-based_maintenance/PdM2_service.py`  
@@ -295,14 +302,14 @@ Returns Base64-encoded JSON:
     "Grouping maintenance": {
         "Group 1": [
             {
-                "Component ID": 100203,
-                "Component name": "POSTE 05 : MONTAGE ENTRAINEURS",
+                "Module ID": "100203",
+                "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
                 "Replacement time": 349.571,
                 "Duration": 4.957
             },
             {
-                "Component ID": 100270,
-                "Component name": "POSTE DE CONTRÔLE", 
+                "Module ID": "100270",
+                "Module": "POSTE DE CONTRÔLE", 
                 "Replacement time": 349.571,
                 "Duration": 4.957
             }
@@ -311,24 +318,24 @@ Returns Base64-encoded JSON:
     "Individual maintenance": {
         "Group 1": [
             {
-                "Component ID": 100203,
-                "Component name": "POSTE 05 : MONTAGE ENTRAINEURS",
+                "Module ID": "100203",
+                "Module": "POSTE 05 : MONTAGE ENTRAINEURS",
                 "Replacement time": 173.298,
                 "Duration": 1.108
             }
         ],
         "Group 2": [
             {
-                "Component ID": 100270,
-                "Component name": "POSTE DE CONTRÔLE",
+                "Module ID": "100270",
+                "Module": "POSTE DE CONTRÔLE",
                 "Replacement time": 179.545,
                 "Duration": 3.849
             }
         ]
     },
     "Time window": {
-        "Begin": 0.0,
-        "End": 1000.0
+        "Begin": "2025-09-01T00:00:00",
+        "End": "2025-09-30T00:00:00"
     }
 }
 ```

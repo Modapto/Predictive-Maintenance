@@ -585,8 +585,8 @@ def output_json_file(best_individual, best_fitness, TW_start, TW_end, m, compone
                         "Grouping maintenance": group_maintenance,
                         "Individual maintenance": individual_maintenance,
                         "Time window": {
-                            "Begin": TW_start,
-                            "End": TW_end
+                            "Begin": TW_start.isoformat() if hasattr(TW_start, 'isoformat') else TW_start,
+                            "End": TW_end.isoformat() if hasattr(TW_end, 'isoformat') else TW_end
                         }
                    }
 

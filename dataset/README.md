@@ -84,6 +84,10 @@ The "input.py" file contains global parameters for the maintenance scheduling se
 
 The service generates an output JSON file (output.json) containing the optimized maintenance scheduling results. The output provides decision support for maintenance planning, considering both individual and grouped maintenance strategies.
 
+**⚠️ Important Update:** The Time window object now provides timestamps in ISO datetime format instead of relative hours:
+- **Begin**: ISO datetime string for time window start
+- **End**: ISO datetime string for time window end
+
 The output.json is a json file containing:
 - "Cost savings": cost saving for grouping maintenance plan.
 - "Grouping maintenance": grouping maintenance plan.
@@ -96,16 +100,16 @@ The output.json is a json file containing:
     "Grouping maintenance": {
         "Group 1": [
             {
-                "Component": 100054,                                      // integer
-                "Equipment name": "POSTE DE CONTRÔLE",                  // string
-                "Replacement time": 349.571,                           // float
-                "Duration": 4.957                                       // float
+                "Module ID": "100054",                                  // string
+                "Module": "POSTE DE CONTRÔLE",                         // string
+                "Replacement time": 349.571,                           // float (hours)
+                "Duration": 4.957                                       // float (hours)
             },
             {
-                "Component": 1,                                      // integer
-                "Equipment name": "CONNECTEURS",                        // string
-                "Replacement time": 349.571,                            // float
-                "Duration": 4.957                                       // float
+                "Module ID": "1",                                       // string
+                "Module": "CONNECTEURS",                               // string
+                "Replacement time": 349.571,                           // float (hours)
+                "Duration": 4.957                                       // float (hours)
             }
         ],
         ...
@@ -113,17 +117,17 @@ The output.json is a json file containing:
     "Individual maintenance": {
         "Group 1": [
             {  
-                "Component": 100054,                                      // integer
-                "Equipment name": "POSTE DE CONTRÔLE",                  // string
-                "Replacement time": 173.298,                            // float
-                "Duration": 1.108                                       // float
+                "Module ID": "100054",                                  // string
+                "Module": "POSTE DE CONTRÔLE",                         // string
+                "Replacement time": 173.298,                           // float (hours)
+                "Duration": 1.108                                       // float (hours)
             }
         ],
         ...
     },
     "Time window": {
-        "Begin": 0.0,                                                   // float
-        "End": 1000.0                                                   // float
+        "Begin": "2025-09-01T00:00:00",                                 // ISO datetime string
+        "End": "2025-09-30T00:00:00"                                    // ISO datetime string
     }
 }
 ```
