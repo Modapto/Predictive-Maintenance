@@ -209,8 +209,8 @@ class ThresholdMaintenanceInput(BaseModel):
 # ---- Output Models ----
 class Component(BaseModel):
     """Model for a single component in a maintenance group"""
-    Component_ID: int = Field(..., alias="Component ID", description="Unique identifier for the component")
-    Component_name: str = Field(..., alias="Component name", description="Name of the component")
+    Module_ID: str = Field(..., alias="Module ID", description="Unique identifier for the module")
+    Module: str = Field(..., description="Name of the module")
     Replacement_time: float = Field(..., alias="Replacement time", description="Time at which the component is replaced")
     Duration: float = Field(..., description="Duration of the maintenance operation")
     
@@ -218,8 +218,8 @@ class Component(BaseModel):
 
 class TimeWindow(BaseModel):
     """Time window for the maintenance schedule"""
-    Begin: float = Field(..., description="Start time of the maintenance window")
-    End: float = Field(..., description="End time of the maintenance window")
+    Begin: str = Field(..., description="Start time of the maintenance window in ISO format")
+    End: str = Field(..., description="End time of the maintenance window in ISO format")
 
 class GroupingMaintenanceOutput(BaseModel):
     """Full grouping maintenance schedule output"""
