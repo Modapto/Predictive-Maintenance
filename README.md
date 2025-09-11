@@ -280,22 +280,6 @@ Returns immediate confirmation message:
 
 ### Grouping Predictive Maintenance Response
 
-Returns Base64-encoded JSON:
-
-```json
-{
-    "result": "eyJyZWNvbW1lbmRhdGlvbiI6ICJzY2hlZHVsZSBhbiBpbnNwZWN0aW9uIG9mIHN1YiBlbGVtZW50IDEwMDAyMCIsICJkZXRhaWxzIjogIml0IGZhaWxlZCA1IHRpbWVzIGluIHRoZSBsYXN0IDkwIGRheXMuIn0="
-}
-```
-
-### Decoding Grouping Predictive Maintenance Response
-
-1. Extract the `result` field from the JSON response
-2. Base64 decode the string value
-3. Parse the resulting JSON string
-
-### Grouping Predictive Maintenance Response (decoded)
-
 ```json
 {
     "Cost savings": 101.42,
