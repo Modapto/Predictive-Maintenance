@@ -312,7 +312,7 @@ async def process_grouping_maintenance_async(
         producer = EventsProducer(kafka_broker)
         
         # Publish event (success or error) to Kafka topic
-        producer.produce_event("smart-service-event", event_data)
+        producer.produce_event("grouping-predictive-maintenance", event_data)
         
         # Log appropriate message based on event type
         if 'Error' in event_data.get('eventType', ''):
@@ -338,11 +338,11 @@ async def process_grouping_maintenance_async(
                 "eventType": "Critical Processing Error",
                 "sourceComponent": "Predictive Maintenance",
                 "smartService": smart_service,
-                "topic": "smart-service-event",
+                "topic": "grouping-predictive-maintenance",
                 "results": None
             }
             
-            producer.produce_event("smart-service-event", critical_error_event)
+            producer.produce_event("grouping-predictive-maintenance", critical_error_event)
             producer.close()
             print("Critical error event published to Kafka!")
         except Exception as kafka_error:

@@ -850,7 +850,7 @@ def async_processing_grouping_maintenance_request(
             "eventType": "Grouping Maintenance Process Completion",
             "sourceComponent": "Grouping Predictive Maintenance",
             "smartService": smart_service,
-            "topic": "smart-service-event",
+            "topic": "grouping-predictive-maintenance",
             "results": algorithm_results
         }
         
@@ -872,7 +872,7 @@ def async_processing_grouping_maintenance_request(
                 "eventType": "Grouping Maintenance Process Error",
                 "sourceComponent": "Grouping Predictive Maintenance",
                 "smartService": smart_service,
-                "topic": "smart-service-event",
+                "topic": "grouping-predictive-maintenance",
                 "results": None
             }
             
@@ -890,7 +890,7 @@ def async_processing_grouping_maintenance_request(
                 "eventType": "System Error",
                 "sourceComponent": "Grouping Predictive Maintenance",
                 "smartService": smart_service,
-                "topic": "smart-service-event",
+                "topic": "grouping-predictive-maintenance",
                 "results": None
             }
 
