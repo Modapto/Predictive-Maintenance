@@ -449,7 +449,7 @@ def linear_ranking_selection(population, fitness_values, num_groups=5):
 
 
 def crossover(parent1, parent2, p_c):
-    if random.random() < p_c:
+    if random.random() < p_c and len(parent1) >= 3:  # Need at least 3 elements for two-point crossover
         point1 = random.randint(1, len(parent1) - 2)
         point2 = random.randint(point1, len(parent1) - 1)
         child1 = parent1[:point1] + parent2[point1:point2] + parent1[point2:]
@@ -459,7 +459,7 @@ def crossover(parent1, parent2, p_c):
         return parent1, parent2
 
 def mutate(genome, p_m):
-    if random.random() < p_m:
+    if random.random() < p_m and len(genome) >= 2:  # Need at least 2 elements to swap
         i, j = random.sample(range(len(genome)), 2)
         genome[i], genome[j] = genome[j], genome[i]
     return genome
@@ -469,6 +469,12 @@ def genetic_algorithm(C_s, C_d, m, component_list, TW_start, TW_end, population_
     ID_activity, _, _, individual_plan = calculate_maintenance_time(component_list, TW_start, TW_end)
     print(individual_plan)
     genome_length = len(ID_activity)
+    
+    # Handle case when no maintenance activities are scheduled
+    if genome_length == 0:
+        logger.warning("No maintenance activities found within the specified time window")
+        return [], 0.0  # Return empty solution with zero fitness
+    
     population = init_population(population_size, genome_length)
     best_solution = None
     best_fitness_value = -float('inf')
@@ -621,16 +627,22 @@ def format_output(best_individual, best_fitness, TW_start, TW_end, m, component_
     """
     ID_activity, _, _, data = calculate_maintenance_time(component_list, TW_start, TW_end)
 
-    # Call your existing mapping functions
-    _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
-    G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
-    
-    # Convert component IDs to names
-    G_component_named = convert_component_ids_to_names(G_component, component_list)
-    group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
-    
-    G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
-    individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
+    # Handle case when no maintenance activities are found
+    if not best_individual or len(best_individual) == 0:
+        logger.warning("No maintenance activities found - returning empty maintenance schedule")
+        group_maintenance = {}
+        individual_maintenance = {}
+    else:
+        # Call your existing mapping functions
+        _, G_component, _, estimate_duration, estimate_replacement_time = mapping_to_UI(best_individual, m, component_list, TW_start, TW_end)
+        G_duration_individual, G_component_individual, replacement_time_individual, _, _ = mapping_to_UI(ID_activity, m, component_list, TW_start, TW_end)
+        
+        # Convert component IDs to names
+        G_component_named = convert_component_ids_to_names(G_component, component_list)
+        group_maintenance = combine_group_data(estimate_duration, G_component, estimate_replacement_time, G_component_named)
+        
+        G_component_named_individual = convert_component_ids_to_names(G_component_individual, component_list)
+        individual_maintenance = combine_group_data(G_duration_individual, G_component_individual, replacement_time_individual, G_component_named_individual)
     
     # Create output dictionary with proper key names to match the expected format
     output = {
@@ -750,19 +762,38 @@ def generate_failure_json(component_list, TW_start, TW_end):
         # Convert LMAT to relative hours from TW_start
         LMAT_h = (LMAT - TW_start).total_seconds() / 3600.0
         TW_end_h = (TW_end - TW_start).total_seconds() / 3600.0
+        
+        logger.debug(f"Component {ModuleID}: LMAT_h={LMAT_h:.2f}, TW_end_h={TW_end_h:.2f}, MTBF={MTBF}")
 
-        k = 1
+        # Find the first maintenance activity that falls within the time window
+        # If LMAT is before the window, start from k=1
+        # If LMAT is after the window start, we need to find which k value brings us into the window
+        
+        if LMAT_h <= 0:
+            # LMAT is before window start, find first maintenance in window
+            k = max(1, int(-LMAT_h / MTBF) + 1)
+        else:
+            # LMAT is after window start, start from k=1 
+            k = 1
+        
         while True:
             replacement_time = LMAT_h + k * MTBF
             if replacement_time > TW_end_h:
                 break
-            data["failure"].append({
-                "ID activity": activity_id,
-                "Replacement time": round(replacement_time, 3),
-                "Module ID": ModuleID
-            })
-            activity_id += 1
+            if replacement_time >= 0:  # Must be within the window
+                data["failure"].append({
+                    "ID activity": activity_id,
+                    "Replacement time": round(replacement_time, 3),
+                    "Module ID": ModuleID
+                })
+                activity_id += 1
+                logger.debug(f"Added maintenance activity {activity_id-1} at time {replacement_time:.2f}")
             k += 1
+            
+            # Safety break to prevent infinite loops
+            if k > 1000:
+                logger.warning(f"Breaking infinite loop for component {ModuleID}")
+                break
 
     return data
 
