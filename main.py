@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, Field
@@ -103,6 +104,32 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+@app.middleware("http")
+async def handle_http2_upgrade(request: Request, call_next):
+    """
+    Handle HTTP/2 upgrade requests based on deployment scheme.
+    Returns 426 for upgrade requests when running on HTTP (localhost).
+    """
+    # Get scheme from environment or request
+    scheme = os.getenv("SERVER_SCHEME", "https").lower()  # Default to http for localhost
+    upgrade_header = request.headers.get("upgrade", "").lower()
+    
+    # If running on HTTP and client requests h2c upgrade, return 426
+    if scheme == "http" and upgrade_header in ["h2c", "http/2"]:
+        logger.warning(f"Rejecting HTTP/2 upgrade request on HTTP scheme: {upgrade_header}")
+        return Response(
+            content="HTTP/2 not supported over HTTP. Please retry with HTTP/1.1",
+            status_code=426,
+            headers={
+                "Upgrade": "HTTP/1.1",
+                "Connection": "Upgrade"
+            }
+        )
+    
+    # Otherwise, continue with the request
+    response = await call_next(request)
+    return response
 
 # Add request logging middleware
 @app.middleware("http")
