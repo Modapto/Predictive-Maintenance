@@ -9,7 +9,7 @@ class PdM2Service:
                  output_path="maintenance_recommendations.json"):
 
         self.failure_data = pd.DataFrame(input_data['events'])
-        self.module_ID = str(input_data['parameters']['module_ID'])
+        self.module_ID = input_data['parameters']['module_ID']
         self.window_size = int(input_data['parameters']['window_size'])
         self.inspection_threshold = int(input_data['parameters']['inspection_threshold'])
         self.replacement_threshold = int(input_data['parameters']['replacement_threshold'])
