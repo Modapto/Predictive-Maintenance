@@ -49,7 +49,7 @@ class PdM2Service:
  
         print('Failures in window size:\n', failures_window_size)
         print('module_ID', self.module_ID)
-        print(type(self.module_ID))
+        print('module_ID type:',type(self.module_ID))
         return failures_window_size, failures_extraction
 
     def _make_decision(self):
