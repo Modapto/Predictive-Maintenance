@@ -31,6 +31,9 @@ class PdM2Service:
         #today = pd.to_datetime("21/06/2023", dayfirst=True)
         ws_days_ago = today - pd.Timedelta(days=self.window_size)
         ext_days_ago = today - pd.Timedelta(days=self.winds_count_component_replac * self.window_size)
+        print("Today:", today)
+        print("Window size days ago:", ws_days_ago)
+        print("Extraction days ago:", ext_days_ago)
 
         failures_window_size = self.df[
             (self.df['Module ID'] == self.module_ID) &
