@@ -46,7 +46,9 @@ class PdM2Service:
             (self.df['TS Intervention started'] >= ext_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
-
+ 
+        print('Failures in window size:\n', failures_window_size)
+        
         return failures_window_size, failures_extraction
 
     def _make_decision(self):
