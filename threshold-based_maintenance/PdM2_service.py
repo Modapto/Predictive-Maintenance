@@ -40,7 +40,7 @@ class PdM2Service:
             (self.df['TS Intervention started'] >= ws_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
-        )
+        
         failures_extraction = self.df[
             (self.df['Module ID'] == self.module_ID) &
             (self.df['TS Intervention started'] >= ext_days_ago) &
