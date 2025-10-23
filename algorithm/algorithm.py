@@ -175,8 +175,8 @@ logger = logging.getLogger(__name__)
 # w_max = parameters.w_max       
 
 # GENOME_LENGTH = 17
-POPULATION_SIZE = 60
-GENERATIONS = 5
+POPULATION_SIZE = 100
+GENERATIONS = 1000
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
