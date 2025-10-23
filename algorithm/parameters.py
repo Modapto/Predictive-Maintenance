@@ -1,5 +1,5 @@
 POPULATION_SIZE = 80
-GENERATIONS = 600
+GENERATIONS = 101
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
