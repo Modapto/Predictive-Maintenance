@@ -56,6 +56,7 @@ class PdM2Service:
         failures_window_size, failures_extraction = self._filter_failures()
         module_count = len(failures_window_size)
         print("Module failure count in window size:", module_count)
+        print("lalalalallallala")
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
             return self._create_result(failures_window_size, "inspection", self.window_size)
