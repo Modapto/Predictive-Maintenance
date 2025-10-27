@@ -180,7 +180,7 @@ GENERATIONS = 300
 p_c_min = 0.6
 p_c_max = 0.9
 p_m_min = 0.01
-p_m_max = 0.1
+p_m_max = 0.2
 w_max = 7 
 
 # initialize genome
