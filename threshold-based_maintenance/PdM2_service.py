@@ -9,7 +9,7 @@ class PdM2Service:
                  output_path="maintenance_recommendations.json"):
 
         self.failure_data = pd.DataFrame(input_data['events'])
-        self.module_ID = str(input_data['parameters']['module_ID'])
+        self.module_ID = input_data['parameters']['module_ID']
         self.window_size = int(input_data['parameters']['window_size'])
         self.inspection_threshold = int(input_data['parameters']['inspection_threshold'])
         self.replacement_threshold = int(input_data['parameters']['replacement_threshold'])
@@ -21,6 +21,7 @@ class PdM2Service:
         self.df = self._load_data()
         self.result = {}
 
+
     def _load_data(self):
         df = self.failure_data
         df['TS Intervention started'] = pd.to_datetime(df['TS Intervention started'],  format='mixed', errors='coerce')
@@ -31,32 +32,33 @@ class PdM2Service:
         #today = pd.to_datetime("21/06/2023", dayfirst=True)
         ws_days_ago = today - pd.Timedelta(days=self.window_size)
         ext_days_ago = today - pd.Timedelta(days=self.winds_count_component_replac * self.window_size)
-        print("Today:", today)
-        print("Window size days ago:", ws_days_ago)
-        print("Extraction days ago:", ext_days_ago)
 
         failures_window_size = self.df[
             (self.df['Module ID'] == self.module_ID) &
             (self.df['TS Intervention started'] >= ws_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
-        print("Window size days ago:", ws_days_ago)
+        print(f'module_ID in params is {self.module_ID} of type {type(self.module_ID)}')
+        print(f'components_ID in params is {self.components_ID} of type {type(self.components_ID[0])}')
+        print(f'values of module ID in events are {type(self.df['Module ID'][0])}')
+        print(f'values of component ID in events are {type(self.df['Component ID'][0])}')
+        print(f'initial date of window is {ws_days_ago}of type {type(ws_days_ago)}')
+        print(f'final date of window is {today} of type {type(today)}')
+        print(f'window size is {self.window_size}')
+        print(f'the date type in events is {type(self.df['TS Intervention started'][0])}, for example {self.df['TS Intervention started'][0]}')
+
         failures_extraction = self.df[
             (self.df['Module ID'] == self.module_ID) &
             (self.df['TS Intervention started'] >= ext_days_ago) &
             (self.df['TS Intervention started'] <= today)
             ]
- 
-        print('Failures in window size:\n', failures_window_size)
-        print('module_ID', self.module_ID)
-        print('module_ID type:',type(self.module_ID))
         return failures_window_size, failures_extraction
 
     def _make_decision(self):
         failures_window_size, failures_extraction = self._filter_failures()
         module_count = len(failures_window_size)
-        print("Module failure count in window size:", module_count)
-        print("lalalalallallala")
+        print(f'the number of failures in the module is {module_count}')
+
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
             return self._create_result(failures_window_size, "inspection", self.window_size)
