@@ -40,12 +40,12 @@ class PdM2Service:
             ]
         print(f'module_ID in params is {self.module_ID} of type {type(self.module_ID)}')
         print(f'components_ID in params is {self.components_ID} of type {type(self.components_ID[0])}')
-        print(f'values of module ID in events are {type(self.df['Module ID'][0])}')
-        print(f'values of component ID in events are {type(self.df['Component ID'][0])}')
+        print(f'values of module ID in events are {type(self.df["Module ID"][0])}')
+        print(f'values of component ID in events are {type(self.df["Component ID"][0])}')
         print(f'initial date of window is {ws_days_ago}of type {type(ws_days_ago)}')
         print(f'final date of window is {today} of type {type(today)}')
         print(f'window size is {self.window_size}')
-        print(f'the date type in events is {type(self.df['TS Intervention started'][0])}, for example {self.df['TS Intervention started'][0]}')
+        print(f'the date type in events is {type(self.df["TS Intervention started"][0])}, for example {self.df["TS Intervention started"][0]}')
 
         failures_extraction = self.df[
             (self.df['Module ID'] == self.module_ID) &
