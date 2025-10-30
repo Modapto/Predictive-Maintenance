@@ -9,13 +9,15 @@ class PdM2Service:
                  output_path="maintenance_recommendations.json"):
 
         self.failure_data = pd.DataFrame(input_data['events'])
-        self.module_ID = input_data['parameters']['module_ID']
+        self.module_ID = str(input_data['parameters']['module_ID'])
         self.window_size = int(input_data['parameters']['window_size'])
         self.inspection_threshold = int(input_data['parameters']['inspection_threshold'])
         self.replacement_threshold = int(input_data['parameters']['replacement_threshold'])
         self.winds_count_component_replac = 3
         #self.components_ID = ast.literal_eval(input_data['parameters']['components_ID'])
-        self.components_ID = input_data['parameters']['components_ID']
+
+        # Convert components_ID elements to strings
+        self.components_ID = [str(x) for x in input_data['parameters']['components_ID']]
         self.output_path = output_path
 
         self.df = self._load_data()
