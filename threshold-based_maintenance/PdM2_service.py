@@ -19,9 +19,15 @@ class PdM2Service:
         # Convert components_ID elements to strings
         self.components_ID = [str(x) for x in input_data['parameters']['components_ID']]
         self.output_path = output_path
+        self.durations = ["non",1,2]
 
         self.df = self._load_data()
         self.result = {}
+        
+        for i in input_data['events']:
+            if i["Module ID"] == self.module_ID:
+                self.Cell = i["Cell"]
+                break        
 
 
     def _load_data(self):
@@ -63,19 +69,25 @@ class PdM2Service:
         print(f'inspection threshold is {self.inspection_threshold}, replacement threshold is {self.replacement_threshold}')
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
+            duration = self.durations[1]            
             return self._create_result(failures_window_size, "inspection", self.window_size)
 
         elif module_count >= self.replacement_threshold:
+            duration = self.durations[2]
             return self._create_result(failures_extraction, "replacement",
                                        self.window_size * self.winds_count_component_replac)
-
         else:
+            duration = self.durations[0]
+            return self._create_result(failures_window_size, "non", self.window_size, duration)
+
+            """
             return {
                 "recommendation": "non",
                 "details": "The system is under control"
             }
+            """
 
-    def _create_result(self, failure_data, action, period):
+    def _create_result(self, failure_data, action, period, duration):
         filtered_data = failure_data[failure_data['Component ID'].isin(self.components_ID)]
         components_count = filtered_data['Component ID'].value_counts()
         
@@ -86,12 +98,20 @@ class PdM2Service:
             most_failed = None
             max_count = 0
 
-        recommendation = f"schedule an {action} of sub element {most_failed}"
-        details = f"it failed {max_count} time(s) in the last {period} days."
+        #recommendation = f"schedule an {action} of sub element {most_failed}"
+        if duration == "non":
+            details = f"The system is under control"
+
+        else:
+            details = f"{max_count} failure(s) in the last {period} days."
 
         return {
-            "recommendation": recommendation,
-            "details": details
+            "Recommendation": action,
+            "Duration": duration,
+            "Sub element ID": most_failed,
+            "Module ID": self.module_ID,
+            "Cell": self.Cell,
+            "Details": details,
         }
 
     def run(self):
