@@ -390,6 +390,11 @@ Both maintenance algorithms use ThreadPoolExecutor for CPU-bound processing to p
 - Supports multiple domain origins
 - Enables credentials and all HTTP methods for development flexibility
 
+## Lisense
+This project is licensed under the MIT License
+
 ## Contributors
 
 - Alkis Aznavouridis (ATC) (<a.aznavouridis@atc.gr>)
+- Huu Truong Le (UL) (<huu-truong.le@univ-lorraine.fr>)
+- Hanser Steven Jimenez Gonzalez (<hanser-steven.jimenez-gonzalez@univ-lorraine.fr>)
