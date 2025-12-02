@@ -19,7 +19,7 @@ class PdM2Service:
         # Convert components_ID elements to strings
         self.components_ID = [str(x) for x in input_data['parameters']['components_ID']]
         self.output_path = output_path
-        self.durations = ["non",1,2]
+        self.durations = [0, 1, 2]  # Changed "non" to 0 to ensure Duration is always an integer
 
         self.df = self._load_data()
         self.result = {}
@@ -69,13 +69,13 @@ class PdM2Service:
         print(f'inspection threshold is {self.inspection_threshold}, replacement threshold is {self.replacement_threshold}')
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
-            duration = self.durations[1]            
-            return self._create_result(failures_window_size, "inspection", self.window_size)
+            duration = self.durations[1]
+            return self._create_result(failures_window_size, "inspection", self.window_size, duration)
 
         elif module_count >= self.replacement_threshold:
             duration = self.durations[2]
             return self._create_result(failures_extraction, "replacement",
-                                       self.window_size * self.winds_count_component_replac)
+                                       self.window_size * self.winds_count_component_replac, duration)
         else:
             duration = self.durations[0]
             return self._create_result(failures_window_size, "non", self.window_size, duration)
@@ -95,13 +95,12 @@ class PdM2Service:
             most_failed = components_count.idxmax()
             max_count = components_count.max()
         else:
-            most_failed = None
+            most_failed = "None"  # Changed from None to string value
             max_count = 0
 
         #recommendation = f"schedule an {action} of sub element {most_failed}"
-        if duration == "non":
+        if duration == 0:  # Changed from "non" to 0 since duration is always an integer
             details = f"The system is under control"
-
         else:
             details = f"{max_count} failure(s) in the last {period} days."
 
