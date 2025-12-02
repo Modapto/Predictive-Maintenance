@@ -335,15 +335,23 @@ Returns immediate confirmation message:
 
 ```json
 {
-    "recommendation": "schedule an inspection of sub element 100020",
-    "details": "it failed 5 times in the last 90 days."
+  "Recommendation": "replacement",
+  "Duration": 2,
+  "Sub element ID": "100022",
+  "Module ID": "100019",
+  "Cell": "LIGNE DE MONTAGE MOTG01",
+  "Details": "14 failure(s) in the last 780 days."
 }
 ```
 
 **Response Fields:**
 
-- `recommendation`: Specific maintenance action recommended ("non", "inspection", or "replacement")
-- `details`: Explanation of the recommendation with failure statistics
+- `Recommendation`: Specific maintenance action recommended ("non", "inspection", or "replacement")
+- `Duration`: Duration of maintenance
+- `Sub element ID`: Identifier of the failed sub-element
+- `Module ID`: Identifier of the failed module
+- `Cell`: Identifier of the failed cell
+- `Details`: Explanation of the recommendation with failure statistics
 
 ## Running the API
 
