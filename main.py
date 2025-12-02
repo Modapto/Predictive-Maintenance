@@ -261,8 +261,12 @@ class GroupingMaintenanceOutput(BaseModel):
 
 class ThresholdBasedMaintenanceOutput(BaseModel):
     """Full threshold-based maintenance schedule output"""
-    recommendation: str = Field(..., description="Maintenance recommendation based on failure analysis")
-    details: str = Field(..., description="Details of the recommendation, including failure counts and periods")
+    Recommendation: str = Field(..., description="Maintenance recommendation based on failure analysis")
+    Duration: int = Field(..., description="Duration of maintenance")
+    Sub_element_ID: str = Field(..., alias="Sub element ID", description="Identifier of the failed sub-element")
+    Module_ID: int = Field(..., alias="Module ID", description="Module identifier")
+    Cell: str = Field(..., description="Cell identifier")
+    Details: str = Field(..., description="Details of the recommendation, including failure counts and periods")
 
     model_config = {"populate_by_name": True}
 
@@ -436,11 +440,11 @@ async def predict_threshold_based_maintenance(base64_data: Base64Request):
         try:
             logger.info("Attempting to parse decoded data into ThresholdMaintenanceInput model")
             data = ThresholdMaintenanceInput(**decoded_data)
-            logger.info("✓ Successfully parsed request data")
+            logger.info(" Successfully parsed request data")
             logger.info(f"Request summary - Events count: {len(data.events)}, "
                        f"Smart Service: {data.smartServiceId}, Module: {data.moduleId}")
         except Exception as e:
-            logger.error("✗ Failed to parse decoded data into model")
+            logger.error(" Failed to parse decoded data into model")
             logger.error(f"Validation error details: {str(e)}")
             logger.error(f"Validation error type: {type(e).__name__}")
             
@@ -464,8 +468,11 @@ async def predict_threshold_based_maintenance(base64_data: Base64Request):
             )
         )
         
+        # Validate Result
+        threshold_result = ThresholdBasedMaintenanceOutput(**result)
+        
         # Encode response to Base64
-        encoded_result = encode_output_to_base64(result)
+        encoded_result = encode_output_to_base64(threshold_result.model_dump(by_alias=True))
         logger.info("Successfully processed threshold-based maintenance request")
         
         return Base64Response(response=encoded_result)
