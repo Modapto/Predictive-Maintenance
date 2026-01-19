@@ -67,7 +67,6 @@ class PdM2Service:
         module_count = len(failures_window_size)
         print(f'the number of failures in the module is {module_count}')
         print(f'inspection threshold is {self.inspection_threshold}, replacement threshold is {self.replacement_threshold}')
-        print('TESTTTTTTTTTTTTTTTTTTTTTT')
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
             duration = self.durations[1]
@@ -98,6 +97,8 @@ class PdM2Service:
         else:
             most_failed = "None"  # Changed from None to string value
             max_count = 0
+
+        print(f"MOST_FAILED:{most_failed}")
 
         #recommendation = f"schedule an {action} of sub element {most_failed}"
         if duration == 0:  # Changed from "non" to 0 since duration is always an integer
