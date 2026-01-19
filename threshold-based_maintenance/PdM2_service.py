@@ -67,6 +67,7 @@ class PdM2Service:
         module_count = len(failures_window_size)
         print(f'the number of failures in the module is {module_count}')
         print(f'inspection threshold is {self.inspection_threshold}, replacement threshold is {self.replacement_threshold}')
+        print('TESTTTTTTTTTTTTTTTTTTTTTT')
 
         if self.inspection_threshold <= module_count < self.replacement_threshold:
             duration = self.durations[1]
