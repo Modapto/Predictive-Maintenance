@@ -99,6 +99,7 @@ class PdM2Service:
             max_count = 0
 
         print(f'MOST_FAILED:{most_failed}')
+        print('TTTTTEST222222')
 
         #recommendation = f"schedule an {action} of sub element {most_failed}"
         if duration == 0:  # Changed from "non" to 0 since duration is always an integer
