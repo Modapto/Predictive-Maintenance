@@ -467,7 +467,7 @@ async def predict_threshold_based_maintenance(base64_data: Base64Request):
                 data
             )
         )
-        logger.debug(f"Raw result from PdM2Service: {json.dumps(result, indent=2, default=str)}")
+        logger.info(f"Raw result from PdM2Service: {json.dumps(result, indent=2, default=str)}")
         # Validate Result
         threshold_result = ThresholdBasedMaintenanceOutput(**result)
         
