@@ -263,7 +263,7 @@ class ThresholdBasedMaintenanceOutput(BaseModel):
     """Full threshold-based maintenance schedule output"""
     Recommendation: str = Field(..., description="Maintenance recommendation based on failure analysis")
     Duration: int = Field(..., description="Duration of maintenance")
-    Sub_element_ID: str = Field(..., alias="Sub element ID", description="Identifier of the failed sub-element")
+    Sub_element_ID: str = Field(..., alias="Sub Element ID", description="Identifier of the failed sub-element")
     Module_ID: int = Field(..., alias="Module ID", description="Module identifier")
     Cell: str = Field(..., description="Cell identifier")
     Details: str = Field(..., description="Details of the recommendation, including failure counts and periods")
